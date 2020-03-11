@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1.0",
     author="Matt Carey",
     author_email="matt@authorityspoke.com",
-    description="tool for fetching and comparing passages from legislation",
+    description="API client for fetching and comparing passages from legislation",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/mscarey/legislice",
