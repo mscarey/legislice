@@ -10,7 +10,7 @@ class TestDownloadJSON:
         s102 = client.fetch(uri="/test/acts/47/1", endpoint=ENDPOINT)
         assert s102["start_date"] == "1935-04-01"
         assert s102["end_date"] is None
-        assert s102["text_version"]["heading"] == "Short title"
+        assert s102["heading"] == "Short title"
 
     def test_fetch_current_section_with_date(self):
         waiver = client.fetch(
@@ -25,3 +25,4 @@ class TestDownloadJSON:
         )
         assert waiver["url"].endswith("acts/47/6D@1940-01-01")
         assert waiver["children"][0]["start_date"] == "1935-04-01"
+

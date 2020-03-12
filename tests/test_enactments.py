@@ -4,7 +4,7 @@ from legislice.enactments import Enactment
 
 
 class TestMakeEnactment:
-    def test_enactment_without_nesting(self):
+    def test_make_enactment_without_nesting(self):
         s1 = Enactment(
             node="/test/acts/47/1",
             start_date=date(1935, 4, 1),
