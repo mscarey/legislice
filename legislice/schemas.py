@@ -10,13 +10,13 @@ class EnactmentSchema(Schema):
     node = fields.Url(relative=True)
     heading = fields.Str()
     content = fields.Str()
-    start_date: fields.Date()
-    end_date: fields.Date(missing=None)
-    children = fields.Nested(lambda: EnactmentSchema(), many=True)
+    start_date = fields.Date()
+    end_date = fields.Date(missing=None)
+    children = fields.List(fields.Nested(lambda: EnactmentSchema()))
 
     class Meta:
         unknown = EXCLUDE
 
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         return self.__model__(**data)
