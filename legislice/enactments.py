@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 
@@ -40,5 +40,26 @@ class Enactment:
     start_date: date
     end_date: Optional[date] = None
     children: List[Enactment] = field(default_factory=list)
-    selector: Optional[Union[bool, TextPositionSelector]] = True
+    selection: Union[bool, Tuple[TextPositionSelector, ...]] = True
 
+    def selected_as_list(self) -> List[Union[None, str]]:
+        selected: List[Union[None, str]] = []
+        if self.selection is True:
+            selected.append(self.content)
+        elif self.selection is False:
+            selected.append(None)
+        for child in self.children:
+            selected += child.selected_as_list()
+        return selected
+
+    def selected_text(self) -> str:
+        result = ""
+        for phrase in self.selected_as_list():
+            if phrase is None:
+                if not result.endswith("..."):
+                    result += "..."
+            else:
+                if result and not result.endswith(("...", " ")):
+                    result += " "
+                result += phrase
+        return result
