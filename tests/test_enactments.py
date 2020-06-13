@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 import pytest
+from anchorpoint import TextQuoteSelector
 
 from legislice.download import Client
 from legislice.enactments import Enactment
@@ -68,6 +69,17 @@ class TestSelectText:
         assert "cryptocurrency" not in section.selected_text()
 
 
+class TestSelectFromEnactment:
+    def test_text_of_enactment_subset(self, section_11_together):
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_together)
+        selector = TextQuoteSelector(
+            exact="barbers, hairdressers, or other male grooming professionals"
+        )
+        limited = combined.select(selector)
+        assert limited.selected_text.startswith("barbers")
+
+
 class TestCompareEnactment:
     client = Client(api_token=TOKEN)
 
@@ -77,6 +89,13 @@ class TestCompareEnactment:
         old_version = self.client.read(uri="/test/acts/47/6A", date=date(1999, 1, 1))
         new_version = self.client.read(uri="/test/acts/47/6A", date=date(2020, 1, 1))
         assert old_version.means(new_version)
+
+    @pytest.mark.vcr()
+    def test_not_gt_if_equal(self):
+        enactment = self.client.read(uri="/test/acts/47/1", date=date(1999, 1, 1))
+        assert enactment == enactment
+        assert not enactment > enactment
+        assert enactment >= enactment
 
     @pytest.mark.vcr()
     def test_different_section_same_text(self):
@@ -104,3 +123,12 @@ class TestCompareEnactment:
         )
         assert more_provisions >= fewer_provisions
         assert more_provisions > fewer_provisions
+
+    def test_enactment_subset(self, section_11_together):
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_together)
+        selector = TextQuoteSelector(
+            exact="barbers, hairdressers, or other male grooming professionals"
+        )
+        limited = combined.select(selector)
+        assert combined > limited
