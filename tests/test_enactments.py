@@ -68,10 +68,17 @@ class TestSelectText:
 
 
 class TestCompareEnactment:
+    client = Client(api_token=TOKEN)
+
     @pytest.mark.vcr()
     def test_equal_enactment_text(self):
         """Test provisions with the same text (different dates)."""
-        client = Client(api_token=TOKEN)
-        old_version = client.read(uri="/test/acts/47/6A", date=date(1999, 1, 1))
-        new_version = client.read(uri="/test/acts/47/6A", date=date(2020, 1, 1))
+        old_version = self.client.read(uri="/test/acts/47/6A", date=date(1999, 1, 1))
+        new_version = self.client.read(uri="/test/acts/47/6A", date=date(2020, 1, 1))
+        assert old_version.means(new_version)
+
+    @pytest.mark.vcr()
+    def test_different_section_same_text(self):
+        old_version = self.client.read(uri="/test/acts/47/8/2/b", date=date(1999, 1, 1))
+        new_version = self.client.read(uri="/test/acts/47/8/2/d", date=date(2020, 1, 1))
         assert old_version.means(new_version)
