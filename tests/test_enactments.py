@@ -6,6 +6,7 @@ import pytest
 
 from legislice.download import Client
 from legislice.enactments import Enactment
+from legislice.schemas import EnactmentSchema
 
 load_dotenv()
 
@@ -84,9 +85,12 @@ class TestCompareEnactment:
         assert old_version.means(new_version)
 
     @pytest.mark.vcr()
-    def test_combined_section_implies_subdivided_section(self):
-        combined = self.client.read(uri="/test/acts/47/8/2", date=date(1999, 1, 1))
-        subdivided = self.client.read(uri="/test/acts/47/8/2", date=date(2020, 1, 1))
+    def test_combined_section_implies_subdivided_section(
+        self, section_11_together, section_11_subdivided
+    ):
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_together)
+        subdivided = schema.load(section_11_subdivided)
         assert combined >= subdivided
         assert combined > subdivided
 

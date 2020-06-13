@@ -23,6 +23,13 @@ class TextPassage:
 
         return self.text.strip(",:;. ") == other.text.strip(",:;. ")
 
+    def __ge__(self, other: Optional[TextPassage]) -> bool:
+        if not other:
+            return True
+
+        other_text = other.text.strip(",:;. ")
+        return other_text in self.text
+
 
 @dataclass(frozen=True)
 class Enactment:
