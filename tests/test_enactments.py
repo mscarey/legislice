@@ -82,3 +82,21 @@ class TestCompareEnactment:
         old_version = self.client.read(uri="/test/acts/47/8/2/b", date=date(1999, 1, 1))
         new_version = self.client.read(uri="/test/acts/47/8/2/d", date=date(2020, 1, 1))
         assert old_version.means(new_version)
+
+    @pytest.mark.vcr()
+    def test_combined_section_implies_subdivided_section(self):
+        combined = self.client.read(uri="/test/acts/47/8/2", date=date(1999, 1, 1))
+        subdivided = self.client.read(uri="/test/acts/47/8/2", date=date(2020, 1, 1))
+        assert combined >= subdivided
+        assert combined > subdivided
+
+    @pytest.mark.vcr()
+    def test_more_provisions_implies_fewer(self):
+        more_provisions = self.client.read(
+            uri="/test/acts/47/8/2", date=date(2020, 1, 1)
+        )
+        fewer_provisions = self.client.read(
+            uri="/test/acts/47/8/2", date=date(1999, 1, 1)
+        )
+        assert more_provisions >= fewer_provisions
+        assert more_provisions > fewer_provisions

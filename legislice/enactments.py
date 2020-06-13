@@ -59,11 +59,13 @@ class Enactment:
     children: List[Enactment] = field(default_factory=list)
     selection: Union[bool, Tuple[TextPositionSelector, ...]] = True
 
-    def selected_as_list(self) -> List[Union[None, TextPassage]]:
+    def selected_as_list(
+        self, include_nones: bool = True
+    ) -> List[Union[None, TextPassage]]:
         selected: List[Union[None, TextPassage]] = []
         if self.selection is True:
             selected.append(TextPassage(self.content))
-        elif self.selection is False and (not selected or selected[-1] is not None):
+        elif include_nones and (not selected or selected[-1] is not None):
             selected.append(None)
         for child in self.children:
             selected += child.selected_as_list()
@@ -100,3 +102,27 @@ class Enactment:
         if not all((pair[0] is None) == (pair[1] is None) for pair in zipped):
             return False
         return all(pair[0] is None or pair[0].means(pair[1]) for pair in zipped)
+
+    def __ge__(self, other):
+        """
+        Tells whether ``self`` implies ``other``.
+
+        :returns:
+            Whether ``self`` contains at least all the same text as ``other``.
+        """
+        if not isinstance(other, self.__class__):
+            return False
+        self_selected_passages = self.selected_as_list(include_nones=False)
+        other_selected_passages = other.selected_as_list(include_nones=False)
+        for other_passage in other_selected_passages:
+            if not any(
+                self_passage >= other_passage for self_passage in self_selected_passages
+            ):
+                return False
+        return True
+
+    def __gt__(self, other) -> bool:
+        """Test whether ``self`` implies ``other`` without having same meaning."""
+        if self == other:
+            return False
+        return self >= other
