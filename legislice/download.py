@@ -12,6 +12,9 @@ class Client:
         self, api_token: str = "", endpoint: str = "https://authorityspoke.com/api/v1"
     ):
         self.endpoint = endpoint
+
+        if api_token.startswith("Token "):
+            api_token = api_token.split("Token ")[1]
         self.api_token = api_token
 
     def fetch(self, uri: str, date: Union[datetime.date, str] = "") -> RawEnactment:
@@ -23,7 +26,7 @@ class Client:
 
         headers = {}
         if self.api_token:
-            headers["Authorization"] = f"Token {self.api_token}"}
+            headers["Authorization"] = f"Token {self.api_token}"
 
         response = requests.get(query, headers=headers)
         return response.json()
