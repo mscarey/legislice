@@ -1,6 +1,15 @@
 from datetime import date
+import os
 
+from dotenv import load_dotenv
+import pytest
+
+from legislice.download import Client
 from legislice.enactments import Enactment
+
+load_dotenv()
+
+TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 
 class TestMakeEnactment:
@@ -56,3 +65,13 @@ class TestSelectText:
         )
         assert section.selected_text() == "Where an exemption is granted..."
         assert "cryptocurrency" not in section.selected_text()
+
+
+class TestCompareEnactment:
+    @pytest.mark.vcr()
+    def test_equal_enactment_text(self):
+        """Test provisions with the same text (different dates)."""
+        client = Client(api_token=TOKEN)
+        old_version = client.read(uri="/test/acts/47/6A", date=date(1999, 1, 1))
+        new_version = client.read(uri="/test/acts/47/6A", date=date(2020, 1, 1))
+        assert old_version.means(new_version)

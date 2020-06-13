@@ -1,8 +1,10 @@
 import datetime
 from typing import Any, Dict, Optional, Union
 
-
 import requests
+
+from legislice.enactments import Enactment
+from legislice.schemas import EnactmentSchema
 
 RawEnactment = Dict[str, Any]
 
@@ -30,3 +32,9 @@ class Client:
 
         response = requests.get(query, headers=headers)
         return response.json()
+
+    def read(self, uri: str, date: Union[datetime.date, str] = "") -> Enactment:
+        raw_enactment = self.fetch(uri=uri, date=date)
+        schema = EnactmentSchema()
+        enactment = schema.load(raw_enactment)
+        return enactment

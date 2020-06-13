@@ -8,9 +8,26 @@ from anchorpoint import TextQuoteSelector, TextPositionSelector
 
 
 @dataclass(frozen=True)
+class TextPassage:
+    """
+    A contiguous passage of legislative text.
+
+    :param passage:
+    """
+
+    text: str
+
+    def means(self, other: Optional[TextPassage]) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+
+        return self.text.strip(",:;. ") == other.text.strip(",:;. ")
+
+
+@dataclass(frozen=True)
 class Enactment:
     """
-    A passage of legislative text.
+    One or more passages of legislative text, selected from within a cited location.
 
     :param node:
         identifier for the site where the provision is codified
@@ -42,11 +59,11 @@ class Enactment:
     children: List[Enactment] = field(default_factory=list)
     selection: Union[bool, Tuple[TextPositionSelector, ...]] = True
 
-    def selected_as_list(self) -> List[Union[None, str]]:
-        selected: List[Union[None, str]] = []
+    def selected_as_list(self) -> List[Union[None, TextPassage]]:
+        selected: List[Union[None, TextPassage]] = []
         if self.selection is True:
-            selected.append(self.content)
-        elif self.selection is False:
+            selected.append(TextPassage(self.content))
+        elif self.selection is False and (not selected or selected[-1] is not None):
             selected.append(None)
         for child in self.children:
             selected += child.selected_as_list()
@@ -61,5 +78,25 @@ class Enactment:
             else:
                 if result and not result.endswith(("...", " ")):
                     result += " "
-                result += phrase
+                result += phrase.text
         return result
+
+    def means(self, other: Enactment) -> bool:
+        r"""
+        Find whether meaning of ``self`` is equivalent to that of ``other``.
+
+        ``Self`` must be neither broader nor narrower than ``other`` to return True.
+
+        :returns:
+            whether ``self`` and ``other`` represent the same text
+            issued by the same sovereign in the same level of
+            :class:`Enactment`\.
+        """
+        if not isinstance(other, self.__class__):
+            return False
+        self_selected_passages = self.selected_as_list()
+        other_selected_passages = other.selected_as_list()
+        zipped = zip(self_selected_passages, other_selected_passages)
+        if not all((pair[0] is None) == (pair[1] is None) for pair in zipped):
+            return False
+        return all(pair[0] is None or pair[0].means(pair[1]) for pair in zipped)
