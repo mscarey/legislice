@@ -106,7 +106,7 @@ class Enactment:
         elif include_nones and (not selected or selected[-1] is not None):
             selected.append(None)
         for child in self.children:
-            selected += child.selected_as_list()
+            selected += child.selected_as_list(include_nones=include_nones)
         return selected
 
     def selected_text(self) -> str:
