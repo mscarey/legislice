@@ -5,6 +5,7 @@ from datetime import date
 from typing import List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
+from anchorpoint.textselectors import TextPositionSet
 
 
 @dataclass(frozen=True)
@@ -29,6 +30,31 @@ class TextPassage:
 
         other_text = other.text.strip(",:;. ")
         return other_text in self.text
+
+
+@dataclass
+class UnfrozenEnactment:
+    node: str
+    heading: str
+    content: str
+    start_date: date
+    end_date: Optional[date] = None
+    children: List[Enactment] = field(default_factory=list)
+    position_selection: Optional[List[TextPositionSelector]] = None
+    quote_selection: Optional[List[TextQuoteSelector]] = None
+    selection: Optional[
+        Union[List[TextQuoteSelector], List[TextPositionSelector]]
+    ] = None
+
+    def distribute_selectors_to_subnodes(self):
+        if self.position_selection:
+            self.selection = TextPositionSet(self.position_selection)
+        elif self.quote_selection:
+            selectors = [
+                selector.as_position(self.content) for selector in self.quote_selection
+            ]
+            selector_set = TextPositionSet(selectors)
+            self.selection = selector_set
 
 
 @dataclass(frozen=True)
