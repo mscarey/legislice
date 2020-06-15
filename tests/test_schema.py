@@ -1,4 +1,14 @@
-from legislice.schemas import EnactmentSchema
+from anchorpoint.textselectors import TextPositionSelector
+
+from legislice.schemas import EnactmentSchema, PositionSelectorSchema
+
+
+class TestLoadSelector:
+    def test_schema_loads_position_selector(self):
+        schema = PositionSelectorSchema()
+        data = {"start": 0, "end": 12}
+        result = schema.load(data)
+        assert isinstance(result, TextPositionSelector)
 
 
 class TestLoadEnactment:
@@ -9,10 +19,8 @@ class TestLoadEnactment:
 
     def test_enactment_with_nested_selectors(self, section_11_subdivided):
         schema = EnactmentSchema()
-        section_11_subdivided["quote_selection"] = [{}]
-        section_11_subdivided["children"][1]["quote_selection"] = [
-            {"exact": "hairdressers"}
-        ]
+        section_11_subdivided["selection"] = [{"start": 0}]
+        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
         assert (
             result.selected_text()

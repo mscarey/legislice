@@ -16,14 +16,22 @@ class QuoteSelectorSchema(Schema):
     prefix = fields.Str(missing=None)
     suffix = fields.Str(missing=None)
 
+    @post_load
+    def make_object(self, data, **kwargs):
+        return self.__model__(**data)
+
 
 class PositionSelectorSchema(Schema):
 
-    __model__ = TextQuoteSelector
+    __model__ = TextPositionSelector
     start = fields.Int()
     end = fields.Int(missing=None)
     include_start = fields.Bool(missing=True)
     include_end = fields.Bool(missing=False)
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        return self.__model__(**data)
 
 
 class EnactmentSchema(Schema):
@@ -36,19 +44,11 @@ class EnactmentSchema(Schema):
     start_date = fields.Date()
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Nested(lambda: EnactmentSchema()))
-    position_selection = fields.Nested(PositionSelectorSchema, many=True, missing=None)
-    quote_selection = fields.Nested(QuoteSelectorSchema, many=True, missing=None)
+    selection = fields.Nested(PositionSelectorSchema, many=True, missing=None)
 
     class Meta:
         unknown = EXCLUDE
 
     @post_load
     def make_object(self, data, **kwargs):
-        if data.get("position_selector"):
-            data["selection"] = data["position_selection"]
-        else:
-            data["selection"] = data.get("quote_selection")
-        del data["position_selection"]
-        del data["quote_selection"]
-
         return self.__model__(**data)
