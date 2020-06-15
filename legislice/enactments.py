@@ -98,6 +98,11 @@ class Enactment:
         selected: List[Union[None, TextPassage]] = []
         if self.selection is True:
             selected.append(TextPassage(self.content))
+        elif self.selection:
+            for passage in self.selection:
+                selected.append(TextPassage(self.content[passage.start : passage.end]))
+                if include_nones and passage.end and (passage.end < len(self.content)):
+                    selected.append(None)
         elif include_nones and (not selected or selected[-1] is not None):
             selected.append(None)
         for child in self.children:

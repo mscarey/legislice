@@ -22,7 +22,5 @@ class TestLoadEnactment:
         section_11_subdivided["selection"] = [{"start": 0}]
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
-        assert (
-            result.selected_text()
-            == "The Department of Beards may issue licenses to such...hairdressers"
-        )
+        answer = "The Department of Beards may issue licenses to such...hairdressers..."
+        assert result.selected_text() == answer
