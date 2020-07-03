@@ -92,9 +92,18 @@ class Enactment:
     children: List[Enactment] = field(default_factory=list)
     selection: Union[bool, Tuple[TextPositionSelector, ...]] = True
 
+    def use_selector(self, selector: TextQuoteSelector) -> Enactment:
+        new_attrs = self.__dict__.copy()
+        position_in_own_content = selector.as_position(self.content)
+        if position_in_own_content:
+            new_attrs["selection"] = position_in_own_content
+            return self.__class__(**new_attrs)
+        raise NotImplementedError
+
     def selected_as_list(
         self, include_nones: bool = True
     ) -> List[Union[None, TextPassage]]:
+        """List the phrases in the Enactment selected by TextPositionSelectors."""
         selected: List[Union[None, TextPassage]] = []
         if self.selection is True:
             selected.append(TextPassage(self.content))
@@ -109,6 +118,7 @@ class Enactment:
             selected += child.selected_as_list(include_nones=include_nones)
         return selected
 
+    @property
     def selected_text(self) -> str:
         result = ""
         for phrase in self.selected_as_list():

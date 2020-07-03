@@ -65,8 +65,8 @@ class TestSelectText:
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.selected_text() == "Where an exemption is granted..."
-        assert "cryptocurrency" not in section.selected_text()
+        assert section.selected_text == "Where an exemption is granted..."
+        assert "cryptocurrency" not in section.selected_text
 
 
 class TestSelectFromEnactment:
@@ -76,7 +76,7 @@ class TestSelectFromEnactment:
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
-        limited = combined.select(selector)
+        limited = combined.use_selector(selector)
         assert limited.selected_text.startswith("barbers")
 
 
@@ -130,5 +130,5 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
-        limited = combined.select(selector)
+        limited = combined.use_selector(selector)
         assert combined > limited
