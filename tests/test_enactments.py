@@ -68,6 +68,17 @@ class TestSelectText:
         assert section.selected_text == "Where an exemption is granted..."
         assert "cryptocurrency" not in section.selected_text
 
+    def test_selected_as_list_selected_with_bool(self):
+        section = Enactment(
+            heading="Issuance of beardcoin",
+            content="Where an exemption is granted...",
+            node="/test/acts/47/6C",
+            children=[],
+            end_date=None,
+            start_date=date(1935, 4, 1),
+        )
+        assert section.selected_as_list()[0].text == "Where an exemption is granted..."
+
 
 class TestSelectFromEnactment:
     def test_text_of_enactment_subset(self, section_11_together):

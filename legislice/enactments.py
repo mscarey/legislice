@@ -96,7 +96,7 @@ class Enactment:
         new_attrs = self.__dict__.copy()
         position_in_own_content = selector.as_position(self.content)
         if position_in_own_content:
-            new_attrs["selection"] = position_in_own_content
+            new_attrs["selection"] = TextPositionSet(position_in_own_content)
             return self.__class__(**new_attrs)
         raise NotImplementedError
 

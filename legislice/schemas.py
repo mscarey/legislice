@@ -44,11 +44,12 @@ class EnactmentSchema(Schema):
     start_date = fields.Date()
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Nested(lambda: EnactmentSchema()))
-    selection = fields.Nested(PositionSelectorSchema, many=True, missing=None)
+    selection = fields.Nested(PositionSelectorSchema, many=True, missing=True)
 
     class Meta:
         unknown = EXCLUDE
 
     @post_load
     def make_object(self, data, **kwargs):
+
         return self.__model__(**data)
