@@ -1,6 +1,7 @@
 import datetime
 from typing import Any, Dict, Optional, Union
 
+from anchorpoint import TextQuoteSelector
 import requests
 
 from legislice.enactments import Enactment
@@ -21,6 +22,7 @@ class Client:
 
     def fetch(self, uri: str, date: Union[datetime.date, str] = "") -> RawEnactment:
         query = self.endpoint + uri
+
         if isinstance(date, datetime.date):
             date = date.isoformat()
         if date:
@@ -33,8 +35,15 @@ class Client:
         response = requests.get(query, headers=headers)
         return response.json()
 
-    def read(self, uri: str, date: Union[datetime.date, str] = "") -> Enactment:
+    def read(
+        self,
+        uri: str,
+        date: Union[datetime.date, str] = "",
+        selector: Optional[TextQuoteSelector] = None,
+    ) -> Enactment:
         raw_enactment = self.fetch(uri=uri, date=date)
         schema = EnactmentSchema()
         enactment = schema.load(raw_enactment)
+        if selector:
+            enactment = enactment.use_selector(selector)
         return enactment

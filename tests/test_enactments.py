@@ -1,9 +1,9 @@
 from datetime import date
 import os
 
+from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
 import pytest
-from anchorpoint import TextQuoteSelector
 
 from legislice.download import Client
 from legislice.enactments import Enactment

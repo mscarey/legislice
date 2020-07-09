@@ -1,3 +1,5 @@
+from datetime import date
+
 from marshmallow import Schema, fields, post_load, validate, EXCLUDE
 
 from anchorpoint.textselectors import (
@@ -41,7 +43,7 @@ class EnactmentSchema(Schema):
     node = fields.Url(relative=True)
     heading = fields.Str()
     content = fields.Str()
-    start_date = fields.Date()
+    start_date = fields.Date(missing=date.today)
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Nested(lambda: EnactmentSchema()))
     selection = fields.Nested(PositionSelectorSchema, many=True, missing=True)

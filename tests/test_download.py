@@ -1,6 +1,7 @@
 import datetime
 import os
 
+from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
 import pytest
 
@@ -42,3 +43,21 @@ class TestDownloadJSON:
         waiver = client.fetch(uri="/test/acts/47/6D", date=datetime.date(1940, 1, 1))
         assert waiver["url"].endswith("acts/47/6D@1940-01-01")
         assert waiver["children"][0]["start_date"] == "1935-04-01"
+
+
+class TestDownloadAndLoad:
+    @pytest.mark.vcr()
+    def test_make_enactment_from_selector_without_code(self):
+        select = TextQuoteSelector(suffix=", shall be vested")
+        client = Client(api_token=TOKEN)
+        art_3 = client.read(uri="/us/const/article/III/1", selector=select)
+
+        assert art_3.text.startswith("The judicial Power")
+        assert art_3.text.endswith("the United States...")
+
+    @pytest.mark.vcr()
+    def test_bad_uri_for_enactment(self):
+        select = TextQuoteSelector(suffix=", shall be vested")
+        client = Client(api_token=TOKEN)
+        with pytest.raises(ValueError):
+            art_3 = client.read(uri="/us/const/article-III/1", selector=select)
