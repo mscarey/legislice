@@ -97,21 +97,21 @@ class TestCompareEnactment:
     @pytest.mark.vcr()
     def test_equal_enactment_text(self):
         """Test provisions with the same text (different dates)."""
-        old_version = self.client.read(uri="/test/acts/47/6A", date=date(1999, 1, 1))
-        new_version = self.client.read(uri="/test/acts/47/6A", date=date(2020, 1, 1))
+        old_version = self.client.read(path="/test/acts/47/6A", date=date(1999, 1, 1))
+        new_version = self.client.read(path="/test/acts/47/6A", date=date(2020, 1, 1))
         assert old_version.means(new_version)
 
     @pytest.mark.vcr()
     def test_not_gt_if_equal(self):
-        enactment = self.client.read(uri="/test/acts/47/1", date=date(1999, 1, 1))
+        enactment = self.client.read(path="/test/acts/47/1", date=date(1999, 1, 1))
         assert enactment == enactment
         assert not enactment > enactment
         assert enactment >= enactment
 
     @pytest.mark.vcr()
     def test_different_section_same_text(self):
-        old_version = self.client.read(uri="/test/acts/47/8/2/b", date=date(1999, 1, 1))
-        new_version = self.client.read(uri="/test/acts/47/8/2/d", date=date(2020, 1, 1))
+        old_version = self.client.read("/test/acts/47/8/2/b", date=date(1999, 1, 1))
+        new_version = self.client.read("/test/acts/47/8/2/d", date=date(2020, 1, 1))
         assert old_version.means(new_version)
 
     @pytest.mark.vcr()
@@ -127,10 +127,10 @@ class TestCompareEnactment:
     @pytest.mark.vcr()
     def test_more_provisions_implies_fewer(self):
         more_provisions = self.client.read(
-            uri="/test/acts/47/8/2", date=date(2020, 1, 1)
+            path="/test/acts/47/8/2", date=date(2020, 1, 1)
         )
         fewer_provisions = self.client.read(
-            uri="/test/acts/47/8/2", date=date(1999, 1, 1)
+            path="/test/acts/47/8/2", date=date(1999, 1, 1)
         )
         assert more_provisions >= fewer_provisions
         assert more_provisions > fewer_provisions

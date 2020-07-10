@@ -20,8 +20,8 @@ class Client:
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token
 
-    def fetch(self, uri: str, date: Union[datetime.date, str] = "") -> RawEnactment:
-        query = self.endpoint + uri
+    def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
+        query = self.endpoint + path
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
@@ -33,15 +33,18 @@ class Client:
             headers["Authorization"] = f"Token {self.api_token}"
 
         response = requests.get(query, headers=headers)
+        if response.status_code == 404:
+            raise ValueError(f"No enacted text found for query {query}")
+
         return response.json()
 
     def read(
         self,
-        uri: str,
+        path: str,
         date: Union[datetime.date, str] = "",
         selector: Optional[TextQuoteSelector] = None,
     ) -> Enactment:
-        raw_enactment = self.fetch(uri=uri, date=date)
+        raw_enactment = self.fetch(path=path, date=date)
         schema = EnactmentSchema()
         enactment = schema.load(raw_enactment)
         if selector:
