@@ -47,17 +47,31 @@ class TestDownloadJSON:
 
 class TestDownloadAndLoad:
     @pytest.mark.vcr()
+    def test_make_enactment_from_citation(self):
+        client = Client(api_token=TOKEN)
+        fourth_a = client.read(path="/us/const/amendment/IV")
+        assert fourth_a.selected_text.endswith("persons or things to be seized.")
+
+    @pytest.mark.vcr()
     def test_make_enactment_from_selector_without_code(self):
         select = TextQuoteSelector(suffix=", shall be vested")
         client = Client(api_token=TOKEN)
-        art_3 = client.read(path="/us/const/article/III/1", selector=select)
+        art_3 = client.read(path="/us/const/article/III/1")
+        art_3 = art_3.use_selector(select)
 
         assert art_3.selected_text.startswith("The judicial Power")
         assert art_3.selected_text.endswith("the United States...")
 
     @pytest.mark.vcr()
     def test_bad_uri_for_enactment(self):
-        select = TextQuoteSelector(suffix=", shall be vested")
         client = Client(api_token=TOKEN)
         with pytest.raises(ValueError):
-            art_3 = client.read(path="/us/const/article-III/1", selector=select)
+            art_3 = client.read(path="/us/const/article-III/1")
+
+    @pytest.mark.vcr()
+    def test_download_and_make_enactment_with_text_split(self):
+        client = Client(api_token=TOKEN)
+        fourth_a = client.read(path="/us/const/amendment/IV",)
+        selection = TextQuoteSelector("and", "the persons or things", "to be seized.")
+        fourth_a = fourth_a.use_selector(selection)
+        assert fourth_a.selected_text.endswith("or things...")

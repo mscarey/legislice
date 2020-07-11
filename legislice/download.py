@@ -5,7 +5,7 @@ from anchorpoint import TextQuoteSelector
 import requests
 
 from legislice.enactments import Enactment
-from legislice.schemas import EnactmentSchema
+from legislice.schemas import EnactmentSchema, QuoteSelectorSchema
 
 RawEnactment = Dict[str, Any]
 
@@ -42,11 +42,9 @@ class Client:
         self,
         path: str,
         date: Union[datetime.date, str] = "",
-        selector: Optional[TextQuoteSelector] = None,
+        selection: Optional[Union[str, TextQuoteSelector]] = None,
     ) -> Enactment:
         raw_enactment = self.fetch(path=path, date=date)
-        schema = EnactmentSchema()
-        enactment = schema.load(raw_enactment)
-        if selector:
-            enactment = enactment.use_selector(selector)
+        enactment_schema = EnactmentSchema()
+        enactment = enactment_schema.load(raw_enactment)
         return enactment

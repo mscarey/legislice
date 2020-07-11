@@ -26,3 +26,4 @@ class TestLoadEnactment:
         result = schema.load(section_11_subdivided)
         answer = "The Department of Beards may issue licenses to such...hairdressers..."
         assert result.selected_text == answer
+
