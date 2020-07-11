@@ -89,3 +89,10 @@ class TestDownloadAndLoad:
         )
         fourth_a = fourth_a.use_selector(selection)
         assert fourth_a.selected_text.endswith("or things...")
+
+    @pytest.mark.vcr()
+    def test_chapeau_and_subsections_from_uslm_code(self):
+        """Test that the selected_text includes the text of subsections."""
+        client = Client(api_token=TOKEN)
+        definition = client.read(path="/test/acts/47/4")
+        assert definition.selected_text.strip().endswith("below the nose.")
