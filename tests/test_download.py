@@ -44,6 +44,18 @@ class TestDownloadJSON:
         assert waiver["url"].endswith("acts/47/6D@1940-01-01")
         assert waiver["children"][0]["start_date"] == "1935-04-01"
 
+    @pytest.mark.vcr()
+    def test_omit_terminal_slash(self):
+        client = Client(api_token=TOKEN)
+        statute = client.fetch(path="us/usc/t17/s102/b/")
+        assert not statute["node"].endswith("/")
+
+    @pytest.mark.vcr()
+    def test_add_omitted_initial_slash(self):
+        client = Client(api_token=TOKEN)
+        statute = client.fetch(path="us/usc/t17/s102/b/")
+        assert statute["node"].startswith("/")
+
 
 class TestDownloadAndLoad:
     @pytest.mark.vcr()
@@ -72,6 +84,8 @@ class TestDownloadAndLoad:
     def test_download_and_make_enactment_with_text_split(self):
         client = Client(api_token=TOKEN)
         fourth_a = client.read(path="/us/const/amendment/IV",)
-        selection = TextQuoteSelector("and", "the persons or things", "to be seized.")
+        selection = TextQuoteSelector(
+            prefix="and", exact="the persons or things", suffix="to be seized."
+        )
         fourth_a = fourth_a.use_selector(selection)
         assert fourth_a.selected_text.endswith("or things...")

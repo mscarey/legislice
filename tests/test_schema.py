@@ -1,6 +1,10 @@
 from anchorpoint.textselectors import TextPositionSelector
 
-from legislice.schemas import EnactmentSchema, PositionSelectorSchema
+from legislice.schemas import (
+    EnactmentSchema,
+    PositionSelectorSchema,
+    QuoteSelectorSchema,
+)
 
 
 class TestLoadSelector:
@@ -9,6 +13,12 @@ class TestLoadSelector:
         data = {"start": 0, "end": 12}
         result = schema.load(data)
         assert isinstance(result, TextPositionSelector)
+
+    def test_selector_text_split(self):
+        schema = QuoteSelectorSchema()
+        data = {"text": "process, system,|method of operation|, concept, principle"}
+        result = schema.load(data)
+        assert result.exact.startswith("method")
 
 
 class TestLoadEnactment:

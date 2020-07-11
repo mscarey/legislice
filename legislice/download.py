@@ -10,6 +10,10 @@ from legislice.schemas import EnactmentSchema, QuoteSelectorSchema
 RawEnactment = Dict[str, Any]
 
 
+def normalize_path(path: str) -> str:
+    return "/" + path.strip("/")
+
+
 class Client:
     def __init__(
         self, api_token: str = "", endpoint: str = "https://authorityspoke.com/api/v1"
@@ -21,7 +25,7 @@ class Client:
         self.api_token = api_token
 
     def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
-        query = self.endpoint + path
+        query = self.endpoint + normalize_path(path)
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
