@@ -36,31 +36,6 @@ class TextPassage:
         return other_text in self.text
 
 
-@dataclass
-class UnfrozenEnactment:
-    node: str
-    heading: str
-    content: str
-    start_date: date
-    end_date: Optional[date] = None
-    children: List[Enactment] = field(default_factory=list)
-    position_selection: Optional[List[TextPositionSelector]] = None
-    quote_selection: Optional[List[TextQuoteSelector]] = None
-    selection: Optional[
-        Union[List[TextQuoteSelector], List[TextPositionSelector]]
-    ] = None
-
-    def distribute_selectors_to_subnodes(self):
-        if self.position_selection:
-            self.selection = TextPositionSet(self.position_selection)
-        elif self.quote_selection:
-            selectors = [
-                selector.as_position(self.content) for selector in self.quote_selection
-            ]
-            selector_set = TextPositionSet(selectors)
-            self.selection = selector_set
-
-
 @dataclass(frozen=True)
 class Enactment:
     """
@@ -116,6 +91,14 @@ class Enactment:
             return "constitution"
         raise NotImplementedError
 
+    @property
+    def text(self):
+        """Get all text including subnodes, regardless of which text is "selected"."""
+        text_parts = [self.content]
+        for child in self.children:
+            text_parts.append(child.text)
+        return " ".join(text_parts)
+
     def __str__(self):
         return f'"{self.selected_text}" ({self.node} {self.start_date})'
 
@@ -130,7 +113,13 @@ class Enactment:
     def selected_as_list(
         self, include_nones: bool = True
     ) -> List[Union[None, TextPassage]]:
-        """List the phrases in the Enactment selected by TextPositionSelectors."""
+        """
+        List the phrases in the Enactment selected by TextPositionSelectors.
+
+        :param include_nones:
+            Whether the list of phrases should include `None` to indicate a block of
+            unselected text
+        """
         selected: List[Union[None, TextPassage]] = []
         if self.selection is True:
             selected.append(TextPassage(self.content))

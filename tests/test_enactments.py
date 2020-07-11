@@ -69,6 +69,12 @@ class TestEnactmentDetails:
 
 
 class TestSelectText:
+    client = Client(api_token=TOKEN)
+
+    def test_get_all_text(self):
+        section = self.client.read(path="/test/acts/47/11")
+        assert "barbers, hairdressers, or other" in section.text
+
     def test_select_text_with_bool(self):
         subsection = Enactment(
             heading="",
@@ -164,3 +170,25 @@ class TestCompareEnactment:
         )
         limited = combined.use_selector(selector)
         assert combined > limited
+
+    @pytest.mark.vcr()
+    def test_same_phrase_different_provisions(self):
+        amend_5 = self.client.read(path="/us/const/amendment/V")
+        amend_14 = self.client.read(path="/us/const/amendment/XIV/1")
+        selector = TextQuoteSelector(
+            exact="life, liberty, or property, without due process of law"
+        )
+        amend_5_selection = amend_5.use_selector(selector)
+        amend_14_selection = amend_14.use_selector(selector)
+        assert amend_5_selection.means(amend_14_selection)
+
+    @pytest.mark.vcr()
+    def test_same_phrase_selected_in_nested_provision(self):
+        amend_5 = self.client.read(path="/us/const/amendment/V")
+        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        selector = TextQuoteSelector(
+            exact="life, liberty, or property, without due process of law"
+        )
+        amend_5_selection = amend_5.use_selector(selector)
+        amend_14_selection = amend_14.use_selector(selector)
+        assert amend_5_selection.means(amend_14_selection)
