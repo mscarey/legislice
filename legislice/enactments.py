@@ -7,6 +7,10 @@ from typing import List, Optional, Tuple, Union
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet
 
+# Path parts known to indicate the level of law they refer to.
+KNOWN_CONSTITUTIONS = ["const"]
+KNOWN_STATUTE_CODES = ["acts", "usc"]
+
 
 @dataclass(frozen=True)
 class TextPassage:
@@ -91,6 +95,26 @@ class Enactment:
     end_date: Optional[date] = None
     children: List[Enactment] = field(default_factory=list)
     selection: Union[bool, Tuple[TextPositionSelector, ...]] = True
+
+    @property
+    def sovereign(self):
+        identifier_parts = self.node.split("/")
+        return identifier_parts[1]
+
+    @property
+    def code(self):
+        identifier_parts = self.node.split("/")
+        if len(identifier_parts) < 3:
+            return None
+        return identifier_parts[2]
+
+    @property
+    def level(self):
+        if self.code in KNOWN_STATUTE_CODES:
+            return "statute"
+        if self.code in KNOWN_CONSTITUTIONS:
+            return "constitution"
+        raise NotImplementedError
 
     def use_selector(self, selector: TextQuoteSelector) -> Enactment:
         new_attrs = self.__dict__.copy()

@@ -47,6 +47,14 @@ class TestMakeEnactment:
         assert section.children[0].content.startswith("The beardcoin shall")
 
 
+class TestEnactmentDetails:
+    def test_usc_enactment_is_statute(self, make_selector):
+        client = Client(api_token=TOKEN)
+        enactment = client.read(path="/us/usc/t17/s103", date="2020-01-01")
+        assert enactment.sovereign == "us"
+        assert enactment.level == "statute"
+
+
 class TestSelectText:
     def test_select_text_with_bool(self):
         subsection = Enactment(

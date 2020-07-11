@@ -1,3 +1,6 @@
+from typing import Dict
+
+from anchorpoint import TextQuoteSelector
 import pytest
 
 
@@ -114,4 +117,22 @@ def section_11_subdivided():
         "start_date": "2013-07-18",
         "url": "https://authorityspoke.com/api/v1/test/acts/47/11@2020-01-01",
         "parent": "https://authorityspoke.com/api/v1/test/acts/47@2020-01-01",
+    }
+
+
+@pytest.fixture(scope="module")
+def make_selector() -> Dict[str, TextQuoteSelector]:
+    return {
+        "bad_selector": TextQuoteSelector(exact="text that doesn't exist in the code"),
+        "preexisting material": TextQuoteSelector(
+            exact=(
+                "protection for a work employing preexisting material in which "
+                + "copyright subsists does not extend to any part of the work in "
+                + "which such material has been used unlawfully."
+            )
+        ),
+        "copyright": TextQuoteSelector(suffix="idea, procedure,"),
+        "copyright_requires_originality": TextQuoteSelector(
+            suffix="fixed in any tangible"
+        ),
     }
