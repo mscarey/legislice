@@ -48,11 +48,24 @@ class TestMakeEnactment:
 
 
 class TestEnactmentDetails:
+    @pytest.mark.vcr()
     def test_usc_enactment_is_statute(self, make_selector):
         client = Client(api_token=TOKEN)
         enactment = client.read(path="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
         assert enactment.level == "statute"
+
+    @pytest.mark.vcr()
+    def test_str_representation(self):
+        client = Client(api_token=TOKEN)
+        enactment = client.read(path="/us/const/amendment/IV")
+        selection = TextQuoteSelector(
+            exact="The right of the people to be secure in their persons"
+        )
+        passage = enactment.use_selector(selection)
+        assert "secure in their persons..." in str(passage)
+        assert passage.node in str(passage)
+        assert "1791-12-15" in str(passage)
 
 
 class TestSelectText:

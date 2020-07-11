@@ -116,6 +116,9 @@ class Enactment:
             return "constitution"
         raise NotImplementedError
 
+    def __str__(self):
+        return f'"{self.selected_text}" ({self.node} {self.start_date})'
+
     def use_selector(self, selector: TextQuoteSelector) -> Enactment:
         new_attrs = self.__dict__.copy()
         position_in_own_content = selector.as_position(self.content)
