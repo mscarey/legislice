@@ -1,12 +1,14 @@
-## Atmosphere Software License Version 0.3–🛂
+## Atmosphere Software License Version 0.4–🚪🛂
 
 ### Preamble
 
-Software developers cannot ignore the impact of networked computation on the global climate crisis. The energy demands of the global economy exceed the current production of renewable energy. While software development has the potential to make economic activity far more efficient, fossil fuel's high subsidies and disastrous social costs mean that improvements to software often give their users the ability to optimize for financial profit at the expense of the environment, by increasing their fossil fuel extraction and polluting activities. This [rebound effect](<https://en.wikipedia.org/wiki/Rebound_effect_(conservation)>) has been worsened by the rise of cryptocurrency, which has made it possible to monetize computation roughly in proportion to the amount of energy consumed. Computation, energy, economics, and ecology are now locked in a harmful cycle. The purpose of the Atmosphere License is to let developers push back against this cycle, supporting environmental sustainabiliy by creating code that increases the relative economic value of renewable energy.
+Software developers cannot ignore the impact of networked computation on the global climate crisis. The energy demands of the global economy exceed the current production of renewable energy. While software development has the potential to make economic activity far more efficient, fossil fuel's high subsidies and disastrous social costs mean that improvements to software often give their users the ability to optimize for financial profit at the expense of the environment, by increasing their fossil fuel extraction and polluting activities. This rebound effect has been worsened by the rise of cryptocurrency, which has made it possible to monetize computation roughly in proportion to the amount of energy consumed. Computation, energy, economics, and ecology are now locked in a harmful cycle. The purpose of the Atmosphere License is to let developers push back against this cycle, supporting environmental sustainabiliy by creating code that increases the relative economic value of renewable energy.
 
 Developers often release their software under open licenses out of a charitable impulse to help users accomplish their tasks more easily. The Atmosphere License acknowledges that if a contribution to open source helps its users to worsen the climate crisis and endanger the ecosystem that everyone depends on to survive, then the contribution is not effective altruism. The pursuit of open source software users' freedom must respect the physical safety of all stakeholders, including the users and the developers themselves.
 
 Furthermore, some opponents of environmental sustainability justify the rapid destruction of natural resources and human habitat as an opportunity to use the victims' status as displaced people or refugees as a pretense to drastically reduce the victims' human rights and freedom of movement. By trying to shift the burden of ecological collapse onto others, they seek to avoid the real challenge of stabilizing the climate. Because of this important link between the climate crisis and the issue of civilian internment, this version of the Atmosphere License also requires divestment from entities that target minority groups or refugees for imprisonment or genocide.
+
+This version of the Atmosphere License also includes a user data privacy provision, to comply with the revised [Ethical Source Definition](https://ethicalsource.dev/definition/).
 
 The precise terms and conditions for copying, distribution and modification follow.
 
@@ -32,14 +34,23 @@ You may modify your copy or copies of the Program or any portion of it, thus for
 - b. You must cause any work that you distribute or publish, that in whole or in part contains or is derived from the Program or any part thereof, to be licensed as a whole at no charge to all third parties under the terms of this License.
 - c. If the modified program normally reads commands interactively when run, you must cause it, when started running for such interactive use in the most ordinary way, to print or display an announcement including an appropriate copyright notice and a notice that there is no warranty (or else, saying that you provide a warranty) and that users may redistribute the program under these conditions, and telling the user how to view a copy of this License. (Exception: if the Program itself is interactive but does not normally print such an announcement, your work based on the Program is not required to print an announcement.)
 - d. You must divest from all Disqualifying Assets as listed in Section 3.
-
-Notwithstanding any other provision of this License, when you modify the Program, you may allow users to interact with your modified version remotely through a computer network only if you have divested from all Disqualifying Assets as listed in Section 3, and your modified version of the Program must prominently offer all users interacting with it remotely through a computer network (if your version supports such interaction) an opportunity to receive the Corresponding Source of your version by providing access to the Corresponding Source from a network server at no charge, through some standard or customary means of facilitating copying of software.
+- e. You must comply with any Obligations to Remote Users as defined below.
 
 These requirements apply to the modified work as a whole. If identifiable sections of that work are not derived from the Program, and can be reasonably considered independent and separate works in themselves, then this License, and its terms, do not apply to those sections when you distribute them as separate works. But when you distribute the same sections as part of a whole which is a work based on the Program, the distribution of the whole must be on the terms of this License, whose permissions for other licensees extend to the entire whole, and thus to each and every part regardless of who wrote it.
 
 Thus, it is not the intent of this section to claim rights or contest your rights to work written entirely by you; rather, the intent is to exercise the right to control the distribution of derivative or collective works based on the Program.
 
 In addition, mere aggregation of another work not based on the Program with the Program (or with a work based on the Program) on a volume of a storage or distribution medium does not bring the other work under the scope of this License.
+
+#### 2.1. Obligations to Remote Users
+
+Notwithstanding any other provision of this License, you may allow users to interact with your modified version remotely through a computer network only if you meet the following Obligations to Remote Users:
+
+- a. your modified version of the Program must prominently offer all users interacting with it remotely through a computer network an opportunity to receive the Corresponding Source of your version by providing access to the Corresponding Source from a network server at no charge, through some standard or customary means of facilitating copying of software.
+
+##### 2🚪. Privacy Obligation to Remote Users
+
+To satisfy the Obligations to Remote Users defined above, if your modified version of the Program collects end-user data, it must prominently offer all users interacting with it remotely through a computer network an opportunity either to delete any and all data generated and stored from the end-user’s usage of the software, or to receive a copy of such data, by providing access to the data from a network server at no charge, through some standard or customary means of facilitating copying of data. All such data provided to the end-user must be in either a human-readable or widely interoperable open format.
 
 #### 3\. Divestment
 
@@ -91,7 +102,7 @@ You are not required to accept this License, since you have not signed it. Howev
 
 Each time you redistribute the Program (or any work based on the Program), the recipient automatically receives a license from the original licensor to copy, distribute or modify the Program subject to these terms and conditions.
 
-If the original license omitted any of the optional provisions regarding Deforestation, Civilian Internment, or For-Profit Prisons, you may add one or more of those provisions to the license as additional terms when conveying modified versions of the Program.
+If the original license omitted any of the optional provisions regarding Privacy of Remote Users, Deforestation, Nonrenewable Power Generation, Civilian Internment, or For-Profit Prisons, you may add one or more of those provisions to the license as additional terms when conveying modified versions of the Program. However, you may not add the "Offset for Renewable Investments" provision.
 
 You may also subject parts of the Program to restrictions derived from the Apache License Version 2.0, regarding matters such as patent termination and indemnification, if those parts of the Program were previously licensed under the Apache License. This is necessary to stay in compliance with the Apache License when relicensing under the Atmosphere License. To do this, add the phrase "subject to restrictions in Apache License Version 2.0" to the boilerplate Atmosphere License notices for your Program, or for the files or other parts of the Program that were covered by the Apache License.
 
@@ -123,14 +134,14 @@ Trademark rights are not licensed under this public license.
 
 ### END OF TERMS AND CONDITIONS
 
-#### How to apply the Atmosphere Software License Version 0.3–🛂 to your work
+#### How to apply the Atmosphere Software License Version 0.4–🚪🛂 to your work
 
 Attach the following boilerplate notice, with the fields enclosed by parentheses replaced with your own identifying information. If you want to include any optional provisions in your license, include the emojis corresponding to those provisions at the end of your license version number.
 
-Copyright (YEAR) (COPYRIGHT HOLDER) Atmosphere Software License Version 0.3–🛂
+Copyright (YEAR) (COPYRIGHT HOLDER) Atmosphere Software License Version 0.4–🚪🛂
 
 If your program has an interactive mode, you should have it provide the name and version number of the Atmosphere License when it starts up, and provide a link to where the full license can be found.
 
-In the repository for your program, include a full copy of the license, including these instructions. If you're including any optional provisions, make sure they appear at the end of Section 3 ("Divestment"). If you're working from a [static document version of the license](/atmosphere-license/atmosphere-static/index.html), remove the brackets from around the provisions you want to use and removed the word "OPTIONAL" before them, both in the version number and in the license text. Be sure to delete any optional provisions you don't want to use. If you make a mistake that causes the license to be ambiguous, an optional provision is considered to be included in your license if and only if its text appears in the license without the word "OPTIONAL".
+In the repository for your program, include a full copy of the license, including these instructions. Make sure the version of the License you're using includes all the optional provisions you intended to select. If you're working from a static document version of the license, remove the brackets from around the provisions you want to use and removed the word "OPTIONAL" before them, both in the version number and in the license text. Be sure to delete any optional provisions you don't want to use. If you make a mistake that causes the license to be ambiguous, an optional provision is considered to be included in your license if and only if its text appears in the license without the word "OPTIONAL".
 
-For more information or to find new versions of this license, check [open-austin.org/atmosphere-license](/).
+For more information or to find new versions of this license, check https://open-austin.org/atmosphere-license.
