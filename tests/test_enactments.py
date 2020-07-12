@@ -1,7 +1,8 @@
 from datetime import date
 import os
 
-from anchorpoint import TextQuoteSelector
+from anchorpoint import TextQuoteSelector, TextPositionSelector
+from anchorpoint.textselectors import TextPositionSet
 from dotenv import load_dotenv
 import pytest
 
@@ -109,6 +110,8 @@ class TestSelectText:
 
 
 class TestSelectFromEnactment:
+    client = Client(api_token=TOKEN)
+
     def test_text_of_enactment_subset(self, section_11_together):
         schema = EnactmentSchema()
         combined = schema.load(section_11_together)
@@ -117,6 +120,19 @@ class TestSelectFromEnactment:
         )
         limited = combined.use_selector(selector)
         assert limited.selected_text.startswith("barbers")
+
+    def test_select_nested_text_with_positions(self):
+        phrases = TextPositionSet(
+            TextPositionSelector(0, 51),
+            TextPositionSelector(61, 73),
+            TextPositionSelector(107, 122),
+        )
+        section = self.client.read(path="/test/acts/47/11")
+        section.select(phrases)
+        assert section.selected_text == (
+            "The Department of Beards may issue licenses to "
+            "such...hairdressers...as they see fit..."
+        )
 
 
 class TestCompareEnactment:
