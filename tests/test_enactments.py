@@ -71,6 +71,7 @@ class TestEnactmentDetails:
 class TestSelectText:
     client = Client(api_token=TOKEN)
 
+    @pytest.mark.vcr()
     def test_get_all_text(self):
         section = self.client.read(path="/test/acts/47/11")
         assert "barbers, hairdressers, or other" in section.text

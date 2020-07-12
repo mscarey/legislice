@@ -125,7 +125,8 @@ class Enactment:
             selected.append(TextPassage(self.content))
         elif self.selection:
             for passage in self.selection:
-                selected.append(TextPassage(self.content[passage.start : passage.end]))
+                end_value = None if passage.end > 999999 else passage.end
+                selected.append(TextPassage(self.content[passage.start : end_value]))
                 if include_nones and passage.end and (passage.end < len(self.content)):
                     selected.append(None)
         elif include_nones and (not selected or selected[-1] is not None):

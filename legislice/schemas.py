@@ -70,7 +70,7 @@ class PositionSelectorSchema(Schema):
 
     __model__ = TextPositionSelector
     start = fields.Int()
-    end = fields.Int(missing=None)
+    end = fields.Int(optional=True)
     include_start = fields.Bool(missing=True)
     include_end = fields.Bool(missing=False)
 
