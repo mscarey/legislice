@@ -124,8 +124,8 @@ class TestSelectFromEnactment:
     def test_select_nested_text_with_positions(self):
         phrases = TextPositionSet(
             TextPositionSelector(0, 51),
-            TextPositionSelector(61, 73),
-            TextPositionSelector(107, 122),
+            TextPositionSelector(59, 71),
+            TextPositionSelector(108, 123),
         )
         section = self.client.read(path="/test/acts/47/11")
         section.select(phrases)

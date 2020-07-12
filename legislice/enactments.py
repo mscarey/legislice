@@ -36,7 +36,7 @@ class TextPassage:
         return other_text in self.text
 
 
-@dataclass(frozen=True)
+@dataclass
 class Enactment:
     """
     One or more passages of legislative text, selected from within a cited location.
@@ -69,7 +69,7 @@ class Enactment:
     start_date: date
     end_date: Optional[date] = None
     children: List[Enactment] = field(default_factory=list)
-    selection: Union[bool, Tuple[TextPositionSelector, ...]] = True
+    selection: Union[bool, List[TextPositionSelector]] = True
 
     @property
     def sovereign(self):
@@ -102,7 +102,35 @@ class Enactment:
     def __str__(self):
         return f'"{self.selected_text}" ({self.node} {self.start_date})'
 
+    def select(self, selection: TextPositionSet):
+
+        self.selection: List[TextPositionSelector] = []
+        selections = selection.ranges()
+        while selections and selections[0].start < len(self.content):
+            if selections[0].end <= len(self.content):
+                self.selection.append(
+                    TextPositionSelector(
+                        start=selections[0].start, end=selections[0].end
+                    )
+                )
+                selections = selections[1:]
+            else:
+                self.selection.append(
+                    TextPositionSelector(
+                        start=selections[0].start, end=len(self.content)
+                    )
+                )
+                selections[0] = TextPositionSelector(
+                    start=len(self.content) + 1, end=selections[0].end
+                )
+        if selections:
+            selections = [selection - len(self.content) for selection in selections]
+            for child in self.children:
+                selections = child.select(TextPositionSet(selections))
+        return selections
+
     def use_selector(self, selector: TextQuoteSelector) -> Enactment:
+        """Select text using one TextQuoteSelector, returning a new Enactment."""
         new_attrs = self.__dict__.copy()
         position_in_own_content = selector.as_position(self.content)
         if position_in_own_content:
