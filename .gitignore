@@ -5,6 +5,7 @@
 .vscode/
 holdings/
 old/
+prof/
 tests/cassettes/
 venv/
 .env

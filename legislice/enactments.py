@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from typing import List, Optional, Tuple, Union
+from typing import Iterable, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet
@@ -63,13 +63,48 @@ class Enactment:
         identifier for the part of the provision being cited
     """
 
-    node: str
-    heading: str
-    content: str
-    start_date: date
-    end_date: Optional[date] = None
-    children: List[Enactment] = field(default_factory=list)
-    selection: Union[bool, List[TextPositionSelector]] = True
+    def __init__(
+        self,
+        node: str,
+        heading: str,
+        content: str,
+        start_date: date,
+        end_date: Optional[date] = None,
+        children: List[Enactment] = None,
+        selection: Union[bool, List[TextPositionSelector]] = True,
+    ):
+        self.node = node
+        self.selection = selection
+
+        self._heading = heading
+        self._content = content
+        self._start_date = start_date
+        self._end_date = end_date
+
+        if not children:
+            self._children = []
+        else:
+            self._children = children
+
+    @property
+    def heading(self):
+        return self._heading
+
+    @property
+    def content(self):
+        return self._content
+
+    @property
+    def start_date(self):
+        return self._start_date
+
+    @property
+    def end_date(self):
+        return self._end_date
+
+    @property
+    def children(self):
+        return self._children
 
     @property
     def sovereign(self):
@@ -109,9 +144,9 @@ class Enactment:
     def __str__(self):
         return f'"{self.selected_text}" ({self.node} {self.start_date})'
 
-    def select(self, selection: TextPositionSet):
+    def select_from_text_positions(self, selection: TextPositionSet):
 
-        self.selection: List[TextPositionSelector] = []
+        self._selection: List[TextPositionSelector] = []
         selections = selection.ranges()
         while selections and selections[0].start < len(self.content):
             if selections[0].end <= len(self.content):
@@ -136,14 +171,18 @@ class Enactment:
                 selections = child.select(TextPositionSet(selections))
         return selections
 
-    def use_selector(self, selector: TextQuoteSelector) -> Enactment:
+    def select(self, selection: TextQuoteSelector) -> TextPositionSet:
         """Select text using one TextQuoteSelector, returning a new Enactment."""
-        new_attrs = self.__dict__.copy()
-        position_in_own_content = selector.as_position(self.content)
-        if position_in_own_content:
-            new_attrs["selection"] = TextPositionSet(position_in_own_content)
-            return self.__class__(**new_attrs)
-        raise NotImplementedError
+        if isinstance(selection, TextQuoteSelector):
+            selection = [selection]
+        elif isinstance(selection, TextPositionSelector):
+            selection = TextPositionSet(selection)
+        if isinstance(selection, Iterable) and isinstance(
+            selection[0], TextQuoteSelector
+        ):
+            selection = self.get_positions_for_quotes(selection)
+        unused_selectors = self.select_from_text_positions(selection)
+        return unused_selectors
 
     def get_positions_for_quotes(
         self, quotes: List[TextQuoteSelector]

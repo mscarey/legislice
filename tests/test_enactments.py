@@ -47,6 +47,16 @@ class TestMakeEnactment:
 
         assert section.children[0].content.startswith("The beardcoin shall")
 
+    def test_protect_from_change(self):
+        subsection = Enactment(
+            heading="",
+            content="The beardcoin shall be a cryptocurrency token.",
+            node="/test/acts/47/6C/1",
+            start_date=date(2013, 7, 18),
+        )
+        with pytest.raises(AttributeError):
+            subsection.content = "The beardcoin shall be a gold coin."
+
 
 class TestEnactmentDetails:
     @pytest.mark.vcr()
@@ -121,6 +131,7 @@ class TestSelectFromEnactment:
         limited = combined.use_selector(selector)
         assert limited.selected_text.startswith("barbers")
 
+    @pytest.mark.vcr()
     def test_select_nested_text_with_positions(self):
         phrases = TextPositionSet(
             TextPositionSelector(0, 51),
@@ -134,6 +145,7 @@ class TestSelectFromEnactment:
             "such...hairdressers...as they see fit..."
         )
 
+    @pytest.mark.vcr()
     def test_get_positions_from_quotes(self):
         section = self.client.read(path="/test/acts/47/11")
         quotes = [
@@ -211,8 +223,8 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
-        amend_5_selection = amend_5.use_selector(selector)
-        amend_14_selection = amend_14.use_selector(selector)
+        amend_5.select(selector)
+        amend_14.select(selector)
         assert amend_5_selection.means(amend_14_selection)
 
     @pytest.mark.vcr()
@@ -222,6 +234,6 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
-        amend_5_selection = amend_5.use_selector(selector)
-        amend_14_selection = amend_14.use_selector(selector)
-        assert amend_5_selection.means(amend_14_selection)
+        amend_5.select(selector)
+        amend_14.select(selector)
+        assert amend_5.means(amend_14)
