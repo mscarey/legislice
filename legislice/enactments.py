@@ -92,6 +92,13 @@ class Enactment:
         raise NotImplementedError
 
     @property
+    def padded_length(self):
+        """Get length of self's content plus one character for space before next section."""
+        if self.content:
+            return len(self.content) + 1
+        return 0
+
+    @property
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
         text_parts = [self.content]
@@ -121,10 +128,10 @@ class Enactment:
                     )
                 )
                 selections[0] = TextPositionSelector(
-                    start=len(self.content) + 1, end=selections[0].end
+                    start=self.padded_length, end=selections[0].end
                 )
         if selections:
-            selections = [selection - len(self.content) for selection in selections]
+            selections = [selection - self.padded_length for selection in selections]
             for child in self.children:
                 selections = child.select(TextPositionSet(selections))
         return selections
@@ -137,6 +144,12 @@ class Enactment:
             new_attrs["selection"] = TextPositionSet(position_in_own_content)
             return self.__class__(**new_attrs)
         raise NotImplementedError
+
+    def get_positions_for_quotes(
+        self, quotes: List[TextQuoteSelector]
+    ) -> TextPositionSet:
+        position_selectors = [quote.as_position(self.text) for quote in quotes]
+        return TextPositionSet(position_selectors)
 
     def selected_as_list(
         self, include_nones: bool = True

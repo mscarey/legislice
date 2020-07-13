@@ -124,14 +124,30 @@ class TestSelectFromEnactment:
     def test_select_nested_text_with_positions(self):
         phrases = TextPositionSet(
             TextPositionSelector(0, 51),
-            TextPositionSelector(59, 71),
-            TextPositionSelector(108, 123),
+            TextPositionSelector(61, 73),
+            TextPositionSelector(112, 127),
         )
         section = self.client.read(path="/test/acts/47/11")
         section.select(phrases)
         assert section.selected_text == (
             "The Department of Beards may issue licenses to "
             "such...hairdressers...as they see fit..."
+        )
+
+    def test_get_positions_from_quotes(self):
+        section = self.client.read(path="/test/acts/47/11")
+        quotes = [
+            TextQuoteSelector(
+                exact="The Department of Beards may issue licenses to such"
+            ),
+            TextQuoteSelector(exact="hairdressers", suffix=", or other male grooming"),
+            TextQuoteSelector(exact="as they see fit"),
+        ]
+        positions = section.get_positions_for_quotes(quotes)
+        assert positions == TextPositionSet(
+            TextPositionSelector(0, 51),
+            TextPositionSelector(61, 73),
+            TextPositionSelector(112, 127),
         )
 
 
