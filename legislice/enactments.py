@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet
@@ -150,7 +150,8 @@ class Enactment:
         text_parts = [self.content]
         for child in self.children:
             text_parts.append(child.text)
-        return " ".join(text_parts)
+        joined = " ".join(text_parts)
+        return joined.strip()
 
     def __str__(self):
         return f'"{self.selected_text}" ({self.node} {self.start_date})'
@@ -189,7 +190,7 @@ class Enactment:
             selection = [selection]
         elif isinstance(selection, TextPositionSelector):
             selection = TextPositionSet(selection)
-        if isinstance(selection, Iterable) and isinstance(
+        if isinstance(selection, Sequence) and isinstance(
             selection[0], TextQuoteSelector
         ):
             selection = self.get_positions_for_quotes(selection)

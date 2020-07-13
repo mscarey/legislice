@@ -84,10 +84,10 @@ class TestDownloadAndLoad:
     def test_download_and_make_enactment_with_text_split(self):
         client = Client(api_token=TOKEN)
         fourth_a = client.read(path="/us/const/amendment/IV",)
-        selection = TextQuoteSelector(
+        selector = TextQuoteSelector(
             prefix="and", exact="the persons or things", suffix="to be seized."
         )
-        fourth_a = fourth_a.use_selector(selection)
+        fourth_a.select(selector)
         assert fourth_a.selected_text.endswith("or things...")
 
     @pytest.mark.vcr()

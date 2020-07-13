@@ -237,3 +237,14 @@ class TestCompareEnactment:
         amend_5.select(selector)
         amend_14.select(selector)
         assert amend_5.means(amend_14)
+
+    def test_selected_as_list_has_no_consecutive_Nones(self):
+        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        selector = TextQuoteSelector(exact="life, liberty, or property")
+        amend_14.select(selector)
+        selected_list = amend_14.selected_as_list()
+
+        assert len(selected_list) == 3
+        assert selected_list[0] is None
+        assert selected_list[1] == "life, liberty, or property"
+        assert selected_list[2] is None
