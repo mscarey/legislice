@@ -74,12 +74,19 @@ class Enactment:
         selection: Union[bool, List[TextPositionSelector]] = True,
     ):
         self.node = node
-        self.selection = selection
-
-        self._heading = heading
         self._content = content
+        self._heading = heading
         self._start_date = start_date
         self._end_date = end_date
+
+        if selection is True:
+            self._selection = TextPositionSet(
+                TextPositionSelector(0, len(self.content))
+            )
+        elif selection is False:
+            self._selection = TextPositionSet()
+        else:
+            self._selection = selection
 
         if not children:
             self._children = []
@@ -105,6 +112,10 @@ class Enactment:
     @property
     def children(self):
         return self._children
+
+    @property
+    def selection(self):
+        return self._selection
 
     @property
     def sovereign(self):
@@ -173,6 +184,7 @@ class Enactment:
 
     def select(self, selection: TextQuoteSelector) -> TextPositionSet:
         """Select text using one TextQuoteSelector, returning a new Enactment."""
+
         if isinstance(selection, TextQuoteSelector):
             selection = [selection]
         elif isinstance(selection, TextPositionSelector):

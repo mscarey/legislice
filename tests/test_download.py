@@ -66,10 +66,10 @@ class TestDownloadAndLoad:
 
     @pytest.mark.vcr()
     def test_make_enactment_from_selector_without_code(self):
-        select = TextQuoteSelector(suffix=", shall be vested")
+        selection = TextQuoteSelector(suffix=", shall be vested")
         client = Client(api_token=TOKEN)
         art_3 = client.read(path="/us/const/article/III/1")
-        art_3 = art_3.use_selector(select)
+        art_3.select(selection)
 
         assert art_3.selected_text.startswith("The judicial Power")
         assert art_3.selected_text.endswith("the United States...")
