@@ -215,6 +215,7 @@ class TestCompareEnactment:
             exact="barbers, hairdressers, or other male grooming professionals"
         )
         limited.select(selector)
+        assert not combined.means(limited)
         assert combined > limited
 
     @pytest.mark.vcr()
