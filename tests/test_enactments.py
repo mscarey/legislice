@@ -73,10 +73,10 @@ class TestEnactmentDetails:
         selection = TextQuoteSelector(
             exact="The right of the people to be secure in their persons"
         )
-        passage = enactment.use_selector(selection)
-        assert "secure in their persons..." in str(passage)
-        assert passage.node in str(passage)
-        assert "1791-12-15" in str(passage)
+        enactment.select(selection)
+        assert "secure in their persons..." in str(enactment)
+        assert enactment.node in str(enactment)
+        assert "1791-12-15" in str(enactment)
 
 
 class TestSelectText:
@@ -104,10 +104,10 @@ class TestSelectText:
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.selected_text == "Where an exemption is granted..."
-        assert "cryptocurrency" not in section.selected_text
+        assert section.selected_text() == "Where an exemption is granted..."
+        assert "cryptocurrency" not in section.selected_text()
 
-    def test_selected_as_list_selected_with_bool(self):
+    def test_text_sequence_selected_with_bool(self):
         section = Enactment(
             heading="Issuance of beardcoin",
             content="Where an exemption is granted...",
@@ -116,7 +116,24 @@ class TestSelectText:
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.selected_as_list()[0].text == "Where an exemption is granted..."
+        assert section.text_sequence()[0].text == "Where an exemption is granted..."
+
+    @pytest.mark.vcr()
+    def test_str_for_text_sequence(self):
+        section = self.client.read(path="/test/acts/47/11")
+        quotes = [
+            TextQuoteSelector(
+                exact="The Department of Beards may issue licenses to such"
+            ),
+            TextQuoteSelector(exact="hairdressers", suffix=", or other male grooming"),
+            TextQuoteSelector(exact="as they see fit"),
+        ]
+        section.select(quotes)
+        text_sequence = section.text_sequence()
+        assert str(text_sequence) == (
+            "The Department of Beards may issue "
+            "licenses to such...hairdressers...as they see fit..."
+        )
 
 
 class TestSelectFromEnactment:
@@ -128,8 +145,9 @@ class TestSelectFromEnactment:
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
-        limited = combined.use_selector(selector)
-        assert limited.selected_text.startswith("barbers")
+        combined.select(selector)
+        sequence = combined.text_sequence()
+        assert str(sequence).startswith("barbers")
 
     @pytest.mark.vcr()
     def test_select_nested_text_with_positions(self):
@@ -140,7 +158,8 @@ class TestSelectFromEnactment:
         )
         section = self.client.read(path="/test/acts/47/11")
         section.select(phrases)
-        assert section.selected_text == (
+        text_sequence = section.text_sequence()
+        assert str(text_sequence) == (
             "The Department of Beards may issue licenses to "
             "such...hairdressers...as they see fit..."
         )
@@ -240,11 +259,11 @@ class TestCompareEnactment:
         amend_14.select(selector)
         assert amend_5.means(amend_14)
 
-    def test_selected_as_list_has_no_consecutive_Nones(self):
+    def test_text_sequence_has_no_consecutive_Nones(self):
         amend_14 = self.client.read(path="/us/const/amendment/XIV")
         selector = TextQuoteSelector(exact="life, liberty, or property")
         amend_14.select(selector)
-        selected_list = amend_14.selected_as_list()
+        selected_list = amend_14.text_sequence()
 
         assert len(selected_list) == 3
         assert selected_list[0] is None

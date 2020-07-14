@@ -62,7 +62,7 @@ class TestDownloadAndLoad:
     def test_make_enactment_from_citation(self):
         client = Client(api_token=TOKEN)
         fourth_a = client.read(path="/us/const/amendment/IV")
-        assert fourth_a.selected_text.endswith("persons or things to be seized.")
+        assert fourth_a.selected_text().endswith("persons or things to be seized.")
 
     @pytest.mark.vcr()
     def test_make_enactment_from_selector_without_code(self):
@@ -70,9 +70,10 @@ class TestDownloadAndLoad:
         client = Client(api_token=TOKEN)
         art_3 = client.read(path="/us/const/article/III/1")
         art_3.select(selection)
+        text = art_3.selected_text()
 
-        assert art_3.selected_text.startswith("The judicial Power")
-        assert art_3.selected_text.endswith("the United States...")
+        assert text.startswith("The judicial Power")
+        assert text.endswith("the United States...")
 
     @pytest.mark.vcr()
     def test_bad_uri_for_enactment(self):
@@ -88,11 +89,12 @@ class TestDownloadAndLoad:
             prefix="and", exact="the persons or things", suffix="to be seized."
         )
         fourth_a.select(selector)
-        assert fourth_a.selected_text.endswith("or things...")
+        assert fourth_a.selected_text().endswith("or things...")
 
     @pytest.mark.vcr()
     def test_chapeau_and_subsections_from_uslm_code(self):
         """Test that the selected_text includes the text of subsections."""
         client = Client(api_token=TOKEN)
         definition = client.read(path="/test/acts/47/4")
-        assert definition.selected_text.strip().endswith("below the nose.")
+        sequence = definition.text_sequence()
+        assert str(sequence.strip()).endswith("below the nose.")

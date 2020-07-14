@@ -60,6 +60,18 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
     def __getitem__(self, key):
         return self.passages[key]
 
+    def __str__(self):
+        result = ""
+        for phrase in self.passages:
+            if phrase is None:
+                if not result.endswith("..."):
+                    result += "..."
+            else:
+                if result and not result.endswith(("...", " ")):
+                    result += " "
+                result += phrase.text
+        return result
+
     def strip(self) -> TextSequence:
         result = self.passages.copy()
         if result and result[0] is None:
@@ -199,7 +211,8 @@ class Enactment:
         return joined.strip()
 
     def __str__(self):
-        return f'"{self.selected_text}" ({self.node} {self.start_date})'
+        text_sequence = self.text_sequence()
+        return f'"{text_sequence}" ({self.node} {self.start_date})'
 
     def select_from_text_positions(self, selection: TextPositionSet):
 
@@ -242,13 +255,16 @@ class Enactment:
         unused_selectors = self.select_from_text_positions(selection)
         return unused_selectors
 
+    def selected_text(self) -> str:
+        return str(self.text_sequence())
+
     def get_positions_for_quotes(
         self, quotes: List[TextQuoteSelector]
     ) -> TextPositionSet:
         position_selectors = [quote.as_position(self.text) for quote in quotes]
         return TextPositionSet(position_selectors)
 
-    def selected_as_list(self, include_nones: bool = True) -> TextSequence:
+    def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
         List the phrases in the Enactment selected by TextPositionSelectors.
 
@@ -271,7 +287,7 @@ class Enactment:
         elif include_nones and (not selected or selected[-1] is not None):
             selected.append(None)
         for child in self.children:
-            child_passages = child.selected_as_list(include_nones=include_nones)
+            child_passages = child.text_sequence(include_nones=include_nones)
             if (
                 selected
                 and selected[-1] is None
@@ -282,19 +298,6 @@ class Enactment:
             else:
                 selected += child_passages
         return TextSequence(selected)
-
-    @property
-    def selected_text(self) -> str:
-        result = ""
-        for phrase in self.selected_as_list():
-            if phrase is None:
-                if not result.endswith("..."):
-                    result += "..."
-            else:
-                if result and not result.endswith(("...", " ")):
-                    result += " "
-                result += phrase.text
-        return result
 
     def means(self, other: Enactment) -> bool:
         r"""
@@ -309,8 +312,8 @@ class Enactment:
         """
         if not isinstance(other, self.__class__):
             return False
-        self_selected_passages = self.selected_as_list()
-        other_selected_passages = other.selected_as_list()
+        self_selected_passages = self.text_sequence()
+        other_selected_passages = other.text_sequence()
         return self_selected_passages.means(other_selected_passages)
 
     def __ge__(self, other):
@@ -322,8 +325,8 @@ class Enactment:
         """
         if not isinstance(other, self.__class__):
             return False
-        self_selected_passages = self.selected_as_list(include_nones=False)
-        other_selected_passages = other.selected_as_list(include_nones=False)
+        self_selected_passages = self.text_sequence(include_nones=False)
+        other_selected_passages = other.text_sequence(include_nones=False)
         for other_passage in other_selected_passages:
             if not any(
                 self_passage >= other_passage for self_passage in self_selected_passages
