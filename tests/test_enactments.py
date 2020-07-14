@@ -210,10 +210,11 @@ class TestCompareEnactment:
     def test_enactment_subset(self, section_11_together):
         schema = EnactmentSchema()
         combined = schema.load(section_11_together)
+        limited = schema.load(section_11_together)
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
-        limited = combined.use_selector(selector)
+        limited.select(selector)
         assert combined > limited
 
     @pytest.mark.vcr()

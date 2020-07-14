@@ -69,7 +69,12 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
         return TextSequence(result)
 
     def means(self, other: TextSequence) -> bool:
-        zipped = zip(self.strip().passages, other.strip().passages)
+        self_passages = self.strip().passages
+        other_passages = other.strip().passages
+        if len(self_passages) != len(other_passages):
+            return False
+
+        zipped = zip(self_passages, other_passages)
         if not all((pair[0] is None) == (pair[1] is None) for pair in zipped):
             return False
         return all(pair[0] is None or pair[0].means(pair[1]) for pair in zipped)
@@ -327,6 +332,6 @@ class Enactment:
 
     def __gt__(self, other) -> bool:
         """Test whether ``self`` implies ``other`` without having same meaning."""
-        if self == other:
+        if self.means(other):
             return False
         return self >= other
