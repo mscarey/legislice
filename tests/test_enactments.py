@@ -181,6 +181,24 @@ class TestSelectFromEnactment:
             TextPositionSelector(112, 127),
         )
 
+    @pytest.mark.vcr()
+    def test_text_sequence_has_no_consecutive_Nones(self):
+        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        selector = TextQuoteSelector(exact="life, liberty, or property")
+        amend_14.select(selector)
+        selected_list = amend_14.text_sequence()
+
+        assert len(selected_list) == 3
+        assert selected_list[0] is None
+        assert selected_list[1].text == "life, liberty, or property"
+        assert selected_list[2] is None
+
+    def test_select_with_position_selector(self, section_11_together):
+        schema = EnactmentSchema()
+        section = schema.load(section_11_together)
+        section.select(TextPositionSelector(start=29, end=43))
+        assert section.selected_text() == "issue licenses"
+
 
 class TestCompareEnactment:
     client = Client(api_token=TOKEN)
@@ -270,13 +288,8 @@ class TestCompareEnactment:
         amend_14.select(selector)
         assert amend_5.means(amend_14)
 
-    def test_text_sequence_has_no_consecutive_Nones(self):
-        amend_14 = self.client.read(path="/us/const/amendment/XIV")
-        selector = TextQuoteSelector(exact="life, liberty, or property")
-        amend_14.select(selector)
-        selected_list = amend_14.text_sequence()
-
-        assert len(selected_list) == 3
-        assert selected_list[0] is None
-        assert selected_list[1].text == "life, liberty, or property"
-        assert selected_list[2] is None
+    def test_enactment_does_not_imply_textsequence(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        subdivided = schema.load(section_11_subdivided)
+        text = subdivided.text_sequence()
+        assert not subdivided > text
