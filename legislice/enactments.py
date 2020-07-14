@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from typing import Sequence, List, Optional, Tuple, Union
@@ -34,6 +35,44 @@ class TextPassage:
 
         other_text = other.text.strip(",:;. ")
         return other_text in self.text
+
+
+class TextSequence(Sequence[Union[None, TextPassage]]):
+    """
+    Sequential passages of legislative text that need not be consecutive.
+
+    Unlike an Enactment, a TextSequence does not preserve the citation structure
+    of the enacted statute.
+
+    :param passages:
+        the text passages included in the TextSequence, which should be chosen
+        to express a coherent idea. "None"s in the sequence represent spans of
+        text that exist in the source statute, but that haven't been chosen
+        to be part of the TextSequence.
+    """
+
+    def __init__(self, passages=Sequence[TextPassage]):
+        self.passages = passages
+
+    def __len__(self):
+        return len(self.passages)
+
+    def __getitem__(self, key):
+        return self.passages[key]
+
+    def strip(self) -> TextSequence:
+        result = self.passages.copy()
+        if result and result[0] is None:
+            result = result[1:]
+        if result and result[-1] is None:
+            result = result[:-1]
+        return TextSequence(result)
+
+    def means(self, other: TextSequence) -> bool:
+        zipped = zip(self.strip().passages, other.strip().passages)
+        if not all((pair[0] is None) == (pair[1] is None) for pair in zipped):
+            return False
+        return all(pair[0] is None or pair[0].means(pair[1]) for pair in zipped)
 
 
 @dataclass
@@ -203,9 +242,7 @@ class Enactment:
         position_selectors = [quote.as_position(self.text) for quote in quotes]
         return TextPositionSet(position_selectors)
 
-    def selected_as_list(
-        self, include_nones: bool = True
-    ) -> List[Union[None, TextPassage]]:
+    def selected_as_list(self, include_nones: bool = True) -> TextSequence:
         """
         List the phrases in the Enactment selected by TextPositionSelectors.
 
@@ -238,7 +275,7 @@ class Enactment:
                 selected += child_passages[1:]
             else:
                 selected += child_passages
-        return selected
+        return TextSequence(selected)
 
     @property
     def selected_text(self) -> str:
@@ -268,10 +305,7 @@ class Enactment:
             return False
         self_selected_passages = self.selected_as_list()
         other_selected_passages = other.selected_as_list()
-        zipped = zip(self_selected_passages, other_selected_passages)
-        if not all((pair[0] is None) == (pair[1] is None) for pair in zipped):
-            return False
-        return all(pair[0] is None or pair[0].means(pair[1]) for pair in zipped)
+        return self_selected_passages.means(other_selected_passages)
 
     def __ge__(self, other):
         """

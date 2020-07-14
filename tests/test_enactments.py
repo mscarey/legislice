@@ -225,7 +225,7 @@ class TestCompareEnactment:
         )
         amend_5.select(selector)
         amend_14.select(selector)
-        assert amend_5_selection.means(amend_14_selection)
+        assert amend_5.means(amend_14)
 
     @pytest.mark.vcr()
     def test_same_phrase_selected_in_nested_provision(self):
