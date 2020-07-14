@@ -226,6 +226,17 @@ class TestCompareEnactment:
         assert more_provisions >= fewer_provisions
         assert more_provisions > fewer_provisions
 
+    @pytest.mark.vcr()
+    def test_fewer_provisions_does_not_imply_more(self):
+        more_provisions = self.client.read(
+            path="/test/acts/47/8/2", date=date(2020, 1, 1)
+        )
+        fewer_provisions = self.client.read(
+            path="/test/acts/47/8/2", date=date(1999, 1, 1)
+        )
+        assert not fewer_provisions >= more_provisions
+        assert not fewer_provisions > more_provisions
+
     def test_enactment_subset(self, section_11_together):
         schema = EnactmentSchema()
         combined = schema.load(section_11_together)

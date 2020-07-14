@@ -72,6 +72,17 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
                 result += phrase.text
         return result
 
+    def __ge__(self, other: TextSequence):
+        for other_passage in other.passages:
+            if not any(self_passage >= other_passage for self_passage in self.passages):
+                return False
+        return True
+
+    def __gt__(self, other: TextSequence):
+        if self.means(other):
+            return False
+        return self >= other
+
     def strip(self) -> TextSequence:
         result = self.passages.copy()
         if result and result[0] is None:
@@ -316,7 +327,7 @@ class Enactment:
         other_selected_passages = other.text_sequence()
         return self_selected_passages.means(other_selected_passages)
 
-    def __ge__(self, other):
+    def __ge__(self, other: Enactment):
         """
         Tells whether ``self`` implies ``other``.
 
@@ -327,12 +338,7 @@ class Enactment:
             return False
         self_selected_passages = self.text_sequence(include_nones=False)
         other_selected_passages = other.text_sequence(include_nones=False)
-        for other_passage in other_selected_passages:
-            if not any(
-                self_passage >= other_passage for self_passage in self_selected_passages
-            ):
-                return False
-        return True
+        return self_selected_passages >= other_selected_passages
 
     def __gt__(self, other) -> bool:
         """Test whether ``self`` implies ``other`` without having same meaning."""
