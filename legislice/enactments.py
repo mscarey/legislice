@@ -214,8 +214,11 @@ class Enactment:
             unselected text
         """
         selected: List[Union[None, TextPassage]] = []
+
+        # To delete?
         if self.selection is True:
             selected.append(TextPassage(self.content))
+
         elif self.selection:
             for passage in self.selection:
                 end_value = None if passage.end > 999999 else passage.end
@@ -225,7 +228,16 @@ class Enactment:
         elif include_nones and (not selected or selected[-1] is not None):
             selected.append(None)
         for child in self.children:
-            selected += child.selected_as_list(include_nones=include_nones)
+            child_passages = child.selected_as_list(include_nones=include_nones)
+            if (
+                selected
+                and selected[-1] is None
+                and child_passages
+                and child_passages[0] is None
+            ):
+                selected += child_passages[1:]
+            else:
+                selected += child_passages
         return selected
 
     @property

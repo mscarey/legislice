@@ -246,5 +246,5 @@ class TestCompareEnactment:
 
         assert len(selected_list) == 3
         assert selected_list[0] is None
-        assert selected_list[1] == "life, liberty, or property"
+        assert selected_list[1].text == "life, liberty, or property"
         assert selected_list[2] is None
