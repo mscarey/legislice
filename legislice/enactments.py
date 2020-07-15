@@ -290,6 +290,13 @@ class Enactment:
         for child in self._children:
             child.select_none()
 
+    def raise_error_for_extra_selector(
+        self, unused_selectors: List[TextPositionSelector]
+    ) -> None:
+        for selector in unused_selectors:
+            if selector.start > len(self.content) + 1:
+                raise ValueError(f'Selector "{selector}" was not used.')
+
     def select_without_children(
         self,
         selection: Union[
@@ -309,7 +316,10 @@ class Enactment:
         else:
             if not isinstance(selection, TextPositionSet):
                 selection = self.convert_selection_to_set(selection)
-            self._selection = self.select_from_text_positions_without_nesting(selection)
+            unused_selectors = self.select_from_text_positions_without_nesting(
+                selection
+            )
+            self.raise_error_for_extra_selector(unused_selectors)
 
     def select(
         self,
@@ -330,9 +340,7 @@ class Enactment:
             if not isinstance(selection, TextPositionSet):
                 selection = self.convert_selection_to_set(selection)
             unused_selectors = self.select_from_text_positions(selection)
-            for selector in unused_selectors:
-                if selector.start > len(self.content) + 1:
-                    raise ValueError(f'Selector "{selector}" was not used.')
+            self.raise_error_for_extra_selector(unused_selectors)
 
     def selected_text(self) -> str:
         return str(self.text_sequence())

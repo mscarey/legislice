@@ -65,7 +65,10 @@ class TestMakeEnactment:
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
         assert isinstance(result.selection, TextPositionSet)
-        assert result.selected_text() == "???"
+        assert (
+            result.selected_text()
+            == "The Department of Beards may issue licenses to such...hairdressers..."
+        )
 
 
 class TestEnactmentDetails:
@@ -157,7 +160,7 @@ class TestSelectFromEnactment:
         )
         combined.select(selector)
         sequence = combined.text_sequence()
-        assert str(sequence).startswith("barbers")
+        assert str(sequence).strip(".").startswith("barbers")
 
     @pytest.mark.vcr()
     def test_select_nested_text_with_positions(self):
