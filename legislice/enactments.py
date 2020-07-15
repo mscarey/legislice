@@ -147,19 +147,13 @@ class Enactment:
         self._start_date = start_date
         self._end_date = end_date
 
-        if selection is True:
-            self._selection = TextPositionSet(
-                TextPositionSelector(0, len(self.content))
-            )
-        elif selection is False:
-            self._selection = TextPositionSet()
-        else:
-            self._selection = selection
-
         if not children:
             self._children = []
         else:
             self._children = children
+
+        if selection is not None:
+            self.select_without_children(selection)
 
     @property
     def heading(self):
@@ -225,8 +219,7 @@ class Enactment:
         text_sequence = self.text_sequence()
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
-    def select_from_text_positions(self, selection: TextPositionSet):
-
+    def select_from_text_positions_without_nesting(self, selection: TextPositionSet):
         self._selection: List[TextPositionSelector] = []
         selections = selection.ranges()
         while selections and selections[0].start < len(self.content):
@@ -246,15 +239,22 @@ class Enactment:
                 selections[0] = TextPositionSelector(
                     start=self.padded_length, end=selections[0].end
                 )
+        return selections
+
+    def select_from_text_positions(self, selection: TextPositionSet):
+        selections = self.select_from_text_positions_without_nesting(selection)
         if selections:
             selections = [selection - self.padded_length for selection in selections]
             for child in self.children:
                 selections = child.select(TextPositionSet(selections))
         return selections
 
-    def select(self, selection: TextQuoteSelector) -> TextPositionSet:
-        """Select text using one TextQuoteSelector, returning a new Enactment."""
-
+    def convert_selection_to_set(
+        self,
+        selection: Union[
+            TextPositionSelector, TextQuoteSelector, Sequence[TextQuoteSelector],
+        ],
+    ) -> TextPositionSet:
         if isinstance(selection, TextQuoteSelector):
             selection = [selection]
         elif isinstance(selection, TextPositionSelector):
@@ -263,8 +263,59 @@ class Enactment:
             selection[0], TextQuoteSelector
         ):
             selection = self.get_positions_for_quotes(selection)
-        unused_selectors = self.select_from_text_positions(selection)
-        return unused_selectors
+        return selection
+
+    def select_without_children(
+        self,
+        selection: Union[
+            bool,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> None:
+        if selection is True:
+            self._selection = TextPositionSet(
+                TextPositionSelector(0, len(self.content))
+            )
+        elif selection is False:
+            self._selection = TextPositionSet()
+        else:
+            if not isinstance(selection, TextPositionSet):
+                selection = self.convert_selection_to_set(selection)
+            self._selection = self.select_from_text_positions_without_nesting(selection)
+
+    def select_all(self) -> None:
+        self._selection = TextPositionSet(TextPositionSelector(0, len(self.content)))
+        for child in self._children:
+            child.select_all()
+
+    def select_none(self) -> None:
+        self._selection = TextPositionSet()
+        for child in self._children:
+            child.select_none()
+
+    def select(
+        self,
+        selection: Union[
+            bool,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> TextPositionSet:
+        """Select text using one TextQuoteSelector, returning a new Enactment."""
+        if selection is True:
+            self.select_all()
+        elif selection is False:
+            self.select_none()
+        else:
+            selection = self.convert_selection_to_set(selection)
+            unused_selectors = self.select_from_text_positions(selection)
+            return unused_selectors
+        return TextPositionSet()
 
     def selected_text(self) -> str:
         return str(self.text_sequence())

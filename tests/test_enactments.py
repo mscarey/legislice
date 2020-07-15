@@ -57,6 +57,16 @@ class TestMakeEnactment:
         with pytest.raises(AttributeError):
             subsection.content = "The beardcoin shall be a gold coin."
 
+    def test_create_TextPositionSet_on_init(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        section_11_subdivided["selection"] = [{"start": 0}]
+        for child in section_11_subdivided["children"]:
+            child["selection"] = []
+        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
+        result = schema.load(section_11_subdivided)
+        assert isinstance(result.selection, TextPositionSet)
+        assert result.selected_text() == "???"
+
 
 class TestEnactmentDetails:
     @pytest.mark.vcr()
