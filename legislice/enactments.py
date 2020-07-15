@@ -261,7 +261,9 @@ class Enactment:
         if selections:
             selections = [selection - self.padded_length for selection in selections]
             for child in self.children:
-                selections = child.select(TextPositionSet(selections))
+                selections = child.select_from_text_positions(
+                    TextPositionSet(selections)
+                )
         return selections
 
     def convert_selection_to_set(
