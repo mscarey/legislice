@@ -6,6 +6,7 @@ from datetime import date
 from typing import Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
+from anchorpoint.utils.ranges import RangeSet
 from anchorpoint.textselectors import TextPositionSet
 
 # Path parts known to indicate the level of law they refer to.
@@ -220,7 +221,7 @@ class Enactment:
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
     def select_from_text_positions_without_nesting(
-        self, selections: Union[List[TextPositionSelector], TextPositionSet]
+        self, selections: Union[List[TextPositionSelector], RangeSet]
     ) -> TextPositionSet:
         r"""
         Move selectors from `selection` to `self._selection` and return any that can't be used.
@@ -232,7 +233,7 @@ class Enactment:
         """
         self._selection: List[TextPositionSelector] = []
 
-        if isinstance(selections, TextPositionSet):
+        if isinstance(selections, RangeSet):
             selections = selections.ranges()
         while selections and selections[0].start < len(self.content):
             if selections[0].end <= len(self.content):
@@ -330,7 +331,7 @@ class Enactment:
                 selection = self.convert_selection_to_set(selection)
             unused_selectors = self.select_from_text_positions(selection)
             for selector in unused_selectors:
-                if selector.start > len(self.content + 1):
+                if selector.start > len(self.content) + 1:
                     raise ValueError(f'Selector "{selector}" was not used.')
 
     def selected_text(self) -> str:

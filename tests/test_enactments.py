@@ -207,7 +207,7 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         section = schema.load(section_11_together)
         section.select(TextPositionSelector(start=29, end=43))
-        assert section.selected_text() == "issue licenses"
+        assert section.selected_text() == "...issue licenses..."
 
 
 class TestCompareEnactment:
