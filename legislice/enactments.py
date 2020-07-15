@@ -220,20 +220,30 @@ class Enactment:
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
     def select_from_text_positions_without_nesting(
-        self, selection: TextPositionSet
+        self, selections: Union[List[TextPositionSelector], TextPositionSet]
     ) -> TextPositionSet:
+        r"""
+        Move selectors from `selection` to `self._selection` and return any that can't be used.
+
+        Replaces any preexisting _selection attribute on this Enactment object.
+
+        :param selection:
+            A TextPositionSet of TextPositionSelectors to apply to this Enactment.
+        """
         self._selection: List[TextPositionSelector] = []
-        selections = selection.ranges()
+
+        if isinstance(selections, TextPositionSet):
+            selections = selections.ranges()
         while selections and selections[0].start < len(self.content):
             if selections[0].end <= len(self.content):
-                self.selection.append(
+                self._selection.append(
                     TextPositionSelector(
                         start=selections[0].start, end=selections[0].end
                     )
                 )
                 selections = selections[1:]
             else:
-                self.selection.append(
+                self._selection.append(
                     TextPositionSelector(
                         start=selections[0].start, end=len(self.content)
                     )
@@ -241,6 +251,7 @@ class Enactment:
                 selections[0] = TextPositionSelector(
                     start=self.padded_length, end=selections[0].end
                 )
+        self._selection = TextPositionSet(self._selection)
         return selections
 
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
