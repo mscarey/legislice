@@ -219,7 +219,9 @@ class Enactment:
         text_sequence = self.text_sequence()
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
-    def select_from_text_positions_without_nesting(self, selection: TextPositionSet):
+    def select_from_text_positions_without_nesting(
+        self, selection: TextPositionSet
+    ) -> TextPositionSet:
         self._selection: List[TextPositionSelector] = []
         selections = selection.ranges()
         while selections and selections[0].start < len(self.content):
@@ -241,7 +243,8 @@ class Enactment:
                 )
         return selections
 
-    def select_from_text_positions(self, selection: TextPositionSet):
+    def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
+        """Select text using position selectors and return any unused position selectors."""
         selections = self.select_from_text_positions_without_nesting(selection)
         if selections:
             selections = [selection - self.padded_length for selection in selections]
@@ -259,11 +262,21 @@ class Enactment:
             selection = [selection]
         elif isinstance(selection, TextPositionSelector):
             selection = TextPositionSet(selection)
-        if isinstance(selection, Sequence) and isinstance(
-            selection[0], TextQuoteSelector
+        if isinstance(selection, Sequence) and all(
+            isinstance(item, TextQuoteSelector) for item in selection
         ):
             selection = self.get_positions_for_quotes(selection)
         return selection
+
+    def select_all(self) -> None:
+        self._selection = TextPositionSet(TextPositionSelector(0, len(self.content)))
+        for child in self._children:
+            child.select_all()
+
+    def select_none(self) -> None:
+        self._selection = TextPositionSet()
+        for child in self._children:
+            child.select_none()
 
     def select_without_children(
         self,
@@ -286,16 +299,6 @@ class Enactment:
                 selection = self.convert_selection_to_set(selection)
             self._selection = self.select_from_text_positions_without_nesting(selection)
 
-    def select_all(self) -> None:
-        self._selection = TextPositionSet(TextPositionSelector(0, len(self.content)))
-        for child in self._children:
-            child.select_all()
-
-    def select_none(self) -> None:
-        self._selection = TextPositionSet()
-        for child in self._children:
-            child.select_none()
-
     def select(
         self,
         selection: Union[
@@ -305,23 +308,25 @@ class Enactment:
             TextQuoteSelector,
             Sequence[TextQuoteSelector],
         ],
-    ) -> TextPositionSet:
+    ) -> None:
         """Select text using one TextQuoteSelector, returning a new Enactment."""
         if selection is True:
             self.select_all()
         elif selection is False:
             self.select_none()
         else:
-            selection = self.convert_selection_to_set(selection)
+            if not isinstance(selection, TextPositionSet):
+                selection = self.convert_selection_to_set(selection)
             unused_selectors = self.select_from_text_positions(selection)
-            return unused_selectors
-        return TextPositionSet()
+            for selector in unused_selectors:
+                if selector.start > len(self.content + 1):
+                    raise ValueError(f'Selector "{selector}" was not used.')
 
     def selected_text(self) -> str:
         return str(self.text_sequence())
 
     def get_positions_for_quotes(
-        self, quotes: List[TextQuoteSelector]
+        self, quotes: Sequence[TextQuoteSelector]
     ) -> TextPositionSet:
         position_selectors = [quote.as_position(self.text) for quote in quotes]
         return TextPositionSet(position_selectors)
