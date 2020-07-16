@@ -4,6 +4,7 @@ import pytest
 
 from legislice.schemas import (
     EnactmentSchema,
+    LinkedEnactmentSchema,
     PositionSelectorSchema,
     QuoteSelectorSchema,
 )
@@ -57,3 +58,22 @@ class TestLoadEnactment:
         answer = "The Department of Beards may issue licenses to such...hairdressers..."
         assert result.selected_text() == answer
 
+
+class TestLoadLinkedEnactment:
+    def test_load_linked_enactment(self):
+        schema = LinkedEnactmentSchema()
+        data = {
+            "children": [
+                "https://authorityspoke.com/api/v1/us/const/",
+                "https://authorityspoke.com/api/v1/us/usc/",
+            ],
+            "content": "",
+            "end_date": None,
+            "heading": "United States Legislation",
+            "node": "/us",
+            "parent": None,
+            "start_date": "1776-07-04",
+            "url": "https://authorityspoke.com/api/v1/us/const/",
+        }
+        result = schema.load(data)
+        assert result.children[0] == "https://authorityspoke.com/api/v1/us/const/"

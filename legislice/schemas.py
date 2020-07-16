@@ -10,7 +10,7 @@ from anchorpoint.textselectors import (
     TextPositionSet,
 )
 
-from legislice.enactments import Enactment
+from legislice.enactments import Enactment, LinkedEnactment
 
 
 def split_anchor_text(text: str) -> Tuple[str, ...]:
@@ -76,6 +76,27 @@ class PositionSelectorSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs):
+        return self.__model__(**data)
+
+
+class LinkedEnactmentSchema(Schema):
+    """Schema for passages from legislation without the full text of child nodes."""
+
+    __model__ = LinkedEnactment
+    node = fields.Url(relative=True)
+    heading = fields.Str()
+    content = fields.Str()
+    start_date = fields.Date(missing=date.today)
+    end_date = fields.Date(missing=None)
+    children = fields.List(fields.Url(relative=False))
+    selection = fields.Nested(PositionSelectorSchema, many=True, missing=True)
+
+    class Meta:
+        unknown = EXCLUDE
+
+    @post_load
+    def make_object(self, data, **kwargs):
+
         return self.__model__(**data)
 
 

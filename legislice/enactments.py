@@ -106,7 +106,7 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
 
 
 @dataclass
-class Enactment:
+class LinkedEnactment:
     """
     One or more passages of legislative text, selected from within a cited location.
 
@@ -120,7 +120,7 @@ class Enactment:
         full text content at this node, even if not all of it is cited
 
     :param children:
-        other nodes nested within this one
+        URLs of other nodes nested within this one
 
     :param start_date:
         date when the text was enacted at the cited location
@@ -139,7 +139,7 @@ class Enactment:
         content: str,
         start_date: date,
         end_date: Optional[date] = None,
-        children: List[Enactment] = None,
+        children: List[str] = None,
         selection: Union[bool, List[TextPositionSelector]] = True,
     ):
         self.node = node
@@ -200,6 +200,89 @@ class Enactment:
             return "constitution"
         raise NotImplementedError
 
+    def __str__(self):
+        text_sequence = self.text_sequence()
+        return f'"{text_sequence}" ({self.node} {self.start_date})'
+
+    def selected_text(self) -> str:
+        return str(self.text_sequence())
+
+    def text_sequence(self, include_nones: bool = True) -> TextSequence:
+        """
+        List the phrases in the Enactment selected by TextPositionSelectors.
+
+        :param include_nones:
+            Whether the list of phrases should include `None` to indicate a block of
+            unselected text
+        """
+        selected: List[Union[None, TextPassage]] = []
+
+        selection_ranges = self.selection.ranges()
+
+        if selection_ranges:
+            if selection_ranges[0].start > 0:
+                selected.append(None)
+            for passage in selection_ranges:
+                end_value = None if passage.end > 999999 else passage.end
+                selected.append(TextPassage(self.content[passage.start : end_value]))
+                if include_nones and passage.end and (passage.end < len(self.content)):
+                    selected.append(None)
+        elif include_nones and (not selected or selected[-1] is not None):
+            selected.append(None)
+        return selected
+
+
+@dataclass
+class Enactment(LinkedEnactment):
+    """
+    One or more passages of legislative text, selected from within a cited location.
+
+    :param node:
+        identifier for the site where the provision is codified
+
+    :param heading:
+        full heading of the provision
+
+    :param content:
+        full text content at this node, even if not all of it is cited
+
+    :param children:
+        other nodes nested within this one
+
+    :param start_date:
+        date when the text was enacted at the cited location
+
+    :param end_date:
+        date when the text was removed from the cited location
+
+    :param selector:
+        identifier for the part of the provision being cited
+    """
+
+    def __init__(
+        self,
+        node: str,
+        heading: str,
+        content: str,
+        start_date: date,
+        end_date: Optional[date] = None,
+        children: List[Enactment] = None,
+        selection: Union[bool, List[TextPositionSelector]] = True,
+    ):
+        self.node = node
+        self._content = content
+        self._heading = heading
+        self._start_date = start_date
+        self._end_date = end_date
+
+        if not children:
+            self._children = []
+        else:
+            self._children = children
+
+        if selection is not None:
+            self.select_without_children(selection)
+
     @property
     def padded_length(self):
         """Get length of self's content plus one character for space before next section."""
@@ -215,10 +298,6 @@ class Enactment:
             text_parts.append(child.text)
         joined = " ".join(text_parts)
         return joined.strip()
-
-    def __str__(self):
-        text_sequence = self.text_sequence()
-        return f'"{text_sequence}" ({self.node} {self.start_date})'
 
     def select_from_text_positions_without_nesting(
         self, selections: Union[List[TextPositionSelector], RangeSet]
@@ -344,9 +423,6 @@ class Enactment:
             unused_selectors = self.select_from_text_positions(selection)
             self.raise_error_for_extra_selector(unused_selectors)
 
-    def selected_text(self) -> str:
-        return str(self.text_sequence())
-
     def get_positions_for_quotes(
         self, quotes: Sequence[TextQuoteSelector]
     ) -> TextPositionSet:
@@ -361,20 +437,7 @@ class Enactment:
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        selected: List[Union[None, TextPassage]] = []
-
-        selection_ranges = self.selection.ranges()
-
-        if selection_ranges:
-            if selection_ranges[0].start > 0:
-                selected.append(None)
-            for passage in selection_ranges:
-                end_value = None if passage.end > 999999 else passage.end
-                selected.append(TextPassage(self.content[passage.start : end_value]))
-                if include_nones and passage.end and (passage.end < len(self.content)):
-                    selected.append(None)
-        elif include_nones and (not selected or selected[-1] is not None):
-            selected.append(None)
+        selected = super().text_sequence(include_nones=include_nones)
         for child in self.children:
             child_passages = child.text_sequence(include_nones=include_nones)
             if (
