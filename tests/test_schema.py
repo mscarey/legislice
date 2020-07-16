@@ -58,6 +58,18 @@ class TestLoadEnactment:
         answer = "The Department of Beards may issue licenses to such...hairdressers..."
         assert result.selected_text() == answer
 
+    def test_selector_not_wrapped_in_list(self, section_11_together):
+        schema = EnactmentSchema()
+        section_11_together["selection"] = {"start": 4, "end": 24}
+        result = schema.load(section_11_together)
+        assert result.selected_text() == "...Department of Beards..."
+
+    def test_load_with_text_quote_selector(self, section_11_together):
+        schema = EnactmentSchema()
+        section_11_together["selection"] = [{"exact": "Department of Beards"}]
+        result = schema.load(section_11_together)
+        assert result.selected_text() == "...Department of Beards..."
+
 
 class TestLoadLinkedEnactment:
     def test_load_linked_enactment(self):

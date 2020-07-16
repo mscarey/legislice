@@ -288,6 +288,21 @@ class TestCompareEnactment:
         assert old_version.means(new_version)
 
     @pytest.mark.vcr()
+    def test_unequal_enactment_text(self):
+        fourth_a = self.client.fetch(path="/us/const/amendment/IV")
+        search_clause = fourth_a.copy()
+        search_clause["selection"] = [{"suffix": ", and no Warrants"}]
+
+        schema = EnactmentSchema()
+
+        fourth_a = schema.load(fourth_a)
+        search_clause = schema.load(search_clause)
+
+        assert fourth_a != search_clause
+        assert fourth_a.means(search_clause)
+        assert fourth_a >= search_clause
+
+    @pytest.mark.vcr()
     def test_not_gt_if_equal(self):
         enactment = self.client.read(path="/test/acts/47/1", date=date(1999, 1, 1))
         assert enactment == enactment
