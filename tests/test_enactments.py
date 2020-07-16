@@ -92,9 +92,10 @@ class TestEnactmentDetails:
         assert enactment.node in str(enactment)
         assert "1791-12-15" in str(enactment)
 
-    def test_code_representation(self):
+    def test_sovereign_representation(self):
         client = Client(api_token=TOKEN)
-        enactment = client.read(path="/us/const")
+        enactment = client.read(path="/us")
+        assert enactment.code is None
 
 
 class TestSelectText:
@@ -104,6 +105,21 @@ class TestSelectText:
     def test_get_all_text(self):
         section = self.client.read(path="/test/acts/47/11")
         assert "barbers, hairdressers, or other" in section.text
+
+    @pytest.mark.vcr()
+    def test_same_quotation_from_enactments_of_differing_depths(self):
+        section = self.client.read(path="/test/acts/47/6C")
+        section.select(
+            TextQuoteSelector(exact="The beardcoin shall be a cryptocurrency")
+        )
+        subsection = self.client.read(path="/test/acts/47/6C/1")
+        subsection.select(
+            TextQuoteSelector(exact="The beardcoin shall be a cryptocurrency")
+        )
+        assert subsection.means(section)
+        assert section >= subsection
+        assert not section > subsection
+        assert not section.text_sequence() > subsection.text_sequence()
 
     def test_select_text_with_bool(self):
         subsection = Enactment(
@@ -293,6 +309,7 @@ class TestCompareEnactment:
         subdivided = schema.load(section_11_subdivided)
         assert combined >= subdivided
         assert combined > subdivided
+        assert combined.text_sequence() > subdivided.text_sequence()
 
     @pytest.mark.vcr()
     def test_more_provisions_implies_fewer(self):
@@ -354,3 +371,10 @@ class TestCompareEnactment:
         subdivided = schema.load(section_11_subdivided)
         text = subdivided.text_sequence()
         assert not subdivided > text
+
+    def test_enactment_does_not_mean_textpassage(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        subdivided = schema.load(section_11_subdivided)
+        text = subdivided.text_sequence()
+        assert not subdivided.means(text.passages[0])
+        assert not text.passages[0].means(subdivided)
