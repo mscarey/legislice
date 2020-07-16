@@ -336,7 +336,7 @@ class Enactment:
         """Select text using one TextQuoteSelector, returning a new Enactment."""
         if selection is True:
             self.select_all()
-        elif selection is False:
+        elif selection is False or selection is None:
             self.select_none()
         else:
             if not isinstance(selection, TextPositionSet):

@@ -177,6 +177,18 @@ class TestSelectFromEnactment:
             "such...hairdressers...as they see fit..."
         )
 
+    def test_select_none(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_subdivided)
+        combined.select(False)
+        assert combined.selected_text() == "..."
+
+    def test_select_none_with_None(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_subdivided)
+        combined.select(None)
+        assert combined.selected_text() == "..."
+
     @pytest.mark.vcr()
     def test_get_positions_from_quotes(self):
         section = self.client.read(path="/test/acts/47/11")
