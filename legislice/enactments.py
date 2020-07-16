@@ -181,6 +181,10 @@ class LinkedEnactment:
         return self._selection
 
     @property
+    def text(self):
+        return self.content
+
+    @property
     def sovereign(self):
         identifier_parts = self.node.split("/")
         return identifier_parts[1]
@@ -207,7 +211,100 @@ class LinkedEnactment:
     def selected_text(self) -> str:
         return str(self.text_sequence())
 
-    def text_sequence(self, include_nones: bool = True) -> TextSequence:
+    def convert_selection_to_set(
+        self,
+        selection: Union[
+            TextPositionSelector, TextQuoteSelector, Sequence[TextQuoteSelector],
+        ],
+    ) -> TextPositionSet:
+        if isinstance(selection, TextQuoteSelector):
+            selection = [selection]
+        elif isinstance(selection, TextPositionSelector):
+            selection = TextPositionSet(selection)
+        if isinstance(selection, Sequence) and all(
+            isinstance(item, TextQuoteSelector) for item in selection
+        ):
+            selection = self.get_positions_for_quotes(selection)
+        return selection
+
+    def get_positions_for_quotes(
+        self, quotes: Sequence[TextQuoteSelector]
+    ) -> TextPositionSet:
+        position_selectors = [quote.as_position(self.text) for quote in quotes]
+        return TextPositionSet(position_selectors)
+
+    def select_from_text_positions_without_nesting(
+        self, selections: Union[List[TextPositionSelector], RangeSet]
+    ) -> TextPositionSet:
+        r"""
+        Move selectors from `selection` to `self._selection` and return any that can't be used.
+
+        Replaces any preexisting _selection attribute on this Enactment object.
+
+        :param selection:
+            A TextPositionSet of TextPositionSelectors to apply to this Enactment.
+        """
+        self._selection: List[TextPositionSelector] = []
+
+        if isinstance(selections, RangeSet):
+            selections = selections.ranges()
+        while selections and selections[0].start < len(self.content):
+            if selections[0].end <= len(self.content):
+                self._selection.append(
+                    TextPositionSelector(
+                        start=selections[0].start, end=selections[0].end
+                    )
+                )
+                selections = selections[1:]
+            else:
+                self._selection.append(
+                    TextPositionSelector(
+                        start=selections[0].start, end=len(self.content)
+                    )
+                )
+                selections[0] = TextPositionSelector(
+                    start=self.padded_length, end=selections[0].end
+                )
+        self._selection = TextPositionSet(self._selection)
+        return selections
+
+    def select_without_children(
+        self,
+        selection: Union[
+            bool,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> None:
+        if selection is True:
+            self._selection = TextPositionSet(
+                TextPositionSelector(0, len(self.content))
+            )
+        elif selection is False:
+            self._selection = TextPositionSet()
+        else:
+            if not isinstance(selection, TextPositionSet):
+                selection = self.convert_selection_to_set(selection)
+            unused_selectors = self.select_from_text_positions_without_nesting(
+                selection
+            )
+            self.raise_error_for_extra_selector(unused_selectors)
+
+    def select(
+        self,
+        selection: Union[
+            bool,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> None:
+        self.select_without_children(selection)
+
+    def _text_sequence(self, include_nones: bool = True) -> List[Optional[TextPassage]]:
         """
         List the phrases in the Enactment selected by TextPositionSelectors.
 
@@ -230,6 +327,23 @@ class LinkedEnactment:
         elif include_nones and (not selected or selected[-1] is not None):
             selected.append(None)
         return selected
+
+    def text_sequence(self, include_nones: bool = True) -> TextSequence:
+        """
+        List the phrases in the Enactment selected by TextPositionSelectors.
+
+        :param include_nones:
+            Whether the list of phrases should include `None` to indicate a block of
+            unselected text
+        """
+        return TextSequence(self._text_sequence(include_nones=include_nones))
+
+    def raise_error_for_extra_selector(
+        self, unused_selectors: List[TextPositionSelector]
+    ) -> None:
+        for selector in unused_selectors:
+            if selector.start > len(self.content) + 1:
+                raise ValueError(f'Selector "{selector}" was not used.')
 
 
 @dataclass
@@ -299,41 +413,6 @@ class Enactment(LinkedEnactment):
         joined = " ".join(text_parts)
         return joined.strip()
 
-    def select_from_text_positions_without_nesting(
-        self, selections: Union[List[TextPositionSelector], RangeSet]
-    ) -> TextPositionSet:
-        r"""
-        Move selectors from `selection` to `self._selection` and return any that can't be used.
-
-        Replaces any preexisting _selection attribute on this Enactment object.
-
-        :param selection:
-            A TextPositionSet of TextPositionSelectors to apply to this Enactment.
-        """
-        self._selection: List[TextPositionSelector] = []
-
-        if isinstance(selections, RangeSet):
-            selections = selections.ranges()
-        while selections and selections[0].start < len(self.content):
-            if selections[0].end <= len(self.content):
-                self._selection.append(
-                    TextPositionSelector(
-                        start=selections[0].start, end=selections[0].end
-                    )
-                )
-                selections = selections[1:]
-            else:
-                self._selection.append(
-                    TextPositionSelector(
-                        start=selections[0].start, end=len(self.content)
-                    )
-                )
-                selections[0] = TextPositionSelector(
-                    start=self.padded_length, end=selections[0].end
-                )
-        self._selection = TextPositionSet(self._selection)
-        return selections
-
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""
         selections = self.select_from_text_positions_without_nesting(selection)
@@ -345,22 +424,6 @@ class Enactment(LinkedEnactment):
                 )
         return selections
 
-    def convert_selection_to_set(
-        self,
-        selection: Union[
-            TextPositionSelector, TextQuoteSelector, Sequence[TextQuoteSelector],
-        ],
-    ) -> TextPositionSet:
-        if isinstance(selection, TextQuoteSelector):
-            selection = [selection]
-        elif isinstance(selection, TextPositionSelector):
-            selection = TextPositionSet(selection)
-        if isinstance(selection, Sequence) and all(
-            isinstance(item, TextQuoteSelector) for item in selection
-        ):
-            selection = self.get_positions_for_quotes(selection)
-        return selection
-
     def select_all(self) -> None:
         self._selection = TextPositionSet(TextPositionSelector(0, len(self.content)))
         for child in self._children:
@@ -370,37 +433,6 @@ class Enactment(LinkedEnactment):
         self._selection = TextPositionSet()
         for child in self._children:
             child.select_none()
-
-    def raise_error_for_extra_selector(
-        self, unused_selectors: List[TextPositionSelector]
-    ) -> None:
-        for selector in unused_selectors:
-            if selector.start > len(self.content) + 1:
-                raise ValueError(f'Selector "{selector}" was not used.')
-
-    def select_without_children(
-        self,
-        selection: Union[
-            bool,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
-    ) -> None:
-        if selection is True:
-            self._selection = TextPositionSet(
-                TextPositionSelector(0, len(self.content))
-            )
-        elif selection is False:
-            self._selection = TextPositionSet()
-        else:
-            if not isinstance(selection, TextPositionSet):
-                selection = self.convert_selection_to_set(selection)
-            unused_selectors = self.select_from_text_positions_without_nesting(
-                selection
-            )
-            self.raise_error_for_extra_selector(unused_selectors)
 
     def select(
         self,
@@ -423,12 +455,6 @@ class Enactment(LinkedEnactment):
             unused_selectors = self.select_from_text_positions(selection)
             self.raise_error_for_extra_selector(unused_selectors)
 
-    def get_positions_for_quotes(
-        self, quotes: Sequence[TextQuoteSelector]
-    ) -> TextPositionSet:
-        position_selectors = [quote.as_position(self.text) for quote in quotes]
-        return TextPositionSet(position_selectors)
-
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
         List the phrases in the Enactment selected by TextPositionSelectors.
@@ -437,7 +463,7 @@ class Enactment(LinkedEnactment):
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        selected = super().text_sequence(include_nones=include_nones)
+        selected = super()._text_sequence(include_nones=include_nones)
         for child in self.children:
             child_passages = child.text_sequence(include_nones=include_nones)
             if (
