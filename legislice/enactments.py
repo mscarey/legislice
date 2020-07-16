@@ -331,7 +331,7 @@ class Enactment:
             TextPositionSet,
             TextQuoteSelector,
             Sequence[TextQuoteSelector],
-        ],
+        ] = True,
     ) -> None:
         """Select text using one TextQuoteSelector, returning a new Enactment."""
         if selection is True:

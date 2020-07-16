@@ -73,7 +73,7 @@ class TestMakeEnactment:
 
 class TestEnactmentDetails:
     @pytest.mark.vcr()
-    def test_usc_enactment_is_statute(self, make_selector):
+    def test_usc_enactment_is_statute(self):
         client = Client(api_token=TOKEN)
         enactment = client.read(path="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
@@ -87,9 +87,14 @@ class TestEnactmentDetails:
             exact="The right of the people to be secure in their persons"
         )
         enactment.select(selection)
+        assert enactment.level == "constitution"
         assert "secure in their persons..." in str(enactment)
         assert enactment.node in str(enactment)
         assert "1791-12-15" in str(enactment)
+
+    def test_code_representation(self):
+        client = Client(api_token=TOKEN)
+        enactment = client.read(path="/us/const")
 
 
 class TestSelectText:
@@ -188,6 +193,37 @@ class TestSelectFromEnactment:
         combined = schema.load(section_11_subdivided)
         combined.select(None)
         assert combined.selected_text() == "..."
+
+    def test_select_all(self, section_11_subdivided):
+        """Clear selected text, and then select one subsection."""
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_subdivided)
+        combined.select(None)
+        combined.children[3].select()
+        assert (
+            combined.selected_text()
+            == "...as they see fit to purchase a beardcoin from a customer..."
+        )
+        assert (
+            combined.children[3].selected_text()
+            == "as they see fit to purchase a beardcoin from a customer"
+        )
+
+    def test_select_all_nested(self, section_11_subdivided):
+        """Clear selected text, and then select one subsection."""
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_subdivided)
+        combined.select()
+        assert combined.selected_text().startswith("The Department of Beards")
+
+    def test_error_for_unusable_selector(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        combined = schema.load(section_11_subdivided)
+        selection = TextPositionSet(
+            TextPositionSelector(0, 10), TextPositionSelector(1000, 1010)
+        )
+        with pytest.raises(ValueError):
+            combined.children[3].select(selection)
 
     @pytest.mark.vcr()
     def test_get_positions_from_quotes(self):
