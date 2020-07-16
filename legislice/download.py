@@ -5,7 +5,11 @@ from anchorpoint import TextQuoteSelector
 import requests
 
 from legislice.enactments import Enactment
-from legislice.schemas import EnactmentSchema, QuoteSelectorSchema
+from legislice.schemas import (
+    EnactmentSchema,
+    LinkedEnactmentSchema,
+    QuoteSelectorSchema,
+)
 
 RawEnactment = Dict[str, Any]
 
@@ -25,6 +29,19 @@ class Client:
         self.api_token = api_token
 
     def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
+        """
+        Fetches data about legislation at specified path and date from Client's assigned endpoint.
+
+        :param path:
+            A path to the desired legislation section using the United States Legislation Markup
+            tree-like citation format. Examples: "/us/const/amendment/IV", "/us/usc/t17/s103"
+
+        :param date:
+            A date when the desired version of the legislation was in effect. This does not need to
+            be the "effective date" or the first date when the version was in effect. However, if
+            you select a date when two versions of the provision were in effect at the same time,
+            you will be given the version that became effective later.
+        """
         query = self.endpoint + normalize_path(path)
 
         if isinstance(date, datetime.date):
@@ -42,13 +59,23 @@ class Client:
 
         return response.json()
 
-    def read(
-        self,
-        path: str,
-        date: Union[datetime.date, str] = "",
-        selection: Optional[Union[str, TextQuoteSelector]] = None,
-    ) -> Enactment:
+    def read(self, path: str, date: Union[datetime.date, str] = "",) -> Enactment:
+        """
+        Fetches data from Client's assigned endpoint and builds Enactment or LinkedEnactment.
+
+        :param path:
+            A path to the desired legislation section using the United States Legislation Markup
+            tree-like citation format. Examples: "/us/const/amendment/IV", "/us/usc/t17/s103"
+
+        :param date:
+            A date when the desired version of the legislation was in effect. This does not need to
+            be the "effective date" or the first date when the version was in effect. However, if
+            you select a date when two versions of the provision were in effect at the same time,
+            you will be given the version that became effective later.
+        """
         raw_enactment = self.fetch(path=path, date=date)
-        enactment_schema = EnactmentSchema()
-        enactment = enactment_schema.load(raw_enactment)
+        if path.count("/") < 4:
+            enactment = LinkedEnactmentSchema().load(raw_enactment)
+        else:
+            enactment = EnactmentSchema().load(raw_enactment)
         return enactment
