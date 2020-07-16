@@ -295,6 +295,15 @@ class TestCompareEnactment:
         assert enactment >= enactment
 
     @pytest.mark.vcr()
+    def test_not_gt_if_equal_with_selection(self):
+        search_clause = self.client.read(path="/us/const/amendment/IV")
+        search_clause.select(TextQuoteSelector(suffix=", and no Warrants"))
+
+        assert search_clause == search_clause
+        assert search_clause.means(search_clause)
+        assert not search_clause > search_clause
+
+    @pytest.mark.vcr()
     def test_different_section_same_text(self):
         old_version = self.client.read("/test/acts/47/8/2/b", date=date(1999, 1, 1))
         new_version = self.client.read("/test/acts/47/8/2/d", date=date(2020, 1, 1))
@@ -345,7 +354,7 @@ class TestCompareEnactment:
         assert combined > limited
 
     @pytest.mark.vcr()
-    def test_same_phrase_different_provisions(self):
+    def test_same_phrase_different_provisions_same_meaning(self):
         amend_5 = self.client.read(path="/us/const/amendment/V")
         amend_14 = self.client.read(path="/us/const/amendment/XIV/1")
         selector = TextQuoteSelector(
@@ -356,7 +365,18 @@ class TestCompareEnactment:
         assert amend_5.means(amend_14)
 
     @pytest.mark.vcr()
-    def test_same_phrase_selected_in_nested_provision(self):
+    def test_same_phrase_different_provisions_implication(self):
+        amend_5 = self.client.read(path="/us/const/amendment/V")
+        amend_14 = self.client.read(path="/us/const/amendment/XIV/1")
+        selector = TextQuoteSelector(
+            exact="life, liberty, or property, without due process of law"
+        )
+        amend_5.select(selector)
+        amend_14.select(selector)
+        assert amend_5 >= amend_14
+
+    @pytest.mark.vcr()
+    def test_same_phrase_selected_in_nested_provision_same_meaning(self):
         amend_5 = self.client.read(path="/us/const/amendment/V")
         amend_14 = self.client.read(path="/us/const/amendment/XIV")
         selector = TextQuoteSelector(
@@ -365,6 +385,17 @@ class TestCompareEnactment:
         amend_5.select(selector)
         amend_14.select(selector)
         assert amend_5.means(amend_14)
+
+    @pytest.mark.vcr()
+    def test_same_phrase_selected_in_nested_provision_implication(self):
+        amend_5 = self.client.read(path="/us/const/amendment/V")
+        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        selector = TextQuoteSelector(
+            exact="life, liberty, or property, without due process of law"
+        )
+        amend_5.select(selector)
+        amend_14.select(selector)
+        assert amend_5 >= amend_14
 
     def test_enactment_does_not_imply_textsequence(self, section_11_subdivided):
         schema = EnactmentSchema()

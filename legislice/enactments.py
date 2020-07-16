@@ -317,7 +317,7 @@ class LinkedEnactment:
         selection_ranges = self.selection.ranges()
 
         if selection_ranges:
-            if selection_ranges[0].start > 0:
+            if include_nones and selection_ranges[0].start > 0:
                 selected.append(None)
             for passage in selection_ranges:
                 end_value = None if passage.end > 999999 else passage.end
