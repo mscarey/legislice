@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass, field
 from datetime import date
 from typing import Sequence, List, Optional, Tuple, Union
 
@@ -105,7 +104,6 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
         )
 
 
-@dataclass
 class LinkedEnactment:
     """
     One or more passages of legislative text, selected from within a cited location.
@@ -346,7 +344,6 @@ class LinkedEnactment:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
 
-@dataclass
 class Enactment(LinkedEnactment):
     """
     One or more passages of legislative text, selected from within a cited location.
