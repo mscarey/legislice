@@ -72,30 +72,58 @@ class TestMakeEnactment:
 
 
 class TestEnactmentDetails:
+    client = Client(api_token=TOKEN)
+
     @pytest.mark.vcr()
     def test_usc_enactment_is_statute(self):
-        client = Client(api_token=TOKEN)
-        enactment = client.read(path="/us/usc/t17/s103", date="2020-01-01")
+        enactment = self.client.read(path="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
         assert enactment.level == "statute"
 
     @pytest.mark.vcr()
     def test_str_representation(self):
-        client = Client(api_token=TOKEN)
-        enactment = client.read(path="/us/const/amendment/IV")
+        enactment = self.client.read(path="/us/const/amendment/IV")
         selection = TextQuoteSelector(
             exact="The right of the people to be secure in their persons"
         )
         enactment.select(selection)
         assert enactment.level == "constitution"
+        assert enactment.start_date == date(1791, 12, 15)
         assert "secure in their persons..." in str(enactment)
         assert enactment.node in str(enactment)
         assert "1791-12-15" in str(enactment)
 
+    @pytest.mark.vcr()
     def test_sovereign_representation(self):
-        client = Client(api_token=TOKEN)
-        enactment = client.read(path="/us")
+        enactment = self.client.read(path="/us")
         assert enactment.code is None
+
+    @pytest.mark.vcr()
+    def test_constitution_effective_date(self):
+        ex_post_facto_provision = self.client.read(path="/us/const/article/I/9/3")
+        assert ex_post_facto_provision.start_date == date(1788, 9, 13)
+
+    @pytest.mark.vcr()
+    def test_date_and_text_from_path_and_regime(self):
+        """
+        This tests different parsing code because the date is
+        in the format "dated the 25th of September, 1804"
+
+        This also verifies that the full text of the section
+        is selected as the text of the Enactment, even though no
+        ``exact``, ``prefix``, or ``suffix`` parameter was
+        passed to the TextQuoteSelector constructor.
+        """
+        amendment_12 = self.client.read(path="/us/const/amendment/XII")
+        assert amendment_12.start_date == date(1804, 9, 25)
+        assert "Electors shall meet" in amendment_12.text
+
+    @pytest.mark.vcr()
+    def test_compare_effective_dates(self):
+        amendment_5 = self.client.read(path="/us/const/amendment/XII")
+        amendment_14 = self.client.read(path="/us/const/amendment/XIV")
+        assert amendment_14.start_date == date(1868, 7, 28)
+        assert amendment_5.start_date < amendment_14.start_date
 
 
 class TestSelectText:
