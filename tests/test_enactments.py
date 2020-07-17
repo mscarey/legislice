@@ -304,6 +304,14 @@ class TestSelectFromEnactment:
         section.select(TextPositionSelector(start=29, end=43))
         assert section.selected_text() == "...issue licenses..."
 
+    def test_invalid_selector_text(self, section_11_subdivided):
+        section_11_subdivided["selection"] = [
+            {"exact": "text that doesn't exist in the code"}
+        ]
+        schema = EnactmentSchema()
+        with pytest.raises(ValueError):
+            _ = schema.load(section_11_subdivided)
+
 
 class TestCompareEnactment:
     client = Client(api_token=TOKEN)
@@ -452,3 +460,28 @@ class TestCompareEnactment:
         text = subdivided.text_sequence()
         assert not subdivided.means(text.passages[0])
         assert not text.passages[0].means(subdivided)
+
+
+class TestAddEnactments:
+    client = Client(api_token=TOKEN)
+
+    @pytest.mark.vcr()
+    def test_add_overlapping_enactments(self):
+        schema = EnactmentSchema()
+        data = self.client.fetch(path="/us/const/amendment/IV")
+        search = schema.load(data)
+        warrant = schema.load(data)
+        search.select(TextQuoteSelector(suffix=", and no Warrants"))
+        warrant.select(
+            TextQuoteSelector(
+                exact="shall not be violated, and no Warrants shall issue,"
+            )
+        )
+        combined = search + warrant
+
+        passage = (
+            "against unreasonable searches and seizures, "
+            + "shall not be violated, "
+            + "and no Warrants shall issue,"
+        )
+        assert passage in combined.text
