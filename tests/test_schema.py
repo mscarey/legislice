@@ -5,39 +5,38 @@ import pytest
 from legislice.schemas import (
     EnactmentSchema,
     LinkedEnactmentSchema,
-    PositionSelectorSchema,
-    QuoteSelectorSchema,
+    SelectorSchema,
 )
 
 
 class TestLoadSelector:
     def test_schema_loads_position_selector(self):
-        schema = PositionSelectorSchema()
+        schema = SelectorSchema()
         data = {"start": 0, "end": 12}
         result = schema.load(data)
         assert isinstance(result, TextPositionSelector)
 
     def test_selector_text_split(self):
-        schema = QuoteSelectorSchema()
+        schema = SelectorSchema()
         data = {"text": "process, system,|method of operation|, concept, principle"}
         result = schema.load(data)
         assert result.exact.startswith("method")
 
     def test_selector_from_string(self):
         data = "eats,|shoots,|and leaves"
-        schema = QuoteSelectorSchema()
+        schema = SelectorSchema()
         result = schema.load(data)
         assert result.exact == "shoots,"
 
     def test_selector_from_string_without_split(self):
         data = "promise me not to omit a single word"
-        schema = QuoteSelectorSchema()
+        schema = SelectorSchema()
         result = schema.load(data)
         assert result.exact.startswith("promise")
 
     def test_selector_from_string_split_wrongly(self):
         data = "eats,|shoots,|and leaves|"
-        schema = QuoteSelectorSchema()
+        schema = SelectorSchema()
         with pytest.raises(ValidationError):
             result = schema.load(data)
 

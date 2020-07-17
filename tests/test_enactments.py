@@ -299,7 +299,7 @@ class TestCompareEnactment:
         search_clause = schema.load(search_clause)
 
         assert fourth_a != search_clause
-        assert fourth_a.means(search_clause)
+        assert not fourth_a.means(search_clause)
         assert fourth_a >= search_clause
 
     @pytest.mark.vcr()
