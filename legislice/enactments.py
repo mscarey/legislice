@@ -13,7 +13,6 @@ KNOWN_CONSTITUTIONS = ["const"]
 KNOWN_STATUTE_CODES = ["acts", "usc"]
 
 
-@dataclass(frozen=True)
 class TextPassage:
     """
     A contiguous passage of legislative text.
@@ -21,7 +20,8 @@ class TextPassage:
     :param passage:
     """
 
-    text: str
+    def __init__(self, text: str):
+        self.text = text
 
     def means(self, other: Optional[TextPassage]) -> bool:
         if not isinstance(other, self.__class__):

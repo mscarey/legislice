@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 from marshmallow import validate, ValidationError
@@ -51,9 +51,8 @@ class SelectorSchema(Schema):
     include_start = fields.Bool(missing=True)
     include_end = fields.Bool(missing=False)
 
-    @pre_load
     def expand_anchor_shorthand(
-        self, data: Union[str, Dict[str, str]], **kwargs
+        self, data: Union[str, Dict[str, str]]
     ) -> Dict[str, str]:
         """
         Convert input from shorthand format to normal selector format.
@@ -64,6 +63,16 @@ class SelectorSchema(Schema):
         if text:
             data["prefix"], data["exact"], data["suffix"] = split_anchor_text(text)
             del data["text"]
+        return data
+
+    @pre_load
+    def preprocess_data(
+        self, data: Union[str, Dict[str, Union[str, Dict, List]]], **kwargs
+    ) -> Dict[str, Union[str, List]]:
+        data = self.expand_anchor_shorthand(data)
+
+        if isinstance(data.get("selection"), Dict):
+            data["selection"] = [data["selection"]]
         return data
 
     @post_load
@@ -77,15 +86,6 @@ class SelectorSchema(Schema):
             for unwanted in ("exact", "prefix", "suffix"):
                 data.pop(unwanted, None)
         return model(**data)
-
-
-class PositionSelectorSchema(Schema):
-
-    __model__ = TextPositionSelector
-
-    @post_load
-    def make_object(self, data, **kwargs):
-        return self.__model__(**data)
 
 
 class LinkedEnactmentSchema(Schema):

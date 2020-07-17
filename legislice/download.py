@@ -5,7 +5,7 @@ from anchorpoint import TextQuoteSelector
 import requests
 
 from legislice.enactments import Enactment
-from legislice.schemas import EnactmentSchema, SelectorSchema
+from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema, SelectorSchema
 
 RawEnactment = Dict[str, Any]
 
