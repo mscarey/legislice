@@ -410,6 +410,17 @@ class Enactment(LinkedEnactment):
         joined = " ".join(text_parts)
         return joined.strip()
 
+    def __add__(self, other: Enactment):
+        if not isinstance(other, self.__class__):
+            raise TypeError
+
+        if self >= other and self.node.startswith(other.node):
+            return self
+        if other >= self and other.node.startswith(self.node):
+            return other
+        combined = self.combine_text(other) or other.combine_text(self)
+        return combined
+
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""
         selections = self.select_from_text_positions_without_nesting(selection)
