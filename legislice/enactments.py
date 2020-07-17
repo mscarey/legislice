@@ -402,6 +402,10 @@ class Enactment(LinkedEnactment):
         return 0
 
     @property
+    def source(self):
+        return self.node
+
+    @property
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
         text_parts = [self.content]
@@ -410,16 +414,42 @@ class Enactment(LinkedEnactment):
         joined = " ".join(text_parts)
         return joined.strip()
 
+    def select_more_text_at_current_node(
+        self, added_selection: TextPositionSet
+    ) -> None:
+        new_selection = self.selection + added_selection
+        self._selection = new_selection
+
+    def _add_enactment_at_included_node(self, other: Enactment) -> Enactment:
+        """Add a selection of text at the same citation or at a child of self's citation."""
+        if self >= other:
+            return self
+        found_node, updated_text = self.add_selected_text(other.selection)
+        if not found_node:
+            raise ValueError(
+                f"Unable to find node {other.node} (dated {other.start_date}) "
+                f"among the descendants of node {self.node} (dated {self.start_date})."
+            )
+        if not updated_text:
+            raise ValueError(
+                f'Unable to find the selected text "{other.selected_text()}" '
+                f"(dated {other.start_date}) "
+                f"at the citation {other.node} (dated {self.start_date})."
+            )
+        return self
+
     def __add__(self, other: Enactment):
         if not isinstance(other, self.__class__):
             raise TypeError
 
-        if self >= other and self.node.startswith(other.node):
-            return self
-        if other >= self and other.node.startswith(self.node):
-            return other
-        combined = self.combine_text(other) or other.combine_text(self)
-        return combined
+        if self.node.startswith(other.node):
+            return self._add_enactment_at_included_node(other)
+        elif other.node.startswith(self.node):
+            return other._add_enactment_at_included_node(self)
+        raise ValueError(
+            "Can't add selected text from two different Enactments "
+            "when neither is a parent of the other."
+        )
 
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""

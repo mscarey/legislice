@@ -465,12 +465,29 @@ class TestCompareEnactment:
 class TestAddEnactments:
     client = Client(api_token=TOKEN)
 
-    @pytest.mark.vcr()
-    def test_add_overlapping_enactments(self):
+    def test_add_overlapping_text_selection(self, fourth_a):
         schema = EnactmentSchema()
-        data = self.client.fetch(path="/us/const/amendment/IV")
-        search = schema.load(data)
-        warrant = schema.load(data)
+        search = schema.load(fourth_a)
+        warrant = schema.load(fourth_a)
+        search.select(TextQuoteSelector(suffix=", and no Warrants"))
+        warrant.select(
+            TextQuoteSelector(
+                exact="shall not be violated, and no Warrants shall issue,"
+            )
+        )
+        search.select_more_text_at_current_node(warrant.selection)
+
+        passage = (
+            "against unreasonable searches and seizures, "
+            + "shall not be violated, "
+            + "and no Warrants shall issue,"
+        )
+        assert passage in search.selected_text()
+
+    def test_add_overlapping_enactments(self, fourth_a):
+        schema = EnactmentSchema()
+        search = schema.load(fourth_a)
+        warrant = schema.load(fourth_a)
         search.select(TextQuoteSelector(suffix=", and no Warrants"))
         warrant.select(
             TextQuoteSelector(

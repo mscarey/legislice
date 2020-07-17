@@ -3,6 +3,8 @@ from typing import Dict
 from anchorpoint import TextQuoteSelector
 import pytest
 
+from legislice.schemas import Enactment, EnactmentSchema
+
 
 @pytest.fixture(scope="class")
 def section6d():
@@ -135,4 +137,18 @@ def make_selector() -> Dict[str, TextQuoteSelector]:
         "copyright_requires_originality": TextQuoteSelector(
             suffix="fixed in any tangible"
         ),
+    }
+
+
+@pytest.fixture(scope="module")
+def fourth_a():
+    return {
+        "heading": "AMENDMENT IV.",
+        "content": "The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.",
+        "children": [],
+        "end_date": None,
+        "node": "/us/const/amendment/IV",
+        "start_date": "1791-12-15",
+        "url": "https://authorityspoke.com/api/v1/us/const/amendment/IV/",
+        "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
     }
