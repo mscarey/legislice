@@ -6,6 +6,7 @@ from typing import Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
+from anchorpoint.schemas import SelectorSchema
 from anchorpoint.textselectors import TextPositionSet
 
 # Path parts known to indicate the level of law they refer to.
@@ -215,6 +216,9 @@ class LinkedEnactment:
             TextPositionSelector, TextQuoteSelector, Sequence[TextQuoteSelector],
         ],
     ) -> TextPositionSet:
+        if isinstance(selection, str):
+            schema = SelectorSchema()
+            selection = schema.load(selection)
         if isinstance(selection, TextQuoteSelector):
             selection = [selection]
         elif isinstance(selection, TextPositionSelector):

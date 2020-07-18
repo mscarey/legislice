@@ -312,6 +312,12 @@ class TestSelectFromEnactment:
         with pytest.raises(ValueError):
             _ = schema.load(section_11_subdivided)
 
+    def test_select_text_with_string(self, fourth_a):
+        schema = EnactmentSchema()
+        fourth_a = schema.load(fourth_a)
+        fourth_a.select("The right of the people")
+        assert fourth_a.selected_text() == "The right of the people..."
+
 
 class TestCompareEnactment:
     client = Client(api_token=TOKEN)
@@ -483,6 +489,18 @@ class TestAddEnactments:
             + "and no Warrants shall issue,"
         )
         assert passage in search.selected_text()
+
+    def test_non_overlapping_text_selection(self, fourth_a):
+        schema = EnactmentSchema()
+        left = schema.load(fourth_a)
+        right = schema.load(fourth_a)
+        left.select("The right of the people to be secure in their persons")
+        right.select("shall not be violated")
+        left.select_more_text_at_current_node(right.selection)
+        assert left.selected_text() == (
+            "The right of the people to be secure in their persons..."
+            "shall not be violated..."
+        )
 
     def test_add_overlapping_enactments(self, fourth_a):
         schema = EnactmentSchema()
