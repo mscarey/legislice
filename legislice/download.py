@@ -1,11 +1,10 @@
 import datetime
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Union
 
-from anchorpoint import TextQuoteSelector
 import requests
 
 from legislice.enactments import Enactment
-from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema, SelectorSchema
+from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema
 
 RawEnactment = Dict[str, Any]
 

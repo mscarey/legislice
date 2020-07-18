@@ -1,5 +1,5 @@
 -e .
--e git+https://github.com/mscarey/anchorpoint.git#egg=anchorpoint
+anchorpoint>=0.3.0
 apispec[validation]
 marshmallow>=3.2.2
 python-dotenv

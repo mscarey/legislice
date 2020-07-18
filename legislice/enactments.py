@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from datetime import date
-from typing import Sequence, List, Optional, Tuple, Union
+from typing import Sequence, List, Optional, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
@@ -393,7 +393,7 @@ class Enactment(LinkedEnactment):
         if not children:
             self._children = []
         else:
-            self._children = children
+            self._children: List[Enactment] = children
 
         if selection is not None:
             self.select_without_children(selection)
