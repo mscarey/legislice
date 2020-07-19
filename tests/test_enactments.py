@@ -502,6 +502,15 @@ class TestAddEnactments:
             "shall not be violated..."
         )
 
+    @pytest.mark.vcr()
+    def test_add_selection_from_changed_section(self):
+        old_version = self.client.read("/test/acts/47/6D/1", date="1935-04-01")
+        new_version = self.client.read("/test/acts/47/6D/1", date="2013-07-18")
+        old_version.select("bona fide religious")
+        new_version.select("reasons")
+        new_version._select_more_text_from_changed_version(old_version)
+        assert new_version.selected_text() == "bona fide religious...reasons"
+
     def test_add_overlapping_enactments(self, fourth_a):
         schema = EnactmentSchema()
         search = schema.load(fourth_a)

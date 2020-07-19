@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from datetime import date
 from typing import Sequence, List, Optional, Union
 
@@ -475,6 +474,39 @@ class Enactment(LinkedEnactment):
         self._selection = TextPositionSet()
         for child in self._children:
             child.select_none()
+
+    def _select_more_text_from_changed_version(self, other: Enactment) -> None:
+        """
+        Select more text from a different text version at the same citation path.
+
+        :param other:
+            An :class:`Enactment` representing different text enacted at a
+            different time, at the same `node` (or USLM path citation) as self.
+            This Element's :attr:`~Enactment.node` attribute must be the same
+            string as self's node attribute. It's not sufficient for `other`
+            to have an Enactment listed in its :attr:`~Enactment._children`
+            attribute with the same node attribute,
+            or for `other` to have the same node attribute as an ancestor of self.
+        """
+        incoming_quote_selectors = [
+            selector.as_quote_selector(other.content) for selector in other.selection
+        ]
+        incoming_position_selectors = []
+        for quote_selector in incoming_quote_selectors:
+            position = quote_selector.as_position(self.text)
+            if position:
+                incoming_position_selectors.append(position)
+            else:
+                raise ValueError(
+                    f"Incoming text selection {quote_selector}  "
+                    f"cannot be found in the provision text."
+                )
+            if not quote_selector.is_unique_in(self.text):
+                raise ValueError(
+                    f"Incoming text selection {quote_selector} cannot be placed because it "
+                    f"is not unique in the provision text."
+                )
+        self.select_from_text_positions(TextPositionSet(incoming_position_selectors))
 
     def select(
         self,
