@@ -318,6 +318,14 @@ class TestSelectFromEnactment:
         fourth_a.select("The right of the people")
         assert fourth_a.selected_text() == "The right of the people..."
 
+    def test_select_method_clears_previous_selection(self):
+        old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
+        old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        old_version.select(old_selector)
+        assert old_version.selected_text() == (
+            "Any such person issued a notice to remedy under subsection 1 must..."
+        )
+
 
 class TestCompareEnactment:
     client = Client(api_token=TOKEN)
@@ -534,7 +542,7 @@ class TestAddEnactments:
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
         old_version.select(old_selector)
-        old_version.children[3].select(
+        old_version.children[4].select(
             "obtain a beardcoin from the Department of Beards"
         )
         assert old_version.selected_text() == (
