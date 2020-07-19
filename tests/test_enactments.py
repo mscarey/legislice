@@ -530,3 +530,26 @@ class TestAddEnactments:
         )
         assert passage in combined.text
 
+    def test_add_selection_from_child_node(self):
+        old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
+        old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        old_version.select(old_selector)
+        old_version.children[3].select(
+            "obtain a beardcoin from the Department of Beards"
+        )
+        assert old_version.selected_text() == (
+            "Any such person issued a notice to remedy under subsection 1 must..."
+            "obtain a beardcoin from the Department of Beards"
+        )
+
+        new_version = self.client.read("/test/acts/47/8/2/c", date="2015-01-01")
+        new_version.select()
+
+        combined = old_version + new_version
+
+        assert combined.selected_text() == (
+            "Any such person issued a notice to remedy under subsection 1 must..."
+            "remove the beard with a laser, or "
+            "obtain a beardcoin from the Department of Beards"
+        )
+
