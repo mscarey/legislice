@@ -423,17 +423,37 @@ class Enactment(LinkedEnactment):
         new_selection = self.selection + added_selection
         self._selection = new_selection
 
+    def _update_text_at_included_node(self, other: Enactment) -> Tuple[bool, bool]:
+        """Recursively search child nodes for one that can be updated by `other`."""
+        if self.node == other.node:
+            found_node = True
+            if self.text == other.text:
+                self.select_more_text_at_current_node(other.selection)
+                updated_selection = True
+            else:
+                try:
+                    self._select_more_text_from_changed_version(other)
+                    updated_selection = True
+                except ValueError:
+                    updated_selection = False
+            return found_node, updated_selection
+        for child in self.children:
+            if other.node.startswith(child.node):
+                return child._update_text_at_included_node(other)
+        return False, False
+
     def _add_enactment_at_included_node(self, other: Enactment) -> Enactment:
         """Add a selection of text at the same citation or at a child of self's citation."""
         if self >= other:
             return self
-        found_node, updated_text = self.add_selected_text(other.selection)
+
+        found_node, updated_selection = self._update_text_at_included_node(other)
         if not found_node:
             raise ValueError(
                 f"Unable to find node {other.node} (dated {other.start_date}) "
                 f"among the descendants of node {self.node} (dated {self.start_date})."
             )
-        if not updated_text:
+        if not updated_selection:
             raise ValueError(
                 f'Unable to find the selected text "{other.selected_text()}" '
                 f"(dated {other.start_date}) "
@@ -445,13 +465,13 @@ class Enactment(LinkedEnactment):
         if not isinstance(other, self.__class__):
             raise TypeError
 
-        if self.node.startswith(other.node):
+        if other.node.startswith(self.node):
             return self._add_enactment_at_included_node(other)
-        elif other.node.startswith(self.node):
+        elif self.node.startswith(other.node):
             return other._add_enactment_at_included_node(self)
         raise ValueError(
             "Can't add selected text from two different Enactments "
-            "when neither is a parent of the other."
+            "when neither is a descendant of the other."
         )
 
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
@@ -506,7 +526,10 @@ class Enactment(LinkedEnactment):
                     f"Incoming text selection {quote_selector} cannot be placed because it "
                     f"is not unique in the provision text."
                 )
-        self.select_from_text_positions(TextPositionSet(incoming_position_selectors))
+        # TODO: should be recursive, using select_from_text_positions?
+        self.select_more_text_at_current_node(
+            TextPositionSet(incoming_position_selectors)
+        )
 
     def select(
         self,

@@ -37,7 +37,7 @@ class TestLoadSelector:
     def test_selector_from_string_split_wrongly(self):
         data = "eats,|shoots,|and leaves|"
         schema = SelectorSchema()
-        with pytest.raises(ValueError):
+        with pytest.raises(ValidationError):
             _ = schema.load(data)
 
 
