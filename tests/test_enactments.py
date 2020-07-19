@@ -197,6 +197,11 @@ class TestSelectText:
             "licenses to such...hairdressers...as they see fit..."
         )
 
+    @pytest.mark.vcr()
+    def test_no_double_spaces_around_repealed_section(self):
+        section = self.client.read(path="/test/acts/47/8/2")
+        assert "or  remove the beard with" not in section.text
+
 
 class TestSelectFromEnactment:
     client = Client(api_token=TOKEN)
@@ -547,7 +552,7 @@ class TestAddEnactments:
         )
         assert old_version.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must..."
-            "obtain a beardcoin from the Department of Beards"
+            "obtain a beardcoin from the Department of Beards..."
         )
 
         new_version = self.client.read("/test/acts/47/8/2/c", date="2015-01-01")
@@ -558,6 +563,6 @@ class TestAddEnactments:
         assert combined.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must..."
             "remove the beard with a laser, or "
-            "obtain a beardcoin from the Department of Beards"
+            "obtain a beardcoin from the Department of Beards..."
         )
 

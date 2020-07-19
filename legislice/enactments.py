@@ -413,7 +413,8 @@ class Enactment(LinkedEnactment):
         """Get all text including subnodes, regardless of which text is "selected"."""
         text_parts = [self.content]
         for child in self.children:
-            text_parts.append(child.text)
+            if child.text:
+                text_parts.append(child.text)
         joined = " ".join(text_parts)
         return joined.strip()
 
@@ -533,13 +534,20 @@ class Enactment(LinkedEnactment):
         self,
         selection: Union[
             bool,
+            str,
             TextPositionSelector,
             TextPositionSet,
             TextQuoteSelector,
             Sequence[TextQuoteSelector],
         ] = True,
     ) -> None:
-        """Select text using one TextQuoteSelector, returning a new Enactment."""
+        """
+        Select text, clearing any previous selection.
+
+        If the selection includes no selectors for child Enactments,
+        then any selected passages for the child Enactments will be
+        cleared.
+        """
         if selection is True:
             self.select_all()
         elif selection is False or selection is None:
