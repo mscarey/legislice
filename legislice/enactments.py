@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Sequence, List, Optional, Union
+from typing import Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
@@ -433,7 +433,7 @@ class Enactment(LinkedEnactment):
                 updated_selection = True
             else:
                 try:
-                    self._select_more_text_from_changed_version(other)
+                    self.select_more_text_from_changed_version(other)
                     updated_selection = True
                 except ValueError:
                     updated_selection = False
@@ -494,7 +494,7 @@ class Enactment(LinkedEnactment):
         for child in self._children:
             child.select_none()
 
-    def _select_more_text_from_changed_version(self, other: Enactment) -> None:
+    def select_more_text_from_changed_version(self, other: Enactment) -> None:
         """
         Select more text from a different text version at the same citation path.
 
@@ -507,6 +507,8 @@ class Enactment(LinkedEnactment):
             attribute with the same node attribute,
             or for `other` to have the same node attribute as an ancestor of self.
         """
+        # TODO: should translate selectors using other.text, not other.content
+        # TODO: should use recursive_selectors, not just selectors at current node
         incoming_quote_selectors = [
             selector.as_quote_selector(other.content) for selector in other.selection
         ]

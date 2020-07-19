@@ -521,7 +521,7 @@ class TestAddEnactments:
         new_version = self.client.read("/test/acts/47/6D/1", date="2013-07-18")
         old_version.select("bona fide religious")
         new_version.select("reasons.")
-        new_version._select_more_text_from_changed_version(old_version)
+        new_version.select_more_text_from_changed_version(old_version)
         assert new_version.selected_text() == "...bona fide religious...reasons."
 
     def test_add_overlapping_enactments(self, fourth_a):
@@ -566,3 +566,68 @@ class TestAddEnactments:
             "obtain a beardcoin from the Department of Beards..."
         )
 
+    @pytest.mark.vcr()
+    def test_fail_to_add_repeated_text_from_changed_version(self):
+        """Fail to place selection because "Department of Beards" occurs twice in this scope."""
+        new_version = self.client.read("/test/acts/47/8")
+        new_version.select(
+            TextQuoteSelector(
+                prefix="Department of Beards, ", exact="Australian Federal Police"
+            )
+        )
+
+        old_version = self.client.read("/test/acts/47/8", date="1935-04-01")
+        old_version.select(
+            TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
+        )
+
+        with pytest.raises(ValueError):
+            _ = new_version + old_version
+
+    @pytest.mark.vcr()
+    @pytest.mark.xfail()
+    def test_locate_anchor_by_remembering_prefix(self):
+        """
+        Place position selector by remembering prefix from TextQuoteSelector.
+
+        Xfails because the prefix information is lost when the selector
+        becomes a position selector.
+        """
+        new_version = self.client.read("/test/acts/47/8")
+        new_version.select(
+            TextQuoteSelector(
+                prefix="Department of Beards, ", exact="Australian Federal Police"
+            )
+        )
+
+        old_version = self.client.read("/test/acts/47/8", date="1935-04-01")
+        old_version.select(
+            TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
+        )
+
+        combined = new_version + old_version
+        assert combined.text == "...Department of Beards...Australian Federal Police..."
+
+    @pytest.mark.vcr()
+    def test_able_to_add_subsection_with_text_repeated_elsewhere(self):
+        new_version = self.client.read("/test/acts/47/8")
+        new_version.select(
+            TextQuoteSelector(
+                prefix="Department of Beards, ", exact="Australian Federal Police"
+            )
+        )
+
+        old_version = self.client.read("/test/acts/47/8", date="1935-04-01")
+        old_version.select(
+            TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
+        )
+
+        new_child = new_version.children[0] + old_version.children[0]
+        assert (
+            new_child.selected_text()
+            == "...Department of Beards...Australian Federal Police..."
+        )
+        assert (
+            new_version.selected_text()
+            == "...Department of Beards...Australian Federal Police..."
+        )
