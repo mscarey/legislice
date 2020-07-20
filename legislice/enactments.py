@@ -528,10 +528,9 @@ class Enactment(LinkedEnactment):
             attribute with the same node attribute,
             or for `other` to have the same node attribute as an ancestor of self.
         """
-        # TODO: should translate selectors using other.text, not other.content
         incoming_quote_selectors = [
-            selector.as_quote_selector(other.content)
-            for selector in other.tree_selection
+            selector.as_quote_selector(other.text)
+            for selector in other.tree_selection()
         ]
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:

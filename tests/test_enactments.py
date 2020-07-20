@@ -524,6 +524,17 @@ class TestAddEnactments:
         new_version.select_more_text_from_changed_version(old_version)
         assert new_version.selected_text() == "...bona fide religious...reasons."
 
+    @pytest.mark.vcr()
+    def test_add_selection_from_changed_node_and_subnode(self):
+        old_version = self.client.read("/test/acts/47/8/2", date="1935-04-01")
+        new_version = self.client.read("/test/acts/47/8/2", date="2013-07-18")
+        new_version.select(
+            "Any such person issued a notice to remedy under subsection 1 must"
+        )
+        old_version.select("obtain a beardcoin")
+        combined = new_version + old_version
+        assert combined.selected_text().endswith("must...obtain a beardcoin...")
+
     def test_add_overlapping_enactments(self, fourth_a):
         schema = EnactmentSchema()
         search = schema.load(fourth_a)
