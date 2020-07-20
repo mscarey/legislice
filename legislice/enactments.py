@@ -445,12 +445,18 @@ class Enactment(LinkedEnactment):
         new_selection = self.selection + added_selection
         self._selection = new_selection
 
+    def select_more_text_in_current_branch(
+        self, added_selection: TextPositionSet
+    ) -> None:
+        new_selection = self.tree_selection() + added_selection
+        self.select_from_text_positions(new_selection)
+
     def _update_text_at_included_node(self, other: Enactment) -> Tuple[bool, bool]:
         """Recursively search child nodes for one that can be updated by `other`."""
         if self.node == other.node:
             found_node = True
             if self.text == other.text:
-                self.select_more_text_at_current_node(other.selection)
+                self.select_more_text_in_current_branch(other.selection)
                 updated_selection = True
             else:
                 try:
@@ -547,8 +553,7 @@ class Enactment(LinkedEnactment):
                     f"Incoming text selection {quote_selector} cannot be placed because it "
                     f"is not unique in the provision text."
                 )
-        # TODO: should be recursive, using select_from_text_positions?
-        self.select_more_text_at_current_node(
+        self.select_more_text_in_current_branch(
             TextPositionSet(incoming_position_selectors)
         )
 

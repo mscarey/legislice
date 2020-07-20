@@ -526,6 +526,7 @@ class TestAddEnactments:
 
     @pytest.mark.vcr()
     def test_add_selection_from_changed_node_and_subnode(self):
+        """Test that text that has changed subsections can still be added."""
         old_version = self.client.read("/test/acts/47/8/2", date="1935-04-01")
         new_version = self.client.read("/test/acts/47/8/2", date="2013-07-18")
         new_version.select(
