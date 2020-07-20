@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from datetime import date
 from typing import Sequence, List, Optional, Text, Tuple, Union
 
@@ -490,13 +491,17 @@ class Enactment(LinkedEnactment):
         return self
 
     def __add__(self, other: Enactment):
+
         if not isinstance(other, self.__class__):
             raise TypeError
 
         if other.node.startswith(self.node):
-            return self._add_enactment_at_included_node(other)
+            copy_of_self = deepcopy(self)
+            return copy_of_self._add_enactment_at_included_node(other)
         elif self.node.startswith(other.node):
-            return other._add_enactment_at_included_node(self)
+            copy_of_other = deepcopy(other)
+            return copy_of_other._add_enactment_at_included_node(self)
+
         raise ValueError(
             "Can't add selected text from two different Enactments "
             "when neither is a descendant of the other."

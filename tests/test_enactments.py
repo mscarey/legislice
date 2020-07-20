@@ -535,6 +535,8 @@ class TestAddEnactments:
         old_version.select("obtain a beardcoin")
         combined = new_version + old_version
         assert combined.selected_text().endswith("must...obtain a beardcoin...")
+        # Test that original Enactments unchanged
+        assert "obtain a beardcoin" not in new_version.selected_text()
 
     def test_add_overlapping_enactments(self, fourth_a):
         schema = EnactmentSchema()
@@ -554,6 +556,8 @@ class TestAddEnactments:
             + "and no Warrants shall issue,"
         )
         assert passage in combined.text
+        # Test that original Enactments unchanged
+        assert "and no Warrants" not in search.selected_text()
 
     def test_get_recursive_selection(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
@@ -611,6 +615,12 @@ class TestAddEnactments:
             "Any such person issued a notice to remedy under subsection 1 must..."
             "remove the beard with a laser..."
         )
+        # original Enactments should be unchanged
+        assert (
+            parent_version.selected_text()
+            == "Any such person issued a notice to remedy under subsection 1 must..."
+        )
+        assert child_version.selected_text() == "remove the beard with a laser..."
 
     @pytest.mark.vcr()
     def test_fail_to_add_repeated_text_from_changed_version(self):
@@ -693,11 +703,10 @@ class TestAddEnactments:
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
 
-        new_child = new_version.children[0] + old_version.children[0]
-        assert (
-            new_child.selected_text()
-            == "...Department of Beards...Australian Federal Police..."
+        new_version.children[0].select_more_text_from_changed_version(
+            old_version.children[0]
         )
+
         assert (
             new_version.selected_text()
             == "...Department of Beards...Australian Federal Police..."
