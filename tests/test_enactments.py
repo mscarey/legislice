@@ -543,6 +543,24 @@ class TestAddEnactments:
         )
         assert passage in combined.text
 
+    def test_get_recursive_selection(self):
+        old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
+        old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        old_version.select(old_selector)
+        old_version.children[4].select(
+            "obtain a beardcoin from the Department of Beards"
+        )
+        selector_set = old_version.tree_selection()
+        ranges = selector_set.ranges()
+        assert ranges[0].start == 0
+        assert ranges[0].end == 65
+
+        assert ranges[1].start == 218
+        assert ranges[1].end == 266
+
+        as_quotes = selector_set.as_quotes(old_version.text)
+        assert as_quotes[1].exact == "obtain a beardcoin from the Department of Beards"
+
     def test_add_selection_from_child_node(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)

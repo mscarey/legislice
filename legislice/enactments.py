@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Sequence, List, Optional, Tuple, Union
+from typing import Sequence, List, Optional, Text, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
@@ -418,6 +418,27 @@ class Enactment(LinkedEnactment):
         joined = " ".join(text_parts)
         return joined.strip()
 
+    def _tree_selection(
+        self, selector_set: TextPositionSet, tree_length: int
+    ) -> Tuple[TextPositionSet, int]:
+        selectors_at_node = self.selection
+        selectors_at_node_with_offset = selectors_at_node + tree_length
+        new_tree_length = tree_length + self.padded_length
+        new_selector_set = selector_set + selectors_at_node_with_offset
+
+        for child in self.children:
+            new_selector_set, new_tree_length = child._tree_selection(
+                selector_set=new_selector_set, tree_length=new_tree_length
+            )
+
+        return new_selector_set, new_tree_length
+
+    def tree_selection(self) -> TextPositionSet:
+        new_selector_set, new_tree_length = self._tree_selection(
+            selector_set=TextPositionSet(), tree_length=0
+        )
+        return new_selector_set
+
     def select_more_text_at_current_node(
         self, added_selection: TextPositionSet
     ) -> None:
@@ -508,9 +529,9 @@ class Enactment(LinkedEnactment):
             or for `other` to have the same node attribute as an ancestor of self.
         """
         # TODO: should translate selectors using other.text, not other.content
-        # TODO: should use recursive_selectors, not just selectors at current node
         incoming_quote_selectors = [
-            selector.as_quote_selector(other.content) for selector in other.selection
+            selector.as_quote_selector(other.content)
+            for selector in other.tree_selection
         ]
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:
