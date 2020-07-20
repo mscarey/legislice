@@ -597,6 +597,22 @@ class TestAddEnactments:
         )
 
     @pytest.mark.vcr()
+    def test_add_selection_from_parent_node(self):
+        parent_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
+        child_version = self.client.read("/test/acts/47/8/2/c", date="2015-01-01")
+
+        parent_version.select(
+            "Any such person issued a notice to remedy under subsection 1 must"
+        )
+        child_version.select("remove the beard with a laser")
+
+        combined = child_version + parent_version
+        assert combined.selected_text() == (
+            "Any such person issued a notice to remedy under subsection 1 must..."
+            "remove the beard with a laser..."
+        )
+
+    @pytest.mark.vcr()
     def test_fail_to_add_repeated_text_from_changed_version(self):
         """Fail to place selection because "Department of Beards" occurs twice in this scope."""
         new_version = self.client.read("/test/acts/47/8")
@@ -613,6 +629,31 @@ class TestAddEnactments:
 
         with pytest.raises(ValueError):
             _ = new_version + old_version
+
+    @pytest.mark.vcr()
+    def test_fail_to_add_non_parent_or_child_enactment(self):
+        left = self.client.read("/test/acts/47/1")
+        right = self.client.read("/test/acts/47/2")
+        with pytest.raises(ValueError):
+            _ = left + right
+
+    @pytest.mark.vcr()
+    def test_fail_to_add_text_not_in_this_version(self):
+        """Fail to add selection from new version because it isn't in the old version."""
+        old_version = self.client.read("/test/acts/47/8", date="1935-04-01")
+        new_version = self.client.read("/test/acts/47/8")
+
+        new_version.select(
+            TextQuoteSelector(
+                prefix="Department of Beards, ", exact="Australian Federal Police"
+            )
+        )
+        old_version.select(
+            "Any such person issued a notice to remedy under subsection 1 must"
+        )
+        new_version.select("remove the beard with a laser")
+        with pytest.raises(ValueError):
+            _ = old_version + new_version
 
     @pytest.mark.vcr()
     @pytest.mark.xfail()
