@@ -71,6 +71,15 @@ class TestMakeEnactment:
         )
 
 
+class TestLinkedEnactment:
+    client = Client(api_token=TOKEN)
+
+    @pytest.mark.vcr()
+    def test_text_sequence_for_linked_enactment(self):
+        enactment = self.client.read(path="/test", date="2020-01-01")
+        assert "for documentation." in enactment.text_sequence()[0].text
+
+
 class TestEnactmentDetails:
     client = Client(api_token=TOKEN)
 
@@ -91,6 +100,7 @@ class TestEnactmentDetails:
         assert enactment.start_date == date(1791, 12, 15)
         assert "secure in their persons..." in str(enactment)
         assert enactment.node in str(enactment)
+        assert enactment.source == enactment.node
         assert "1791-12-15" in str(enactment)
 
     @pytest.mark.vcr()
@@ -484,6 +494,22 @@ class TestCompareEnactment:
 class TestAddEnactments:
     client = Client(api_token=TOKEN)
 
+    @pytest.mark.vcr()
+    def test_add_subset_enactment(self):
+        """Test that adding an included Enactment returns the same Enactment."""
+        greater = self.client.read(path="/test/acts/47/8/2")
+        lesser = self.client.read(path="/test/acts/47/8/2/a")
+        combined = greater + lesser
+        assert combined.means(greater)
+
+    @pytest.mark.vcr()
+    def test_add_superset_enactment(self):
+        """Test that adding an included Enactment returns the same Enactment."""
+        greater = self.client.read(path="/test/acts/47/8/2")
+        lesser = self.client.read(path="/test/acts/47/8/2/a")
+        combined = lesser + greater
+        assert combined.means(greater)
+
     def test_add_overlapping_text_selection(self, fourth_a):
         schema = EnactmentSchema()
         search = schema.load(fourth_a)
@@ -662,6 +688,14 @@ class TestAddEnactments:
             "Any such person issued a notice to remedy under subsection 1 must"
         )
         new_version.select("remove the beard with a laser")
+        with pytest.raises(ValueError):
+            _ = old_version + new_version
+
+    @pytest.mark.vcr()
+    def test_fail_to_add_node_not_in_this_version(self):
+        """Fail to add new selection because its node isn't in the old version."""
+        old_version = self.client.read("/test/acts/47/8/2", date="1935-04-01")
+        new_version = self.client.read("/test/acts/47/8/2/c")
         with pytest.raises(ValueError):
             _ = old_version + new_version
 
