@@ -79,6 +79,12 @@ class TestLinkedEnactment:
         enactment = self.client.read(path="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
 
+    @pytest.mark.vcr()
+    def test_select_text_in_linked_enactment(self):
+        enactment = self.client.read(path="/test", date="2020-01-01")
+        enactment.select("for documentation.")
+        assert enactment.selected_text() == "...for documentation."
+
 
 class TestEnactmentDetails:
     client = Client(api_token=TOKEN)

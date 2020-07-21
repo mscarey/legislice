@@ -274,6 +274,7 @@ class LinkedEnactment:
         self,
         selection: Union[
             bool,
+            str,
             TextPositionSelector,
             TextPositionSet,
             TextQuoteSelector,
