@@ -448,9 +448,10 @@ class Enactment(LinkedEnactment):
 
     def select_more_text_in_current_branch(
         self, added_selection: TextPositionSet
-    ) -> None:
+    ) -> TextPositionSet:
         new_selection = self.tree_selection() + added_selection
-        self.select_from_text_positions(new_selection)
+        unused_selectors = self.select_from_text_positions(new_selection)
+        return unused_selectors
 
     def _update_text_at_included_node(self, other: Enactment) -> Tuple[bool, bool]:
         """Recursively search child nodes for one that can be updated by `other`."""
@@ -476,7 +477,10 @@ class Enactment(LinkedEnactment):
         if self >= other:
             return self
 
-        found_node, updated_selection = self._update_text_at_included_node(other)
+        copy_of_self = deepcopy(self)
+        found_node, updated_selection = copy_of_self._update_text_at_included_node(
+            other
+        )
         if not found_node:
             raise ValueError(
                 f"Unable to find node {other.node} (dated {other.start_date}) "
@@ -488,19 +492,19 @@ class Enactment(LinkedEnactment):
                 f"(dated {other.start_date}) "
                 f"at the citation {other.node} (dated {self.start_date})."
             )
-        return self
+        return copy_of_self
 
     def __add__(self, other: Enactment):
 
         if not isinstance(other, self.__class__):
-            raise TypeError
+            copy_of_self = deepcopy(self)
+            copy_of_self.select_more(other)
+            return copy_of_self
 
         if other.node.startswith(self.node):
-            copy_of_self = deepcopy(self)
-            return copy_of_self._add_enactment_at_included_node(other)
+            return self._add_enactment_at_included_node(other)
         elif self.node.startswith(other.node):
-            copy_of_other = deepcopy(other)
-            return copy_of_other._add_enactment_at_included_node(self)
+            return other._add_enactment_at_included_node(self)
 
         raise ValueError(
             "Can't add selected text from two different Enactments "
@@ -561,6 +565,24 @@ class Enactment(LinkedEnactment):
         self.select_more_text_in_current_branch(
             TextPositionSet(incoming_position_selectors)
         )
+
+    def select_more(
+        self,
+        selection: Union[
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> None:
+        """
+        Select text, in addition to any previous selection.
+        """
+        if not isinstance(selection, TextPositionSet):
+            selection = self.convert_selection_to_set(selection)
+        unused_selectors = self.select_more_text_in_current_branch(selection)
+        self.raise_error_for_extra_selector(unused_selectors)
 
     def select(
         self,

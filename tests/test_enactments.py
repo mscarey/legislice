@@ -711,3 +711,14 @@ class TestAddEnactments:
             new_version.selected_text()
             == "...Department of Beards...Australian Federal Police..."
         )
+
+    def test_add_string_as_selector(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        section = schema.load(section_11_subdivided)
+        section.select("The Department of Beards may issue licenses to such")
+        more = section + "hairdressers"
+        assert (
+            more.selected_text()
+            == "The Department of Beards may issue licenses to such...hairdressers..."
+        )
+
