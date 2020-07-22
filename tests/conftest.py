@@ -152,3 +152,31 @@ def fourth_a():
         "url": "https://authorityspoke.com/api/v1/us/const/amendment/IV/",
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
     }
+
+
+@pytest.fixture(scope="module")
+def fifth_a():
+    return {
+        "heading": "AMENDMENT V.",
+        "content": "No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any Criminal Case to be a witness against himself; nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation.",
+        "children": [],
+        "end_date": None,
+        "node": "/us/const/amendment/V",
+        "start_date": "1791-12-15",
+        "url": "https://authorityspoke.com/api/v1/us/const/amendment/V/",
+        "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+    }
+
+
+@pytest.fixture(scope="module")
+def fourteenth_dp():
+    return {
+        "heading": "Citizenship: security and equal protection of citizens.",
+        "content": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside. No State shall make or enforce any law which shall abridge the privileges or immunities of citizens of the United States; nor shall any State deprive any person of life, liberty, or property, without due process of law; nor deny to any person within its jurisdiction the equal protection of the laws.",
+        "children": [],
+        "end_date": None,
+        "node": "/us/const/amendment/IV",
+        "start_date": "1868-07-28",
+        "url": "https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/",
+        "parent": "https://authorityspoke.com/api/v1/us/const/amendment/XIV/",
+    }

@@ -784,6 +784,8 @@ class TestAddEnactments:
 class TestConsolidateEnactments:
     """Test function for combining a list of Enactments."""
 
+    client = Client(api_token=TOKEN)
+
     def test_consolidate_enactments(self, fourth_a):
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
@@ -801,3 +803,42 @@ class TestConsolidateEnactments:
         assert len(consolidated) == 1
         assert consolidated[0].means(fourth)
 
+    @pytest.mark.vcr()
+    def test_consolidate_adjacent_passages(self):
+        copyright_clause = self.client.read("/us/const/article/I/8/8")
+        copyright_statute = self.client.read("/us/usc/t17/s102/b")
+
+        copyright_clause.select(None)
+        securing_for_authors = copyright_clause + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        and_inventors = copyright_clause + "and Inventors"
+        right_to_writings = (
+            copyright_clause + "the exclusive Right to their respective Writings"
+        )
+        to_combine = [
+            copyright_statute,
+            securing_for_authors,
+            and_inventors,
+            right_to_writings,
+        ]
+        combined = consolidate_enactments(to_combine)
+        assert len(combined) == 2
+        assert any(
+            law.selected_text().startswith("To promote the Progress")
+            and law.selected_text().endswith("their respective Writings...")
+            for law in combined
+        )
+
+    def test_do_not_consolidate_from_different_sections(self, fifth_a, fourteenth_dp):
+        schema = EnactmentSchema()
+
+        due_process_5 = schema.load(fifth_a)
+        due_process_14 = schema.load(fourteenth_dp)
+
+        due_process_5.select("life, liberty, or property, without due process of law")
+        due_process_14.select("life, liberty, or property, without due process of law")
+
+        combined = consolidate_enactments([due_process_5, due_process_14])
+        assert len(combined) == 2

@@ -207,6 +207,9 @@ class LinkedEnactment:
         text_sequence = self.text_sequence()
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
+
     def selected_text(self) -> str:
         return str(self.text_sequence())
 
