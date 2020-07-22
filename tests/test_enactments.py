@@ -501,7 +501,7 @@ class TestAddEnactments:
     client = Client(api_token=TOKEN)
 
     @pytest.mark.vcr()
-    def test_add_subset_enactment(self):
+    def test_add_subset_nested_enactment(self):
         """Test that adding an included Enactment returns the same Enactment."""
         greater = self.client.read(path="/test/acts/47/8/2")
         lesser = self.client.read(path="/test/acts/47/8/2/a")
@@ -509,12 +509,41 @@ class TestAddEnactments:
         assert combined.means(greater)
 
     @pytest.mark.vcr()
-    def test_add_superset_enactment(self):
+    def test_add_superset_nested_enactment(self):
         """Test that adding an included Enactment returns the same Enactment."""
         greater = self.client.read(path="/test/acts/47/8/2")
         lesser = self.client.read(path="/test/acts/47/8/2/a")
         combined = lesser + greater
         assert combined.means(greater)
+
+    @pytest.mark.vcr()
+    def test_add_shorter_plus_longer(self):
+        fourth_a = self.client.fetch(path="/us/const/amendment/IV")
+        search_clause = fourth_a.copy()
+        search_clause["selection"] = [{"suffix": ", and no Warrants"}]
+
+        schema = EnactmentSchema()
+
+        fourth_a = schema.load(fourth_a)
+        search_clause = schema.load(search_clause)
+
+        greater_plus_lesser = search_clause + fourth_a
+
+        assert greater_plus_lesser.text == fourth_a.text
+        assert greater_plus_lesser.means(fourth_a)
+
+        lesser_plus_greater = fourth_a + search_clause
+        assert lesser_plus_greater.text == fourth_a.text
+        assert lesser_plus_greater.means(fourth_a)
+
+    def test_add_longer_plus_shorter(self, make_enactment):
+        search_clause = make_enactment["search_clause"]
+        fourth_a = make_enactment["fourth_a"]
+
+        combined = fourth_a + search_clause
+
+        assert combined.text == fourth_a.text
+        assert combined == fourth_a
 
     def test_add_overlapping_text_selection(self, fourth_a):
         schema = EnactmentSchema()
