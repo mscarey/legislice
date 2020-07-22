@@ -2,7 +2,7 @@ from datetime import date
 import os
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.textselectors import TextPositionSet
+from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
 
@@ -330,7 +330,7 @@ class TestSelectFromEnactment:
             {"exact": "text that doesn't exist in the code"}
         ]
         schema = EnactmentSchema()
-        with pytest.raises(ValueError):
+        with pytest.raises(TextSelectionError):
             _ = schema.load(section_11_subdivided)
 
     def test_select_text_with_string(self, fourth_a):
@@ -566,6 +566,12 @@ class TestAddEnactments:
             "shall not be violated..."
         )
 
+    def test_select_unavailable_text(self, fourth_a):
+        schema = EnactmentSchema()
+        fourth = schema.load(fourth_a)
+        with pytest.raises(TextSelectionError):
+            fourth.select("right to privacy")
+
     @pytest.mark.vcr()
     def test_add_selection_from_changed_section(self):
         old_version = self.client.read("/test/acts/47/6D/1", date="1935-04-01")
@@ -715,7 +721,7 @@ class TestAddEnactments:
             "Any such person issued a notice to remedy under subsection 1 must"
         )
         new_version.select("remove the beard with a laser")
-        with pytest.raises(ValueError):
+        with pytest.raises(TextSelectionError):
             _ = old_version + new_version
 
     @pytest.mark.vcr()
