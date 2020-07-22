@@ -1,12 +1,20 @@
+import os
+
 from anchorpoint.textselectors import TextPositionSelector
+from dotenv import load_dotenv
 from marshmallow import ValidationError
 import pytest
 
+from legislice.download import Client
 from legislice.schemas import (
     EnactmentSchema,
     LinkedEnactmentSchema,
     SelectorSchema,
 )
+
+load_dotenv()
+
+TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 
 class TestLoadSelector:
@@ -88,3 +96,19 @@ class TestLoadLinkedEnactment:
         }
         result = schema.load(data)
         assert result.children[0] == "https://authorityspoke.com/api/v1/us/const/"
+
+
+class TestDumpEnactment:
+
+    client = Client(api_token=TOKEN)
+
+    @pytest.mark.vcr()
+    def test_dump_enactment_with_selector_to_dict(self):
+        copyright_clause = self.client.read("/us/const/article/I/8/8")
+        copyright_clause.select("Science and useful Arts")
+
+        schema = EnactmentSchema()
+        dumped = schema.dump(copyright_clause)
+        selection = dumped["selection"][0]
+        quote = dumped["content"][selection["start"] : selection["end"]]
+        assert quote == "Science and useful Arts"

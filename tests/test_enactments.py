@@ -339,6 +339,7 @@ class TestSelectFromEnactment:
         fourth_a.select("The right of the people")
         assert fourth_a.selected_text() == "The right of the people..."
 
+    @pytest.mark.vcr()
     def test_select_method_clears_previous_selection(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
@@ -609,6 +610,7 @@ class TestAddEnactments:
         # Test that original Enactments unchanged
         assert "and no Warrants" not in search.selected_text()
 
+    @pytest.mark.vcr()
     def test_get_recursive_selection(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
@@ -627,6 +629,7 @@ class TestAddEnactments:
         as_quotes = selector_set.as_quotes(old_version.text)
         assert as_quotes[1].exact == "obtain a beardcoin from the Department of Beards"
 
+    @pytest.mark.vcr()
     def test_add_selection_from_child_node(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
@@ -842,3 +845,4 @@ class TestConsolidateEnactments:
 
         combined = consolidate_enactments([due_process_5, due_process_14])
         assert len(combined) == 2
+
