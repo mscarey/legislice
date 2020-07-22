@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import pytest
 
 from legislice.download import Client
-from legislice.enactments import Enactment
+from legislice.enactments import Enactment, consolidate_enactments
 from legislice.schemas import EnactmentSchema
 
 load_dotenv()
@@ -516,9 +516,7 @@ class TestAddEnactments:
         combined = lesser + greater
         assert combined.means(greater)
 
-    @pytest.mark.vcr()
-    def test_add_shorter_plus_longer(self):
-        fourth_a = self.client.fetch(path="/us/const/amendment/IV")
+    def test_add_shorter_plus_longer(self, fourth_a):
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
 
@@ -535,15 +533,6 @@ class TestAddEnactments:
         lesser_plus_greater = fourth_a + search_clause
         assert lesser_plus_greater.text == fourth_a.text
         assert lesser_plus_greater.means(fourth_a)
-
-    def test_add_longer_plus_shorter(self, make_enactment):
-        search_clause = make_enactment["search_clause"]
-        fourth_a = make_enactment["fourth_a"]
-
-        combined = fourth_a + search_clause
-
-        assert combined.text == fourth_a.text
-        assert combined == fourth_a
 
     def test_add_overlapping_text_selection(self, fourth_a):
         schema = EnactmentSchema()
@@ -790,4 +779,25 @@ class TestAddEnactments:
             more.selected_text()
             == "The Department of Beards may issue licenses to such...hairdressers..."
         )
+
+
+class TestConsolidateEnactments:
+    """Test function for combining a list of Enactments."""
+
+    def test_consolidate_enactments(self, fourth_a):
+        search_clause = fourth_a.copy()
+        search_clause["selection"] = [{"suffix": ", and no Warrants"}]
+
+        warrants_clause = fourth_a.copy()
+        warrants_clause["selection"] = [{"prefix": "shall not be violated,"}]
+
+        schema = EnactmentSchema()
+
+        fourth = schema.load(fourth_a)
+        search = schema.load(search_clause)
+        warrants = schema.load(warrants_clause)
+
+        consolidated = consolidate_enactments([fourth, search, warrants])
+        assert len(consolidated) == 1
+        assert consolidated[0].means(fourth)
 

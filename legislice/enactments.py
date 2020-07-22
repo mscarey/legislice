@@ -670,3 +670,32 @@ class Enactment(LinkedEnactment):
         if self.means(other):
             return False
         return self >= other
+
+
+def consolidate_enactments(enactments: List[Enactment]) -> List[Enactment]:
+    r"""
+    Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.
+
+    :param enactments:
+        a list of :class:`Enactment`\s that may include overlapping
+        legislative text within the same section
+
+    :returns:
+        a list of :class:`Enactment`\s without overlapping text
+    """
+    consolidated: List[Enactment] = []
+    while enactments:
+        match_made = False
+        left = enactments.pop()
+        for right in enactments:
+            try:
+                combined = left + right
+                enactments.remove(right)
+                enactments.append(combined)
+                match_made = True
+                break
+            except ValueError:
+                pass
+        if match_made is False:
+            consolidated.append(left)
+    return consolidated
