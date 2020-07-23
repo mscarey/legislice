@@ -129,6 +129,9 @@ class LinkedEnactment:
 
     :param selector:
         identifier for the part of the provision being cited
+
+    :param name:
+        a user-assigned label for the object
     """
 
     def __init__(
@@ -140,6 +143,7 @@ class LinkedEnactment:
         end_date: Optional[date] = None,
         children: List[str] = None,
         selection: Union[bool, List[TextPositionSelector]] = True,
+        name: str = "",
     ):
         self.node = node
         self._content = content
@@ -154,6 +158,7 @@ class LinkedEnactment:
 
         if selection is not None:
             self.select_without_children(selection)
+        self.name = name
 
     @property
     def source(self):
