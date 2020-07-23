@@ -156,6 +156,10 @@ class LinkedEnactment:
             self.select_without_children(selection)
 
     @property
+    def source(self):
+        return self.node
+
+    @property
     def heading(self):
         return self._heading
 
@@ -187,6 +191,10 @@ class LinkedEnactment:
     def sovereign(self):
         identifier_parts = self.node.split("/")
         return identifier_parts[1]
+
+    @property
+    def jurisdiction(self):
+        return self.sovereign
 
     @property
     def code(self):
@@ -408,10 +416,6 @@ class Enactment(LinkedEnactment):
         if self.content:
             return len(self.content) + 1
         return 0
-
-    @property
-    def source(self):
-        return self.node
 
     @property
     def text(self):

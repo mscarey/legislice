@@ -113,6 +113,7 @@ class TestEnactmentDetails:
     def test_sovereign_representation(self):
         enactment = self.client.read(path="/us")
         assert enactment.code is None
+        assert enactment.jurisdiction == "us"
 
     @pytest.mark.vcr()
     def test_constitution_effective_date(self):
