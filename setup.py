@@ -1,11 +1,13 @@
 import setuptools
 
+import legislice
+
 with open("readme.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="legislice",
-    version="0.1.0",
+    version=legislice.__version__,
     author="Matt Carey",
     author_email="matt@authorityspoke.com",
     description="API client for fetching and comparing passages from legislation",

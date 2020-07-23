@@ -4,6 +4,7 @@
 .mypy_cache/
 .pytest*
 .vscode/
+docs/_build/
 holdings/
 old/
 prof/
