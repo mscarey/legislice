@@ -30,7 +30,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       env:
-        LEGISLICE_API_TOKEN: ${{ secrets.LEGISLICE_API_TOKEN }
+        LEGISLICE_API_TOKEN: ${{ secrets.LEGISLICE_API_TOKEN }}
       run: |
         pytest
-        
