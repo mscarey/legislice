@@ -349,6 +349,12 @@ class TestSelectFromEnactment:
             "Any such person issued a notice to remedy under subsection 1 must..."
         )
 
+    @pytest.mark.vcr()
+    def test_no_space_before_ellipsis(self):
+        enactment = self.client.read(path="/us/usc/t17/s102/b")
+        enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
+        assert " ..." not in enactment.selected_text()
+
 
 class TestCompareEnactment:
     client = Client(api_token=TOKEN)
