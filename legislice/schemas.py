@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import date
 from typing import Dict, List, Union
 
@@ -5,6 +6,7 @@ from anchorpoint.schemas import SelectorSchema
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import Enactment, LinkedEnactment
+from legislice.text_expansion import Mentioned
 
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[str, List[RawSelector]]]
@@ -77,7 +79,6 @@ class LinkedEnactmentSchema(ExpandableSchema):
 
         return self.__model__(**data)
 
-    @pre_load
     def accept_selector_outside_list(self, data, **kwargs):
         if isinstance(data.get("selection"), Dict):
             data["selection"] = [data["selection"]]
@@ -97,8 +98,8 @@ class LinkedEnactmentSchema(ExpandableSchema):
         for name in selector_field_names:
             if data.get(name):
                 if not data.get("selection"):
-                    data["selection"] = {[]}
-                data["selection"][0][name] = data[name]
+                    data["selection"] = {}
+                data["selection"][name] = data[name]
                 del data[name]
         return data
 
@@ -107,12 +108,13 @@ class LinkedEnactmentSchema(ExpandableSchema):
         """Prepare Enactment to load."""
         data = self.get_from_mentioned(data)
         data = self.move_selector_fields(data)
+        data = self.accept_selector_outside_list(data)
         data = self.consume_type_field(data)
         data = self.remove_anchors_field(data)
         return data
 
 
-class EnactmentSchema(Schema):
+class EnactmentSchema(LinkedEnactmentSchema):
     """Schema for passages from legislation."""
 
     __model__ = Enactment
@@ -126,14 +128,3 @@ class EnactmentSchema(Schema):
 
     class Meta:
         unknown = EXCLUDE
-
-    @pre_load
-    def accept_selector_outside_list(self, data, **kwargs):
-        if isinstance(data.get("selection"), Dict):
-            data["selection"] = [data["selection"]]
-        return data
-
-    @post_load
-    def make_object(self, data, **kwargs):
-
-        return self.__model__(**data)
