@@ -49,12 +49,6 @@ class EnactmentSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    @pre_load
-    def accept_selector_outside_list(self, data, **kwargs):
-        if isinstance(data.get("selection"), Dict):
-            data["selection"] = [data["selection"]]
-        return data
-
     @post_load
     def make_object(self, data, **kwargs):
 
