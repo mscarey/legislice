@@ -7,7 +7,7 @@ RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[str, List[RawSelector]]]
 
 
-class Mentioned(OrderedDict):
+class EnactmentIndex(OrderedDict):
     """Index of cross-referenced objects, keyed to phrases that reference them."""
 
     def insert_by_name(self, obj: Dict) -> None:

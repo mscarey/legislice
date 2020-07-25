@@ -3,10 +3,10 @@ from datetime import date
 from typing import Dict, List, Union
 
 from anchorpoint.schemas import SelectorSchema
-from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
+from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE, ValidationError
 
 from legislice.enactments import Enactment, LinkedEnactment
-from legislice.name_index import Mentioned, RawEnactment
+from legislice.name_index import EnactmentIndex, RawEnactment
 
 
 class ExpandableSchema(Schema):
@@ -15,7 +15,7 @@ class ExpandableSchema(Schema):
     def get_from_mentioned(self, data, **kwargs):
         """Replace data to load with any object with same name in "mentioned"."""
         if isinstance(data, str):
-            mentioned = self.context.get("mentioned") or Mentioned()
+            mentioned = self.context.get("mentioned") or EnactmentIndex()
             return deepcopy(mentioned.get_by_name(data))
         return data
 
