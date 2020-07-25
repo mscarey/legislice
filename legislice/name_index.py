@@ -96,7 +96,7 @@ def create_name_for_enactment(obj: RawEnactment) -> str:
 
     for field_name in ["start", "end", "prefix", "exact", "suffix"]:
         if obj.get(field_name):
-            name += f":{field_name}={obj[field_name]}"
+            name += f':{field_name}="{obj[field_name]}"'
     return name
 
 

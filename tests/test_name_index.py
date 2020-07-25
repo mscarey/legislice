@@ -80,3 +80,12 @@ class TestCollectEnactments:
         mentioned_entry = mentioned.get_by_name("5a")
         enactment = schema.load(mentioned_entry)
         assert enactment.start_date == date(1791, 12, 15)
+
+    def test_collect_enactments_from_dict(self):
+        obj, mentioned = collect_enactments(self.example_rules)
+        assert mentioned["beard means"]["node"] == "/test/acts/47/4"
+
+    def test_replace_enactment_in_source_with_name(self):
+        example_rules, mentioned = collect_enactments(self.example_rules)
+        assert example_rules[0]["enactments"][0] == "beard means"
+        assert example_rules[0]["enactments"][1] == '/test/acts/47/4/a:suffix=", or"'
