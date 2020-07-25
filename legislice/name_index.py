@@ -135,7 +135,7 @@ def collect_enactments(
                     obj[key] = new_value
         if obj.get("source"):
             obj["node"] = obj.pop("source")
-        if obj.get("node"):
+        if obj.get("node") or obj.get("name") in mentioned.keys():
             obj = ensure_enactment_has_name(obj)
             obj, mentioned = update_name_index_with_enactment(obj, mentioned)
     return obj, mentioned

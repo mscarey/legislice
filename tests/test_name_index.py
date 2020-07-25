@@ -42,6 +42,11 @@ class TestCollectEnactments:
                     "name": "beard means",
                 },
                 {"node": "/test/acts/47/4/a", "suffix": ", or"},
+                {
+                    "node": "/test/acts/47/4/b",
+                    "name": "ear rule",
+                    "anchors": [{"start": 10, "end": 20}, {"start": 40, "end": 50}],
+                },
             ],
             "universal": True,
         },
@@ -64,7 +69,10 @@ class TestCollectEnactments:
                     "name": "the fact that the facial hair was a beard",
                 }
             ],
-            "enactments": ["beard means", {"node": "/test/acts/47/4/b"}],
+            "enactments": [
+                "beard means",
+                {"name": "ear rule", "anchors": [{"start": 100, "end": 150}]},
+            ],
             "universal": True,
         },
     ]
@@ -89,3 +97,9 @@ class TestCollectEnactments:
         example_rules, mentioned = collect_enactments(self.example_rules)
         assert example_rules[0]["enactments"][0] == "beard means"
         assert example_rules[0]["enactments"][1] == '/test/acts/47/4/a:suffix=", or"'
+
+    def test_collect_enactment_anchors_from_dict(self):
+        """Anchors for this Enactment are collected in two different places."""
+        example_rules, mentioned = collect_enactments(self.example_rules)
+        assert mentioned["ear rule"]["anchors"][0]["start"] == 10
+        assert mentioned["ear rule"]["anchors"][2]["start"] == 100
