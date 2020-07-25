@@ -126,18 +126,21 @@ def collect_enactments(
             new_list.append(new_item)
         obj = new_list
     if isinstance(obj, Dict):
-
+        new_dict = {}
         for key, value in obj.items():
-            if key not in keys_to_ignore:
-                if isinstance(value, (Dict, List)):
-                    new_value, new_mentioned = collect_enactments(value, mentioned)
-                    mentioned.update(new_mentioned)
-                    obj[key] = new_value
-        if obj.get("source"):
-            obj["node"] = obj.pop("source")
-        if obj.get("node") or obj.get("name") in mentioned.keys():
-            obj = ensure_enactment_has_name(obj)
-            obj, mentioned = update_name_index_with_enactment(obj, mentioned)
+            if key not in keys_to_ignore and isinstance(value, (Dict, List)):
+                new_value, new_mentioned = collect_enactments(value, mentioned)
+                mentioned.update(new_mentioned)
+                new_dict[key] = new_value
+            else:
+                new_dict[key] = value
+
+        if new_dict.get("source"):
+            new_dict["node"] = new_dict.pop("source")
+        if new_dict.get("node") or (new_dict.get("name") in mentioned.keys()):
+            new_dict = ensure_enactment_has_name(new_dict)
+            new_dict, mentioned = update_name_index_with_enactment(new_dict, mentioned)
+        obj = new_dict
     return obj, mentioned
 
 
