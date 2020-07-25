@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 RawSelector = Union[str, Dict[str, str]]
-RawEnactment = Dict[str, Union[str, List[RawSelector]]]
+RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
+RawPredicate = Dict[str, Union[str, bool]]
+RawFactor = Dict[str, Union[RawPredicate, Sequence[Any], str, bool]]
 
 
 class EnactmentIndex(OrderedDict):
@@ -84,3 +86,35 @@ class EnactmentIndex(OrderedDict):
                 self.insert_by_name(obj)
         return None
 
+
+def collect_mentioned(
+    obj: Union[RawFactor, List[Union[RawFactor, str]]],
+    mentioned: Optional[EnactmentIndex] = None,
+    keys_to_ignore: Sequence[str] = ("predicate", "anchors"),
+) -> Tuple[RawFactor, EnactmentIndex]:
+    """
+    Make a dict of all nested objects labeled by name, creating names if needed.
+    To be used during loading to expand name references to full objects.
+    """
+    mentioned = mentioned or EnactmentIndex()
+    if isinstance(obj, List):
+        new_list = []
+        for item in obj:
+            new_item, new_mentioned = collect_mentioned(item, mentioned)
+            mentioned.update(new_mentioned)
+            new_list.append(new_item)
+        obj = new_list
+    if isinstance(obj, Dict):
+
+        obj, mentioned = update_name_index_from_fact_content(obj, mentioned)
+
+        for key, value in obj.items():
+            if key not in keys_to_ignore:
+                if isinstance(value, (Dict, List)):
+                    new_value, new_mentioned = collect_mentioned(value, mentioned)
+                    mentioned.update(new_mentioned)
+                    obj[key] = new_value
+        obj = ensure_factor_has_name(obj)
+
+        obj, mentioned = update_name_index_with_factor(obj, mentioned)
+    return obj, mentioned
