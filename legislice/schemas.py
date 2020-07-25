@@ -6,10 +6,7 @@ from anchorpoint.schemas import SelectorSchema
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import Enactment, LinkedEnactment
-from legislice.text_expansion import Mentioned
-
-RawSelector = Union[str, Dict[str, str]]
-RawEnactment = Dict[str, Union[str, List[RawSelector]]]
+from legislice.name_index import Mentioned, RawEnactment
 
 
 class ExpandableSchema(Schema):

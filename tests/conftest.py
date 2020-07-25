@@ -3,8 +3,6 @@ from typing import Dict
 from anchorpoint import TextQuoteSelector
 import pytest
 
-from legislice.schemas import Enactment, EnactmentSchema
-
 
 @pytest.fixture(scope="class")
 def section6d():
