@@ -87,7 +87,28 @@ class EnactmentIndex(OrderedDict):
         return None
 
 
-def collect_mentioned(
+def create_name_for_enactment(obj: RawEnactment) -> str:
+    name: str = obj["node"]
+    if obj.get("start_date"):
+        name += f'@{obj["start_date"]}'
+    if obj.get("start_date"):
+        name += f'@{obj["start_date"]}'
+
+    for field_name in ["start", "end", "prefix", "exact", "suffix"]:
+        if obj.get(field_name):
+            name += f":{field_name}={obj[field_name]}"
+    return name
+
+
+def ensure_enactment_has_name(obj: RawEnactment) -> RawEnactment:
+    if not obj.get("name"):
+        new_name = create_name_for_enactment(obj)
+        if new_name:
+            obj["name"] = new_name
+    return obj
+
+
+def collect_enactments(
     obj: Union[RawFactor, List[Union[RawFactor, str]]],
     mentioned: Optional[EnactmentIndex] = None,
     keys_to_ignore: Sequence[str] = ("predicate", "anchors"),
@@ -100,21 +121,49 @@ def collect_mentioned(
     if isinstance(obj, List):
         new_list = []
         for item in obj:
-            new_item, new_mentioned = collect_mentioned(item, mentioned)
+            new_item, new_mentioned = collect_enactments(item, mentioned)
             mentioned.update(new_mentioned)
             new_list.append(new_item)
         obj = new_list
     if isinstance(obj, Dict):
 
-        obj, mentioned = update_name_index_from_fact_content(obj, mentioned)
-
         for key, value in obj.items():
             if key not in keys_to_ignore:
                 if isinstance(value, (Dict, List)):
-                    new_value, new_mentioned = collect_mentioned(value, mentioned)
+                    new_value, new_mentioned = collect_enactments(value, mentioned)
                     mentioned.update(new_mentioned)
                     obj[key] = new_value
-        obj = ensure_factor_has_name(obj)
+        if obj.get("source"):
+            obj["node"] = obj.pop("source")
+        if obj.get("node"):
+            obj = ensure_enactment_has_name(obj)
+            obj, mentioned = update_name_index_with_enactment(obj, mentioned)
+    return obj, mentioned
 
-        obj, mentioned = update_name_index_with_factor(obj, mentioned)
+
+def update_name_index_with_enactment(
+    obj: RawFactor, mentioned: EnactmentIndex
+) -> Tuple[Union[str, RawFactor], EnactmentIndex]:
+    r"""
+    Update index of mentioned Factors with 'obj', if obj is named.
+    If there is already an entry in the mentioned index with the same name
+    as obj, the old entry won't be replaced. But if any additional text
+    anchors are present in the new obj, the anchors will be added.
+    If obj has a name, it will be collapsed to a name reference.
+    :param obj:
+        data from JSON to be loaded as a :class:`.Factor`
+    :param mentioned:
+        :class:`.RawFactor`\s indexed by name for retrieval when loading objects
+        using a Marshmallow schema.
+    :returns:
+        both 'obj' and 'mentioned', as updated
+    """
+    if obj.get("name"):
+        if obj["name"] in mentioned:
+            if obj.get("anchors"):
+                for anchor in obj["anchors"]:
+                    mentioned[obj["name"]]["anchors"].append(anchor)
+        else:
+            mentioned.insert_by_name(obj)
+        obj = obj["name"]
     return obj, mentioned
