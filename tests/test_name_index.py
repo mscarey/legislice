@@ -126,3 +126,11 @@ class TestCollectEnactments:
         assert updated["content"].startswith("exists in an uninterrupted")
         assert updated["start_date"] == "1935-04-01"
 
+    def test_load_updated_enactment_data(self):
+        example_rules, mentioned = collect_enactments(self.example_rules)
+        updated = update_from_api(mentioned["ear rule"], client=self.client)
+        schema = EnactmentSchema()
+        enactment = schema.load(updated)
+        assert enactment.start_date == date(1935, 4, 1)
+        assert enactment.content.startswith("exists in an uninterrupted")
+        assert enactment.anchors[2]["start"] == 100
