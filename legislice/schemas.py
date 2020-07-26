@@ -29,12 +29,6 @@ class ExpandableSchema(Schema):
                 )
         return data
 
-    def remove_anchors_field(self, data, **kwargs):
-        """Remove field that may have been used to link objects to Opinion text."""
-        if data.get("anchors"):
-            del data["anchors"]
-        return data
-
     def wrap_single_element_in_list(self, data: Dict, many_element: str):
         """Make a specified field a list if it isn't already a list."""
         if data.get(many_element) is not None and not isinstance(
@@ -107,7 +101,6 @@ class LinkedEnactmentSchema(ExpandableSchema):
         data = self.move_selector_fields(data)
         data = self.accept_selector_outside_list(data)
         data = self.consume_type_field(data)
-        data = self.remove_anchors_field(data)
         return data
 
 
