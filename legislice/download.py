@@ -1,9 +1,11 @@
+from copy import deepcopy
 import datetime
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
 import requests
 
 from legislice.enactments import Enactment
+from legislice.name_index import collect_enactments
 from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema, ValidationError
 
 RawEnactment = Dict[str, Any]
@@ -80,20 +82,33 @@ class Client:
         enactment = schema.load(raw_enactment)
         return enactment
 
+    def update_enactment_if_invalid(self, data: RawEnactment) -> RawEnactment:
+        if not data.get("node"):
+            raise ValueError(
+                '"data" must contain a "node" field '
+                "with a citation path to a legislative provision, "
+                'for example "/us/const/amendment/IV"'
+            )
+        schema_class = get_schema_for_node(data["node"])
+        schema = schema_class()
+        try:
+            schema.load(data)
+        except ValidationError:
+            data_from_api = self.fetch(path=data["node"], date=data.get("start_date"))
+            new_data = {**data, **data_from_api}
+            return new_data
+        return data
 
-def update_from_api(data: RawEnactment, client: Client) -> RawEnactment:
-    if not data.get("node"):
-        raise ValueError(
-            '"data" must contain a "node" field '
-            "with a citation path to a legislative provision, "
-            'for example "/us/const/amendment/IV"'
-        )
-    schema_class = get_schema_for_node(data["node"])
-    schema = schema_class()
-    try:
-        schema.load(data)
-    except ValidationError:
-        data_from_api = client.fetch(path=data["node"], date=data.get("start_date"))
-        new_data = {**data, **data_from_api}
-        return new_data
-    return data
+    def read_from_json(self, data: List[RawEnactment]) -> List[Enactment]:
+        r"""
+        Create a new :class:`Enactment` object using imported JSON data.
+
+        If fields are missing from the JSON, they will be fetched using the API key.
+        """
+        schema = EnactmentSchema()
+        record, mentioned = collect_enactments(data)
+        for key, value in mentioned.items():
+            mentioned[key] = self.update_enactment_if_invalid(value)
+        schema.context["mentioned"] = mentioned
+        return schema.load(deepcopy(record))
+

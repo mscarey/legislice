@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import date
-from typing import Sequence, List, Optional, Text, Tuple, Union
+from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
@@ -103,6 +103,10 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
             (pair[0] is None and pair[1] is None) or pair[0].means(pair[1])
             for pair in zipped
         )
+
+
+RawSelector = Union[str, Dict[str, str]]
+RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
 
 
 class BaseEnactment:

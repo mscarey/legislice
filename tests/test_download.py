@@ -96,3 +96,19 @@ class TestDownloadAndLoad:
         definition = self.client.read(path="/test/acts/47/4")
         sequence = definition.text_sequence()
         assert str(sequence.strip()).endswith("below the nose.")
+
+
+class TestReadJSON:
+    client = Client(api_token=TOKEN)
+
+    @pytest.mark.vcr()
+    def test_collect_enactments_from_list(
+        self, section6d, section_11_subdivided, fifth_a
+    ):
+        section_11_subdivided["name"] = "s11"
+        section6d["name"] = "6c"
+        fifth_a["name"] = "5a"
+        data = [section6d, section_11_subdivided, fifth_a]
+        enactments = self.client.read_from_json(data)
+        assert enactments[0].node == "/test/acts/47/6D"
+        assert enactments[0].children[0] == "/test/acts/47/6D/1"

@@ -5,8 +5,8 @@ from typing import Dict, List, Union
 from anchorpoint.schemas import SelectorSchema
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE, ValidationError
 
-from legislice.enactments import Enactment, LinkedEnactment
-from legislice.name_index import EnactmentIndex, RawEnactment
+from legislice.enactments import Enactment, LinkedEnactment, RawEnactment
+from legislice.name_index import EnactmentIndex
 
 
 class ExpandableSchema(Schema):

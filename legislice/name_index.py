@@ -3,8 +3,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
-RawSelector = Union[str, Dict[str, str]]
-RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
+
 RawPredicate = Dict[str, Union[str, bool]]
 RawFactor = Dict[str, Union[RawPredicate, Sequence[Any], str, bool]]
 
