@@ -60,10 +60,10 @@ class LinkedEnactmentSchema(ExpandableSchema):
     """Schema for passages from legislation without the full text of child nodes."""
 
     __model__ = LinkedEnactment
-    node = fields.Url(relative=True)
-    heading = fields.Str()
-    content = fields.Str()
-    start_date = fields.Date()
+    node = fields.Url(relative=True, required=True)
+    heading = fields.Str(required=True)
+    content = fields.Str(required=True)
+    start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Url(relative=False))
     selection = fields.Nested(SelectorSchema, many=True, missing=True)
@@ -115,13 +115,7 @@ class EnactmentSchema(LinkedEnactmentSchema):
     """Schema for passages from legislation."""
 
     __model__ = Enactment
-    node = fields.Url(relative=True)
-    heading = fields.Str()
-    content = fields.Str()
-    start_date = fields.Date()
-    end_date = fields.Date(missing=None)
     children = fields.List(fields.Nested(lambda: EnactmentSchema()))
-    selection = fields.Nested(SelectorSchema, many=True, missing=True)
 
     class Meta:
         unknown = EXCLUDE

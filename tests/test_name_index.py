@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from legislice.download import update_from_api
 from legislice.name_index import EnactmentIndex, collect_enactments
 from legislice.schemas import EnactmentSchema
+import pytest
 
 from legislice.download import Client
 
@@ -115,9 +116,10 @@ class TestCollectEnactments:
         assert mentioned["ear rule"]["anchors"][0]["start"] == 10
         assert mentioned["ear rule"]["anchors"][2]["start"] == 100
 
+    @pytest.mark.vcr
     def test_update_unloaded_enactment_from_api(self):
         example_rules, mentioned = collect_enactments(self.example_rules)
-        updated = update_from_api(mentioned["ear_rule"], client=self.client)
+        updated = update_from_api(mentioned["ear rule"], client=self.client)
         assert updated["node"] == "/test/acts/47/4/b"
         assert updated["anchors"][0]["start"] == 10
         assert updated["anchors"][2]["start"] == 100
