@@ -4,13 +4,19 @@ from typing import Any, Dict, Union
 import requests
 
 from legislice.enactments import Enactment
-from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema
+from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema, ValidationError
 
 RawEnactment = Dict[str, Any]
 
 
 def normalize_path(path: str) -> str:
     return "/" + path.strip("/")
+
+
+def get_schema_for_node(path: str):
+    if path.count("/") < 4:
+        return LinkedEnactmentSchema
+    return EnactmentSchema
 
 
 class Client:
@@ -69,8 +75,25 @@ class Client:
             you will be given the version that became effective later.
         """
         raw_enactment = self.fetch(path=path, date=date)
-        if path.count("/") < 4:
-            enactment = LinkedEnactmentSchema().load(raw_enactment)
-        else:
-            enactment = EnactmentSchema().load(raw_enactment)
+        schema_class = get_schema_for_node(path)
+        schema = schema_class()
+        enactment = schema.load(raw_enactment)
         return enactment
+
+
+def update_from_api(data: RawEnactment, client: Client) -> RawEnactment:
+    if not data.get("node"):
+        raise ValueError(
+            '"data" must contain a "node" field '
+            "with a citation path to a legislative provision, "
+            'for example "/us/const/amendment/IV"'
+        )
+    schema_class = get_schema_for_node(data["node"])
+    schema = schema_class()
+    try:
+        schema.load(data)
+    except ValidationError:
+        data_from_api = client.fetch(path=data["node"], date=data.get("start_date"))
+        new_data = {**data, **data_from_api}
+        return new_data
+    return data

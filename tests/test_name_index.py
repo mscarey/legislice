@@ -1,7 +1,16 @@
 from datetime import date
+import os
 
-from legislice.schemas import EnactmentSchema
+from dotenv import load_dotenv
+from legislice.download import update_from_api
 from legislice.name_index import EnactmentIndex, collect_enactments
+from legislice.schemas import EnactmentSchema
+
+from legislice.download import Client
+
+load_dotenv()
+
+TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 
 class TestIndexEnactments:
@@ -77,6 +86,8 @@ class TestCollectEnactments:
         },
     ]
 
+    client = Client(api_token=TOKEN)
+
     def test_collect_enactments_from_list(
         self, section6d, section_11_subdivided, fifth_a
     ):
@@ -103,3 +114,13 @@ class TestCollectEnactments:
         example_rules, mentioned = collect_enactments(self.example_rules)
         assert mentioned["ear rule"]["anchors"][0]["start"] == 10
         assert mentioned["ear rule"]["anchors"][2]["start"] == 100
+
+    def test_update_unloaded_enactment_from_api(self):
+        example_rules, mentioned = collect_enactments(self.example_rules)
+        updated = update_from_api(mentioned["ear_rule"], client=self.client)
+        assert updated["node"] == "/test/acts/47/4/b"
+        assert updated["anchors"][0]["start"] == 10
+        assert updated["anchors"][2]["start"] == 100
+        assert updated["content"].startswith("exists in an uninterrupted")
+        assert updated["start_date"] == "1935-04-01"
+
