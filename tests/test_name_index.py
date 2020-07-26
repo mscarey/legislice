@@ -133,4 +133,4 @@ class TestCollectEnactments:
         enactment = schema.load(updated)
         assert enactment.start_date == date(1935, 4, 1)
         assert enactment.content.startswith("exists in an uninterrupted")
-        assert enactment.anchors[2]["start"] == 100
+        assert enactment.anchors[2].start == 100
