@@ -112,3 +112,10 @@ class TestReadJSON:
         enactments = self.client.read_from_json(data)
         assert enactments[0].node == "/test/acts/47/6D"
         assert enactments[0].children[0] == "/test/acts/47/6D/1"
+
+    @pytest.mark.vcr()
+    def test_read_linked_enactment_from_json(self):
+        data = [{"node": "/us/const"}]
+        enactments = self.client.read_from_json(data)
+        assert enactments[0].node == "/us/const"
+        assert isinstance(enactments.children[0], str)

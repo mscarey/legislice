@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
+from legislice.enactments import RawEnactment
 
 RawPredicate = Dict[str, Union[str, bool]]
 RawFactor = Dict[str, Union[RawPredicate, Sequence[Any], str, bool]]
@@ -27,24 +28,26 @@ class EnactmentIndex(OrderedDict):
         """
         if not self.get(name):
             raise ValueError(
-                f'Name "{name}" not found in the index of mentioned Factors'
+                f'Name "{name}" not found in the index of mentioned Enactments'
             )
         value = {"name": name}
         value.update(self[name])
         return value
 
-    def sorted_by_length(self) -> Mentioned:
+    def sorted_by_length(self) -> EnactmentIndex:
         """
         Sort dict items from longest to shortest.
         Used to ensure that keys nearer the start can't be substrings of later keys.
         """
-        return Mentioned(sorted(self.items(), key=lambda t: len(t[0]), reverse=True))
+        return EnactmentIndex(
+            sorted(self.items(), key=lambda t: len(t[0]), reverse=True)
+        )
 
     def __str__(self):
-        return f"Mentioned({str(dict(self))})"
+        return f"EnactmentIndex({str(dict(self))})"
 
     def __repr__(self):
-        return f"Mentioned({repr(dict(self))})"
+        return f"EnactmentIndex({repr(dict(self))})"
 
     def enactment_has_anchor(
         self, enactment_name: str, anchor: Dict[str, Union[str, int]]
@@ -88,8 +91,6 @@ class EnactmentIndex(OrderedDict):
 
 def create_name_for_enactment(obj: RawEnactment) -> str:
     name: str = obj["node"]
-    if obj.get("start_date"):
-        name += f'@{obj["start_date"]}'
     if obj.get("start_date"):
         name += f'@{obj["start_date"]}'
 
