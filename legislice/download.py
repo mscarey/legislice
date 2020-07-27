@@ -129,7 +129,7 @@ class Client:
         self, enactment_index: EnactmentIndex
     ) -> List[str]:
         need_updates = []
-        for name, record in enactment_index:
+        for name, record in enactment_index.items():
             if self.enactment_needs_api_update(record):
                 need_updates.append(name)
         return need_updates

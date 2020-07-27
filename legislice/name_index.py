@@ -111,7 +111,7 @@ def ensure_enactment_has_name(obj: RawEnactment) -> RawEnactment:
 def collect_enactments(
     obj: Union[RawFactor, List[Union[RawFactor, str]]],
     mentioned: Optional[EnactmentIndex] = None,
-    keys_to_ignore: Sequence[str] = ("predicate", "anchors"),
+    keys_to_ignore: Sequence[str] = ("predicate", "anchors", "children"),
 ) -> Tuple[RawFactor, EnactmentIndex]:
     """
     Make a dict of all nested objects labeled by name, creating names if needed.

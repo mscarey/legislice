@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import pytest
 
 from legislice.download import Client
+from legislice.name_index import collect_enactments
+
 
 load_dotenv()
 
@@ -97,25 +99,28 @@ class TestDownloadAndLoad:
         sequence = definition.text_sequence()
         assert str(sequence.strip()).endswith("below the nose.")
 
+    @pytest.mark.vcr()
+    def test_update_linked_enactment(self):
+        data = {"node": "/us/const"}
+        new = self.client.update_enactment_if_invalid(data)
+        assert new["node"] == "/us/const"
+        assert new["start_date"] == "1788-09-13"
+        assert isinstance(new["children"][0], str)
+
 
 class TestReadJSON:
     client = Client(api_token=TOKEN)
 
     @pytest.mark.vcr()
-    def test_collect_enactments_from_list(
+    def test_list_enactments_needing_updates(
         self, section6d, section_11_subdivided, fifth_a
     ):
         section_11_subdivided["name"] = "s11"
-        section6d["name"] = "6c"
+        section6d["name"] = "6d"
         fifth_a["name"] = "5a"
         data = [section6d, section_11_subdivided, fifth_a]
-        enactments = self.client.read_from_json(data)
-        assert enactments[0].node == "/test/acts/47/6D"
-        assert enactments[0].children[0] == "/test/acts/47/6D/1"
-
-    @pytest.mark.vcr()
-    def test_read_linked_enactment_from_json(self):
-        data = [{"node": "/us/const"}]
-        enactments = self.client.read_from_json(data)
-        assert enactments[0].node == "/us/const"
-        assert isinstance(enactments.children[0], str)
+        data.append({"node": "/us/const", "name": "constitution"})
+        _, enactment_index = collect_enactments(data)
+        enactment_list = self.client.list_enactments_needing_updates(enactment_index)
+        assert len(enactment_list) == 1
+        assert enactment_list[0] == "constitution"
