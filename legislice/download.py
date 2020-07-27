@@ -1,16 +1,25 @@
+from copy import deepcopy
 import datetime
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
+from marshmallow.fields import Raw
 
 import requests
 
 from legislice.enactments import Enactment
-from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema
+from legislice.name_index import EnactmentIndex, collect_enactments
+from legislice.schemas import LinkedEnactmentSchema, EnactmentSchema, ValidationError
 
 RawEnactment = Dict[str, Any]
 
 
 def normalize_path(path: str) -> str:
     return "/" + path.strip("/")
+
+
+def get_schema_for_node(path: str):
+    if path.count("/") < 4:
+        return LinkedEnactmentSchema
+    return EnactmentSchema
 
 
 class Client:
@@ -54,6 +63,17 @@ class Client:
 
         return response.json()
 
+    def read_from_json(self, data: RawEnactment) -> Enactment:
+        r"""
+        Create a new :class:`Enactment` object using imported JSON data.
+
+        If fields are missing from the JSON, they will be fetched using the API key.
+        """
+        schema_class = get_schema_for_node(data["node"])
+        schema = schema_class()
+        enactment = schema.load(data)
+        return enactment
+
     def read(self, path: str, date: Union[datetime.date, str] = "",) -> Enactment:
         """
         Fetches data from Client's assigned endpoint and builds Enactment or LinkedEnactment.
@@ -69,8 +89,54 @@ class Client:
             you will be given the version that became effective later.
         """
         raw_enactment = self.fetch(path=path, date=date)
-        if path.count("/") < 4:
-            enactment = LinkedEnactmentSchema().load(raw_enactment)
-        else:
-            enactment = EnactmentSchema().load(raw_enactment)
-        return enactment
+        return self.read_from_json(raw_enactment)
+
+    def update_enactment_if_invalid(self, data: RawEnactment) -> RawEnactment:
+        if not data.get("node"):
+            raise ValueError(
+                '"data" must contain a "node" field '
+                "with a citation path to a legislative provision, "
+                'for example "/us/const/amendment/IV"'
+            )
+        schema_class = get_schema_for_node(data["node"])
+        schema = schema_class()
+        try:
+            schema.load(data)
+        except ValidationError:
+            data_from_api = self.fetch(path=data["node"], date=data.get("start_date"))
+            new_data = {**data, **data_from_api}
+            return new_data
+        return data
+
+    def enactment_needs_api_update(self, data: RawEnactment) -> bool:
+        """Determine if JSON representation of Enactment needs to be supplemented from API."""
+        if not data.get("node"):
+            raise ValueError(
+                '"data" must contain a "node" field '
+                "with a citation path to a legislative provision, "
+                'for example "/us/const/amendment/IV"'
+            )
+        schema_class = get_schema_for_node(data["node"])
+        schema = schema_class()
+        try:
+            schema.load(data)
+            return False
+        except ValidationError:
+            pass
+        return True
+
+    def list_enactments_needing_updates(
+        self, enactment_index: EnactmentIndex
+    ) -> List[str]:
+        need_updates = []
+        for name, record in enactment_index.items():
+            if self.enactment_needs_api_update(record):
+                need_updates.append(name)
+        return need_updates
+
+    def update_entries_in_enactment_index(
+        self, enactment_index: EnactmentIndex
+    ) -> EnactmentIndex:
+        for key, value in enactment_index.items():
+            enactment_index[key] = self.update_enactment_if_invalid(value)
+        return enactment_index

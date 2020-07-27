@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import date
-from typing import Sequence, List, Optional, Text, Tuple, Union
+from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
@@ -105,10 +105,12 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
         )
 
 
-class LinkedEnactment:
-    """
-    One or more passages of legislative text, selected from within a cited location.
+RawSelector = Union[str, Dict[str, str]]
+RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
 
+
+class BaseEnactment:
+    """
     :param node:
         identifier for the site where the provision is codified
 
@@ -118,9 +120,6 @@ class LinkedEnactment:
     :param content:
         full text content at this node, even if not all of it is cited
 
-    :param children:
-        URLs of other nodes nested within this one
-
     :param start_date:
         date when the text was enacted at the cited location
 
@@ -129,6 +128,13 @@ class LinkedEnactment:
 
     :param selector:
         identifier for the part of the provision being cited
+
+    :param anchors:
+        a list of selectors representing the part of some other document
+        (e.g. an Opinion) that references the Enactment. Unlike the selection
+        field, it doesn't reference part of the Enactment itself. For use as
+        a temporary place to store the anchors until they can be moved over
+        to the citing document.
 
     :param name:
         a user-assigned label for the object
@@ -141,23 +147,21 @@ class LinkedEnactment:
         content: str,
         start_date: date,
         end_date: Optional[date] = None,
-        children: List[str] = None,
         selection: Union[bool, List[TextPositionSelector]] = True,
+        anchors: Union[List[TextPositionSelector], List[TextQuoteSelector]] = None,
         name: str = "",
+        *args,
+        **kwargs,
     ):
         self.node = node
+
         self._content = content
         self._heading = heading
         self._start_date = start_date
         self._end_date = end_date
-
-        if not children:
-            self._children = []
-        else:
-            self._children = children
-
         if selection is not None:
             self.select_without_children(selection)
+        self.anchors = anchors
         self.name = name
 
     @property
@@ -365,55 +369,38 @@ class LinkedEnactment:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
 
-class Enactment(LinkedEnactment):
+class LinkedEnactment(BaseEnactment):
     """
     One or more passages of legislative text, selected from within a cited location.
 
-    :param node:
-        identifier for the site where the provision is codified
-
-    :param heading:
-        full heading of the provision
-
-    :param content:
-        full text content at this node, even if not all of it is cited
-
     :param children:
-        other nodes nested within this one
-
-    :param start_date:
-        date when the text was enacted at the cited location
-
-    :param end_date:
-        date when the text was removed from the cited location
-
-    :param selector:
-        identifier for the part of the provision being cited
+        URLs of other nodes nested within this one
     """
 
-    def __init__(
-        self,
-        node: str,
-        heading: str,
-        content: str,
-        start_date: date,
-        end_date: Optional[date] = None,
-        children: List[Enactment] = None,
-        selection: Union[bool, List[TextPositionSelector]] = True,
-    ):
-        self.node = node
-        self._content = content
-        self._heading = heading
-        self._start_date = start_date
-        self._end_date = end_date
+    def __init__(self, children: List[str] = None, *args, **kwargs):
 
         if not children:
             self._children = []
         else:
-            self._children: List[Enactment] = children
+            self._children = children
+        super().__init__(*args, **kwargs)
 
-        if selection is not None:
-            self.select_without_children(selection)
+
+class Enactment(BaseEnactment):
+    """
+    One or more passages of legislative text, selected from within a cited location.
+
+    :param children:
+        other Enactments nested under this one's node
+
+    """
+
+    def __init__(self, children: List[Enactment] = None, *args, **kwargs):
+        if not children:
+            self._children = []
+        else:
+            self._children: List[Enactment] = children
+        super().__init__(*args, **kwargs)
 
     @property
     def padded_length(self):

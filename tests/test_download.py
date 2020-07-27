@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import pytest
 
 from legislice.download import Client
+from legislice.name_index import collect_enactments
+
 
 load_dotenv()
 
@@ -96,3 +98,29 @@ class TestDownloadAndLoad:
         definition = self.client.read(path="/test/acts/47/4")
         sequence = definition.text_sequence()
         assert str(sequence.strip()).endswith("below the nose.")
+
+    @pytest.mark.vcr()
+    def test_update_linked_enactment(self):
+        data = {"node": "/us/const"}
+        new = self.client.update_enactment_if_invalid(data)
+        assert new["node"] == "/us/const"
+        assert new["start_date"] == "1788-09-13"
+        assert isinstance(new["children"][0], str)
+
+
+class TestReadJSON:
+    client = Client(api_token=TOKEN)
+
+    @pytest.mark.vcr()
+    def test_list_enactments_needing_updates(
+        self, section6d, section_11_subdivided, fifth_a
+    ):
+        section_11_subdivided["name"] = "s11"
+        section6d["name"] = "6d"
+        fifth_a["name"] = "5a"
+        data = [section6d, section_11_subdivided, fifth_a]
+        data.append({"node": "/us/const", "name": "constitution"})
+        _, enactment_index = collect_enactments(data)
+        enactment_list = self.client.list_enactments_needing_updates(enactment_index)
+        assert len(enactment_list) == 1
+        assert enactment_list[0] == "constitution"
