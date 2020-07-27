@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
+from marshmallow.fields import Raw
+
 from legislice.enactments import RawEnactment
 
 RawPredicate = Dict[str, Union[str, bool]]
@@ -66,7 +68,7 @@ class EnactmentIndex(OrderedDict):
             anchors_for_selected_element.append(anchor)
         self[enactment_name]["anchors"] = anchors_for_selected_element
 
-    def index_enactment(self, obj: RawEnactment) -> None:
+    def index_enactment(self, obj: RawEnactment) -> Union[str, RawEnactment]:
         r"""
         Update index of mentioned Factors with 'obj', if obj is named.
         If there is already an entry in the mentioned index with the same name
@@ -86,7 +88,8 @@ class EnactmentIndex(OrderedDict):
                         )
             else:
                 self.insert_by_name(obj)
-        return None
+            obj = obj["name"]
+        return obj
 
 
 def create_name_for_enactment(obj: RawEnactment) -> str:
@@ -139,34 +142,6 @@ def collect_enactments(
             new_dict["node"] = new_dict.pop("source")
         if new_dict.get("node") or (new_dict.get("name") in mentioned.keys()):
             new_dict = ensure_enactment_has_name(new_dict)
-            new_dict, mentioned = update_name_index_with_enactment(new_dict, mentioned)
+            new_dict = mentioned.index_enactment(new_dict)
         obj = new_dict
-    return obj, mentioned
-
-
-def update_name_index_with_enactment(
-    obj: RawFactor, mentioned: EnactmentIndex
-) -> Tuple[Union[str, RawFactor], EnactmentIndex]:
-    r"""
-    Update index of mentioned Factors with 'obj', if obj is named.
-    If there is already an entry in the mentioned index with the same name
-    as obj, the old entry won't be replaced. But if any additional text
-    anchors are present in the new obj, the anchors will be added.
-    If obj has a name, it will be collapsed to a name reference.
-    :param obj:
-        data from JSON to be loaded as a :class:`.Factor`
-    :param mentioned:
-        :class:`.RawFactor`\s indexed by name for retrieval when loading objects
-        using a Marshmallow schema.
-    :returns:
-        both 'obj' and 'mentioned', as updated
-    """
-    if obj.get("name"):
-        if obj["name"] in mentioned:
-            if obj.get("anchors"):
-                for anchor in obj["anchors"]:
-                    mentioned[obj["name"]]["anchors"].append(anchor)
-        else:
-            mentioned.insert_by_name(obj)
-        obj = obj["name"]
     return obj, mentioned
