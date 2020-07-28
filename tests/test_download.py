@@ -124,3 +124,8 @@ class TestReadJSON:
         enactment_list = self.client.list_enactments_needing_updates(enactment_index)
         assert len(enactment_list) == 1
         assert enactment_list[0] == "constitution"
+
+    @pytest.mark.vcr()
+    def test_read_from_json(self, section6d, section_11_subdivided, fifth_a):
+        enactment = self.client.read_from_json(data={"node": "/us/const/amendment/IV"})
+        assert enactment.start_date.isoformat() == "1791-12-15"

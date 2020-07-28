@@ -69,9 +69,10 @@ class Client:
 
         If fields are missing from the JSON, they will be fetched using the API key.
         """
-        schema_class = get_schema_for_node(data["node"])
+        updated = self.update_enactment_if_invalid(data)
+        schema_class = get_schema_for_node(updated["node"])
         schema = schema_class()
-        enactment = schema.load(data)
+        enactment = schema.load(updated)
         return enactment
 
     def read(self, path: str, date: Union[datetime.date, str] = "",) -> Enactment:
