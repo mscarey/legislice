@@ -491,18 +491,26 @@ class TestCompareEnactment:
         amend_14.select(selector)
         assert amend_5 >= amend_14
 
-    def test_enactment_does_not_imply_textsequence(self, section_11_subdivided):
+    def test_fail_to_check_enactment_implies_textsequence(self, section_11_subdivided):
         schema = EnactmentSchema()
         subdivided = schema.load(section_11_subdivided)
         text = subdivided.text_sequence()
-        assert not subdivided > text
+        with pytest.raises(TypeError):
+            _ = subdivided >= text
 
-    def test_enactment_does_not_mean_textpassage(self, section_11_subdivided):
+    def test_fail_to_check_if_enactment_means_textpassage(self, section_11_subdivided):
         schema = EnactmentSchema()
         subdivided = schema.load(section_11_subdivided)
         text = subdivided.text_sequence()
-        assert not subdivided.means(text.passages[0])
-        assert not text.passages[0].means(subdivided)
+        with pytest.raises(TypeError):
+            _ = subdivided.means(text.passages[0])
+
+    def test_fail_to_check_if_textpassage_means_enactment(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        subdivided = schema.load(section_11_subdivided)
+        text = subdivided.text_sequence()
+        with pytest.raises(TypeError):
+            _ = text.passages[0].means(subdivided)
 
 
 class TestAddEnactments:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import date
-from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
+from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
@@ -26,14 +26,19 @@ class TextPassage:
 
     def means(self, other: Optional[TextPassage]) -> bool:
         if not isinstance(other, self.__class__):
-            return False
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for same meaning."
+            )
 
         return self.text.strip(",:;. ") == other.text.strip(",:;. ")
 
     def __ge__(self, other: Optional[TextPassage]) -> bool:
         if not other:
             return True
-
+        if not isinstance(other, self.__class__):
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
+            )
         other_text = other.text.strip(",:;. ")
         return other_text in self.text
 
@@ -646,7 +651,9 @@ class Enactment(BaseEnactment):
             :class:`Enactment`\.
         """
         if not isinstance(other, self.__class__):
-            return False
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for same meaning."
+            )
         self_selected_passages = self.text_sequence()
         other_selected_passages = other.text_sequence()
         return self_selected_passages.means(other_selected_passages)
@@ -659,7 +666,9 @@ class Enactment(BaseEnactment):
             Whether ``self`` contains at least all the same text as ``other``.
         """
         if not isinstance(other, self.__class__):
-            return False
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
+            )
         self_selected_passages = self.text_sequence(include_nones=False)
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
