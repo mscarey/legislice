@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 
 from anchorpoint.textselectors import TextPositionSelector
@@ -6,6 +7,7 @@ from marshmallow import ValidationError
 import pytest
 
 from legislice.download import Client
+from legislice.name_index import collect_enactments
 from legislice.schemas import (
     EnactmentSchema,
     LinkedEnactmentSchema,
@@ -76,6 +78,13 @@ class TestLoadEnactment:
         section_11_together["selection"] = [{"exact": "Department of Beards"}]
         result = schema.load(section_11_together)
         assert result.selected_text() == "...Department of Beards..."
+
+    def test_retrieve_enactment_by_name(self, section6d, section_11_together):
+        obj, indexed = collect_enactments([section6d, section_11_together])
+        schema = EnactmentSchema(many=True)
+        schema.context["enactment_index"] = indexed
+        enactments = schema.load(obj)
+        assert enactments[0].start_date.isoformat() == "1935-04-01"
 
 
 class TestLoadLinkedEnactment:

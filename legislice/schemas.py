@@ -12,10 +12,10 @@ from legislice.name_index import EnactmentIndex
 class ExpandableSchema(Schema):
     """Base schema for classes that can be cross-referenced by name in input JSON."""
 
-    def get_from_mentioned(self, data, **kwargs):
-        """Replace data to load with any object with same name in "mentioned"."""
+    def get_indexed_enactment(self, data, **kwargs):
+        """Replace data to load with any object with same name in "enactment_index"."""
         if isinstance(data, str):
-            mentioned = self.context.get("mentioned") or EnactmentIndex()
+            mentioned = self.context.get("enactment_index") or EnactmentIndex()
             return deepcopy(mentioned.get_by_name(data))
         return data
 
@@ -40,7 +40,6 @@ class ExpandableSchema(Schema):
     @pre_load
     def format_data_to_load(self, data: Union[str, Dict], **kwargs) -> Dict:
         """Expand data if it was just a name reference in the JSON input."""
-        data = self.get_from_mentioned(data)
         data = self.consume_type_field(data)
         return data
 
@@ -98,7 +97,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
-        data = self.get_from_mentioned(data)
+        data = self.get_indexed_enactment(data)
         data = self.move_selector_fields(data)
         data = self.accept_selector_outside_list(data)
         data = self.consume_type_field(data)
