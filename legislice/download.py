@@ -79,6 +79,8 @@ class Client:
         """
         Fetches data from Client's assigned endpoint and builds Enactment or LinkedEnactment.
 
+        All text is selected by default.
+
         :param path:
             A path to the desired legislation section using the United States Legislation Markup
             tree-like citation format. Examples: "/us/const/amendment/IV", "/us/usc/t17/s103"
@@ -90,7 +92,9 @@ class Client:
             you will be given the version that became effective later.
         """
         raw_enactment = self.fetch(path=path, date=date)
-        return self.read_from_json(raw_enactment)
+        enactment = self.read_from_json(raw_enactment)
+        enactment.select_all()
+        return enactment
 
     def update_enactment_if_invalid(self, data: RawEnactment) -> RawEnactment:
         if not data.get("node"):

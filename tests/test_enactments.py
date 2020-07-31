@@ -375,6 +375,7 @@ class TestCompareEnactment:
         schema = EnactmentSchema()
 
         fourth_a = schema.load(fourth_a)
+        fourth_a.select_all()
         search_clause = schema.load(search_clause)
 
         assert fourth_a != search_clause
@@ -409,7 +410,9 @@ class TestCompareEnactment:
     ):
         schema = EnactmentSchema()
         combined = schema.load(section_11_together)
+        combined.select_all()
         subdivided = schema.load(section_11_subdivided)
+        subdivided.select_all()
         assert combined >= subdivided
         assert combined > subdivided
         assert combined.text_sequence() > subdivided.text_sequence()
@@ -439,6 +442,7 @@ class TestCompareEnactment:
     def test_enactment_subset(self, section_11_together):
         schema = EnactmentSchema()
         combined = schema.load(section_11_together)
+        combined.select_all()
         limited = schema.load(section_11_together)
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
@@ -501,6 +505,7 @@ class TestCompareEnactment:
     def test_fail_to_check_if_enactment_means_textpassage(self, section_11_subdivided):
         schema = EnactmentSchema()
         subdivided = schema.load(section_11_subdivided)
+        subdivided.select_all()
         text = subdivided.text_sequence()
         with pytest.raises(TypeError):
             _ = subdivided.means(text.passages[0])
@@ -508,6 +513,7 @@ class TestCompareEnactment:
     def test_fail_to_check_if_textpassage_means_enactment(self, section_11_subdivided):
         schema = EnactmentSchema()
         subdivided = schema.load(section_11_subdivided)
+        subdivided.select_all()
         text = subdivided.text_sequence()
         with pytest.raises(TypeError):
             _ = text.passages[0].means(subdivided)

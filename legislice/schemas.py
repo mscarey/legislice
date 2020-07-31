@@ -59,8 +59,8 @@ class LinkedEnactmentSchema(ExpandableSchema):
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Url(relative=False))
-    selection = fields.Nested(SelectorSchema, many=True, missing=True)
-    anchors = fields.Nested(SelectorSchema, many=True, missing=None)
+    selection = fields.Nested(SelectorSchema, many=True, missing=list)
+    anchors = fields.Nested(SelectorSchema, many=True, missing=list)
 
     class Meta:
         unknown = EXCLUDE

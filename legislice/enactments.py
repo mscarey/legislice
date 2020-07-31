@@ -390,6 +390,18 @@ class LinkedEnactment(BaseEnactment):
             self._children = children
         super().__init__(*args, **kwargs)
 
+    def select_all(
+        self,
+        selection: Union[
+            bool,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ] = True,
+    ) -> None:
+        self.select_without_children(selection)
+
 
 class Enactment(BaseEnactment):
     """

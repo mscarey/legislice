@@ -149,6 +149,7 @@ def fourth_a():
         "start_date": "1791-12-15",
         "url": "https://authorityspoke.com/api/v1/us/const/amendment/IV/",
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+        "selection": True,
     }
 
 
@@ -163,6 +164,7 @@ def fifth_a():
         "start_date": "1791-12-15",
         "url": "https://authorityspoke.com/api/v1/us/const/amendment/V/",
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+        "selection": True,
     }
 
 
@@ -177,4 +179,5 @@ def fourteenth_dp():
         "start_date": "1868-07-28",
         "url": "https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/",
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/XIV/",
+        "selection": True,
     }
