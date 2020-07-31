@@ -67,6 +67,8 @@ class LinkedEnactmentSchema(ExpandableSchema):
 
     @post_load
     def make_object(self, data, **kwargs):
+        if data.get("selection"):
+            data["selection"] = [item for item in data["selection"] if item is not None]
 
         return self.__model__(**data)
 
