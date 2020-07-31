@@ -71,7 +71,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
         return self.__model__(**data)
 
     def accept_selector_outside_list(self, data, **kwargs):
-        if isinstance(data.get("selection"), Dict):
+        if isinstance(data.get("selection"), (Dict, bool)):
             data["selection"] = [data["selection"]]
         return data
 

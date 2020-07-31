@@ -67,6 +67,14 @@ class TestLoadEnactment:
         answer = "The Department of Beards may issue licenses to such...hairdressers..."
         assert result.selected_text() == answer
 
+    def test_enactment_with_True_as_selector(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        section_11_subdivided["selection"] = True
+        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
+        result = schema.load(section_11_subdivided)
+        answer = "The Department of Beards may issue licenses to such...hairdressers..."
+        assert result.selected_text() == answer
+
     def test_selector_not_wrapped_in_list(self, section_11_together):
         schema = EnactmentSchema()
         section_11_together["selection"] = {"start": 4, "end": 24}
