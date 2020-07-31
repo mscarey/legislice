@@ -72,11 +72,6 @@ class LinkedEnactmentSchema(ExpandableSchema):
 
         return self.__model__(**data)
 
-    def accept_selector_outside_list(self, data, **kwargs):
-        if isinstance(data.get("selection"), (Dict, bool)):
-            data["selection"] = [data["selection"]]
-        return data
-
     def move_selector_fields(self, data: RawEnactment, **kwargs):
         """
         Nest fields used for :class:`SelectorSchema` model.
@@ -101,7 +96,8 @@ class LinkedEnactmentSchema(ExpandableSchema):
         """Prepare Enactment to load."""
         data = self.get_indexed_enactment(data)
         data = self.move_selector_fields(data)
-        data = self.accept_selector_outside_list(data)
+        data = self.wrap_single_element_in_list(data, "selection")
+        data = self.wrap_single_element_in_list(data, "anchors")
         data = self.consume_type_field(data)
         return data
 

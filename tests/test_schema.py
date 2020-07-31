@@ -52,6 +52,8 @@ class TestLoadSelector:
 
 
 class TestLoadEnactment:
+    client = Client(api_token=TOKEN)
+
     def test_load_nested_enactment(self, section6d):
         schema = EnactmentSchema()
         result = schema.load(section6d)
@@ -94,6 +96,13 @@ class TestLoadEnactment:
         section_11_together["selection"] = [{"exact": "Department of Beards"}]
         result = schema.load(section_11_together)
         assert result.selected_text() == "...Department of Beards..."
+
+    @pytest.mark.vcr()
+    def test_load_enactment_with_text_anchor(self, provision_with_text_anchor):
+        schema = EnactmentSchema()
+        record = self.client.update_enactment_if_invalid(provision_with_text_anchor)
+        result = schema.load(record)
+        assert result.anchors[0].exact == "17 U.S.C. § 102(a)"
 
     def test_retrieve_enactment_by_name(self, section6d, section_11_together):
         obj, indexed = collect_enactments([section6d, section_11_together])
