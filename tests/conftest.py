@@ -51,7 +51,7 @@ def section_11_together():
     }
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 def section_11_subdivided():
     return {
         "heading": "Licensed repurchasers of beardcoin",

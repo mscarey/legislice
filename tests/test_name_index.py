@@ -125,6 +125,7 @@ class TestCollectEnactments:
         assert updated["content"].startswith("exists in an uninterrupted")
         assert updated["start_date"] == "1935-04-01"
 
+    @pytest.mark.vcr
     def test_load_updated_enactment_data(self):
         example_rules, mentioned = collect_enactments(self.example_rules)
         updated = self.client.update_enactment_if_invalid(mentioned["ear rule"])

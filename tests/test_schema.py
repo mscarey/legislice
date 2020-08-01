@@ -111,6 +111,15 @@ class TestLoadEnactment:
         enactments = schema.load(obj)
         assert enactments[0].start_date.isoformat() == "1935-04-01"
 
+    def test_enactment_does_not_fail_for_excess_selector(self, section_11_subdivided):
+        """Test selector that extends into the text of a subnode."""
+        exact = "The Department of Beards may issue licenses to such barbers"
+        section_11_subdivided["exact"] = exact
+        schema = EnactmentSchema(many=False)
+        enactment = schema.load(section_11_subdivided)
+
+        assert enactment.selected_text() == exact + "..."
+
 
 class TestLoadLinkedEnactment:
     def test_load_linked_enactment(self):

@@ -152,7 +152,6 @@ class BaseEnactment:
         content: str,
         start_date: date,
         end_date: Optional[date] = None,
-        selection: Union[bool, List[TextPositionSelector]] = True,
         anchors: Union[List[TextPositionSelector], List[TextQuoteSelector]] = None,
         name: str = "",
         *args,
@@ -164,8 +163,6 @@ class BaseEnactment:
         self._heading = heading
         self._start_date = start_date
         self._end_date = end_date
-        if selection is not None:
-            self.select_without_children(selection)
         self.anchors = anchors
         self.name = name
 
@@ -241,6 +238,10 @@ class BaseEnactment:
             TextPositionSelector, TextQuoteSelector, Sequence[TextQuoteSelector],
         ],
     ) -> TextPositionSet:
+        if selection is True:
+            return TextPositionSet(TextPositionSelector(0, len(self.content)))
+        elif selection is False:
+            return TextPositionSet()
         if isinstance(selection, str):
             schema = SelectorSchema()
             selection = schema.load(selection)
@@ -306,19 +307,11 @@ class BaseEnactment:
             Sequence[TextQuoteSelector],
         ],
     ) -> None:
-        if selection is True:
-            self._selection = TextPositionSet(
-                TextPositionSelector(0, len(self.content))
-            )
-        elif selection is False:
-            self._selection = TextPositionSet()
-        else:
-            if not isinstance(selection, TextPositionSet):
-                selection = self.convert_selection_to_set(selection)
-            unused_selectors = self.select_from_text_positions_without_nesting(
-                selection
-            )
-            self.raise_error_for_extra_selector(unused_selectors)
+
+        if not isinstance(selection, TextPositionSet):
+            selection = self.convert_selection_to_set(selection)
+        unused_selectors = self.select_from_text_positions_without_nesting(selection)
+        self.raise_error_for_extra_selector(unused_selectors)
 
     def select(
         self,
@@ -382,13 +375,24 @@ class LinkedEnactment(BaseEnactment):
         URLs of other nodes nested within this one
     """
 
-    def __init__(self, children: List[str] = None, *args, **kwargs):
+    def __init__(
+        self,
+        children: List[str] = None,
+        selection: Union[bool, List[TextPositionSelector]] = True,
+        *args,
+        **kwargs,
+    ):
 
         if not children:
             self._children = []
         else:
             self._children = children
         super().__init__(*args, **kwargs)
+
+        if selection:
+            self.select_without_children(selection)
+        else:
+            self._selection = TextPositionSet()
 
     def select_all(
         self,
@@ -412,12 +416,21 @@ class Enactment(BaseEnactment):
 
     """
 
-    def __init__(self, children: List[Enactment] = None, *args, **kwargs):
+    def __init__(
+        self,
+        children: List[Enactment] = None,
+        selection: Union[bool, List[TextPositionSelector]] = True,
+        *args,
+        **kwargs,
+    ):
         if not children:
             self._children = []
         else:
-            self._children: List[Enactment] = children
+            self._children = children
         super().__init__(*args, **kwargs)
+        self._selection = TextPositionSet()
+        if selection:
+            self.select_more(selection)
 
     @property
     def padded_length(self):
@@ -598,8 +611,13 @@ class Enactment(BaseEnactment):
         """
         if not isinstance(selection, TextPositionSet):
             selection = self.convert_selection_to_set(selection)
-        unused_selectors = self.select_more_text_in_current_branch(selection)
-        self.raise_error_for_extra_selector(unused_selectors)
+
+        # Ignore child nodes if selector was passed in without an end
+        if any(selector.end > 99999 for selector in selection):
+            self.select_without_children(True)
+        else:
+            unused_selectors = self.select_more_text_in_current_branch(selection)
+            self.raise_error_for_extra_selector(unused_selectors)
 
     def select(
         self,
