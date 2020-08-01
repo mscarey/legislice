@@ -252,13 +252,13 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         combined = schema.load(section_11_subdivided)
         combined.select(False)
-        assert combined.selected_text() == "..."
+        assert combined.selected_text() == ""
 
     def test_select_none_with_None(self, section_11_subdivided):
         schema = EnactmentSchema()
         combined = schema.load(section_11_subdivided)
         combined.select(None)
-        assert combined.selected_text() == "..."
+        assert combined.selected_text() == ""
 
     def test_select_all(self, section_11_subdivided):
         """Clear selected text, and then select one subsection."""

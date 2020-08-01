@@ -76,6 +76,8 @@ class TextSequence(Sequence[Union[None, TextPassage]]):
                 if result and not result.endswith(("...", " ")):
                     result += " "
                 result += phrase.text
+        if result == "...":
+            return ""
         return result
 
     def __ge__(self, other: TextSequence):
