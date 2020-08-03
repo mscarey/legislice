@@ -1,17 +1,12 @@
-from copy import deepcopy
 import datetime
 from typing import Any, Dict, List, Union
-from marshmallow.fields import Raw
 
+from marshmallow import ValidationError
 import requests
 
 from legislice.enactments import Enactment
-from legislice.name_index import EnactmentIndex, collect_enactments
-from legislice.schemas import (
-    ValidationError,
-    get_schema_for_node,
-    can_be_loaded_as_enactment,
-)
+from legislice.name_index import EnactmentIndex
+from legislice.schemas import get_schema_for_node
 
 RawEnactment = Dict[str, Any]
 
@@ -67,7 +62,7 @@ class Client:
 
         If fields are missing from the JSON, they will be fetched using the API key.
         """
-        if not can_be_loaded_as_enactment(data):
+        if self.enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
         schema_class = get_schema_for_node(data["node"])
         schema = schema_class()
@@ -130,6 +125,6 @@ class Client:
         self, enactment_index: EnactmentIndex
     ) -> EnactmentIndex:
         for key, value in enactment_index.items():
-            if not can_be_loaded_as_enactment(value):
+            if self.enactment_needs_api_update(value):
                 enactment_index[key] = self.update_enactment_from_api(value)
         return enactment_index

@@ -17,6 +17,7 @@ class ExpandableSchema(Schema):
         if isinstance(data, str):
             mentioned = self.context.get("enactment_index") or EnactmentIndex()
             return deepcopy(mentioned.get_by_name(data))
+
         return data
 
     def consume_type_field(self, data, **kwargs):
@@ -116,20 +117,3 @@ def get_schema_for_node(path: str):
     if path.count("/") < 4:
         return LinkedEnactmentSchema
     return EnactmentSchema
-
-
-def can_be_loaded_as_enactment(data: RawEnactment) -> bool:
-    """Test if RawEnactment can be loaded as a LinkedEnactment or Enactment."""
-    if not data.get("node"):
-        raise ValueError(
-            '"data" must contain a "node" field '
-            "with a citation path to a legislative provision, "
-            'for example "/us/const/amendment/IV"'
-        )
-    schema_class = get_schema_for_node(data["node"])
-    schema = schema_class()
-    try:
-        schema.load(data)
-    except ValidationError:
-        return False
-    return True

@@ -4,8 +4,6 @@ from collections import OrderedDict
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
-from marshmallow.fields import Raw
-
 from legislice.enactments import RawEnactment
 
 RawPredicate = Dict[str, Union[str, bool]]
