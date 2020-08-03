@@ -6,7 +6,7 @@ import requests
 
 from legislice.enactments import Enactment
 from legislice.name_index import EnactmentIndex
-from legislice.schemas import get_schema_for_node
+from legislice.schemas import get_schema_for_node, enactment_needs_api_update
 
 RawEnactment = Dict[str, Any]
 
@@ -62,7 +62,7 @@ class Client:
 
         If fields are missing from the JSON, they will be fetched using the API key.
         """
-        if self.enactment_needs_api_update(data):
+        if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
         schema_class = get_schema_for_node(data["node"])
         schema = schema_class()
@@ -95,29 +95,12 @@ class Client:
         new_data = {**data, **data_from_api}
         return new_data
 
-    def enactment_needs_api_update(self, data: RawEnactment) -> bool:
-        """Determine if JSON representation of Enactment needs to be supplemented from API."""
-        if not data.get("node"):
-            raise ValueError(
-                '"data" must contain a "node" field '
-                "with a citation path to a legislative provision, "
-                'for example "/us/const/amendment/IV"'
-            )
-        schema_class = get_schema_for_node(data["node"])
-        schema = schema_class()
-        try:
-            schema.load(data)
-            return False
-        except ValidationError:
-            pass
-        return True
-
     def list_enactments_needing_updates(
         self, enactment_index: EnactmentIndex
     ) -> List[str]:
         need_updates = []
         for name, record in enactment_index.items():
-            if self.enactment_needs_api_update(record):
+            if enactment_needs_api_update(record):
                 need_updates.append(name)
         return need_updates
 
@@ -125,6 +108,6 @@ class Client:
         self, enactment_index: EnactmentIndex
     ) -> EnactmentIndex:
         for key, value in enactment_index.items():
-            if self.enactment_needs_api_update(value):
+            if enactment_needs_api_update(value):
                 enactment_index[key] = self.update_enactment_from_api(value)
         return enactment_index

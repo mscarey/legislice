@@ -9,16 +9,37 @@ from legislice.enactments import Enactment, LinkedEnactment, RawEnactment
 from legislice.name_index import EnactmentIndex
 
 
+def enactment_needs_api_update(data: RawEnactment) -> bool:
+    """Determine if JSON representation of Enactment needs to be supplemented from API."""
+    if not data.get("node"):
+        raise ValueError(
+            '"data" must contain a "node" field '
+            "with a citation path to a legislative provision, "
+            'for example "/us/const/amendment/IV"'
+        )
+    if (
+        data.get("heading") is None
+        or data.get("content") is None
+        or data.get("start_date") is None
+    ):
+        return True
+    return False
+
+
 class ExpandableSchema(Schema):
     """Base schema for classes that can be cross-referenced by name in input JSON."""
 
     def get_indexed_enactment(self, data, **kwargs):
         """Replace data to load with any object with same name in "enactment_index"."""
         if isinstance(data, str):
-            mentioned = self.context.get("enactment_index") or EnactmentIndex()
-            return deepcopy(mentioned.get_by_name(data))
+            name_to_retrieve = data
+        elif data.get("name") and enactment_needs_api_update(data):
+            name_to_retrieve = data["name"]
+        else:
+            return data
 
-        return data
+        mentioned = self.context.get("enactment_index") or EnactmentIndex()
+        return deepcopy(mentioned.get_by_name(name_to_retrieve))
 
     def consume_type_field(self, data, **kwargs):
         """Verify that type field is correct and then get rid of it."""

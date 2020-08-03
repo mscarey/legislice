@@ -12,6 +12,7 @@ from legislice.schemas import (
     EnactmentSchema,
     LinkedEnactmentSchema,
     SelectorSchema,
+    enactment_needs_api_update,
 )
 
 load_dotenv()
@@ -130,7 +131,7 @@ class TestLoadEnactment:
             "url": "https://authorityspoke.com/api/v1/test/acts/47/11/i@2020-01-01",
         }
         with pytest.raises(ValueError):
-            _ = self.client.enactment_needs_api_update(barbers_without_node)
+            _ = enactment_needs_api_update(barbers_without_node)
 
 
 class TestLoadLinkedEnactment:
