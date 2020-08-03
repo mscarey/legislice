@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
+from copy import deepcopy
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from marshmallow.fields import Raw
@@ -67,6 +68,13 @@ class EnactmentIndex(OrderedDict):
         if not self.enactment_has_anchor(enactment_name, anchor):
             anchors_for_selected_element.append(anchor)
         self[enactment_name]["anchors"] = anchors_for_selected_element
+
+    def __add__(self, other: EnactmentIndex) -> EnactmentIndex:
+        new_index = deepcopy(self)
+        for key in other.keys():
+            other_dict = other.get_by_name(key)
+            new_index.index_enactment(other_dict)
+        return new_index
 
     def index_enactment(self, obj: RawEnactment) -> Union[str, RawEnactment]:
         r"""
