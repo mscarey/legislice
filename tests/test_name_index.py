@@ -137,7 +137,7 @@ class TestCollectEnactments:
     @pytest.mark.vcr
     def test_update_unloaded_enactment_from_api(self):
         example_rules, mentioned = collect_enactments(self.example_rules)
-        updated = self.client.update_enactment_if_invalid(mentioned["ear rule"])
+        updated = self.client.update_enactment_from_api(mentioned["ear rule"])
         assert updated["node"] == "/test/acts/47/4/b"
         assert updated["anchors"][0]["start"] == 10
         assert updated["anchors"][2]["start"] == 100
@@ -147,7 +147,7 @@ class TestCollectEnactments:
     @pytest.mark.vcr
     def test_load_updated_enactment_data(self):
         example_rules, mentioned = collect_enactments(self.example_rules)
-        updated = self.client.update_enactment_if_invalid(mentioned["ear rule"])
+        updated = self.client.update_enactment_from_api(mentioned["ear rule"])
         schema = EnactmentSchema()
         enactment = schema.load(updated)
         assert enactment.start_date == date(1935, 4, 1)

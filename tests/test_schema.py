@@ -12,6 +12,7 @@ from legislice.schemas import (
     EnactmentSchema,
     LinkedEnactmentSchema,
     SelectorSchema,
+    can_be_loaded_as_enactment,
 )
 
 load_dotenv()
@@ -100,7 +101,7 @@ class TestLoadEnactment:
     @pytest.mark.vcr()
     def test_load_enactment_with_text_anchor(self, provision_with_text_anchor):
         schema = EnactmentSchema()
-        record = self.client.update_enactment_if_invalid(provision_with_text_anchor)
+        record = self.client.update_enactment_from_api(provision_with_text_anchor)
         result = schema.load(record)
         assert result.anchors[0].exact == "17 U.S.C. § 102(a)"
 
@@ -119,6 +120,18 @@ class TestLoadEnactment:
         enactment = schema.load(section_11_subdivided)
 
         assert enactment.selected_text() == exact + "..."
+
+    def test_node_field_needed_to_load_enactment(self):
+        barbers_without_node = {
+            "heading": "",
+            "content": "barbers,",
+            "children": [],
+            "end_date": None,
+            "start_date": "2013-07-18",
+            "url": "https://authorityspoke.com/api/v1/test/acts/47/11/i@2020-01-01",
+        }
+        with pytest.raises(ValueError):
+            _ = can_be_loaded_as_enactment(barbers_without_node)
 
 
 class TestLoadLinkedEnactment:

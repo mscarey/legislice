@@ -110,3 +110,26 @@ class EnactmentSchema(LinkedEnactmentSchema):
 
     class Meta:
         unknown = EXCLUDE
+
+
+def get_schema_for_node(path: str):
+    if path.count("/") < 4:
+        return LinkedEnactmentSchema
+    return EnactmentSchema
+
+
+def can_be_loaded_as_enactment(data: RawEnactment) -> bool:
+    """Test if RawEnactment can be loaded as a LinkedEnactment or Enactment."""
+    if not data.get("node"):
+        raise ValueError(
+            '"data" must contain a "node" field '
+            "with a citation path to a legislative provision, "
+            'for example "/us/const/amendment/IV"'
+        )
+    schema_class = get_schema_for_node(data["node"])
+    schema = schema_class()
+    try:
+        schema.load(data)
+    except ValidationError:
+        return False
+    return True

@@ -102,7 +102,7 @@ class TestDownloadAndLoad:
     @pytest.mark.vcr()
     def test_update_linked_enactment(self):
         data = {"node": "/us/const"}
-        new = self.client.update_enactment_if_invalid(data)
+        new = self.client.update_enactment_from_api(data)
         assert new["node"] == "/us/const"
         assert new["start_date"] == "1788-09-13"
         assert isinstance(new["children"][0], str)
