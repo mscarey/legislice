@@ -87,3 +87,15 @@ class TestUpdateEnactments:
         loaded_enactment = client.read_from_json(updated_enactment)
         assert loaded_enactment.selected_text() == "...person shall..."
 
+
+class TestReadJSON:
+    def test_read_enactment_with_suffix_field(self, mock_responses):
+        raw_enactment = {
+            "name": "search clause",
+            "node": "/us/const/amendment/IV",
+            "suffix": ", and no Warrants shall issue",
+            "start_date": "1791-12-15",
+        }
+        client = JSONRepository(responses=mock_responses)
+        enactment = client.read_from_json(raw_enactment)
+        assert enactment.selected_text().endswith("shall not be violated...")

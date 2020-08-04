@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 import os
 
@@ -132,6 +133,14 @@ class TestLoadEnactment:
         }
         with pytest.raises(ValueError):
             _ = enactment_needs_api_update(barbers_without_node)
+
+    def test_nest_selector_fields_before_loading(self, mock_responses):
+        raw_enactment = deepcopy(mock_responses["/us/const/amendment/IV"]["1791-12-15"])
+        raw_enactment["selection"] = [{"start": 10, "end": 20}]
+        raw_enactment["suffix"] = ", and no Warrants shall issue"
+        schema = EnactmentSchema()
+        updated = schema.move_selector_fields(raw_enactment)
+        assert updated["selection"][1]["suffix"] == ", and no Warrants shall issue"
 
 
 class TestLoadLinkedEnactment:

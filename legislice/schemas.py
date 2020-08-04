@@ -53,9 +53,9 @@ class ExpandableSchema(Schema):
 
     def wrap_single_element_in_list(self, data: Dict, many_element: str):
         """Make a specified field a list if it isn't already a list."""
-        if data.get(many_element) is not None and not isinstance(
-            data[many_element], list
-        ):
+        if data.get(many_element) is None:
+            data[many_element] = []
+        elif not isinstance(data[many_element], list):
             data[many_element] = [data[many_element]]
         return data
 
@@ -105,20 +105,21 @@ class LinkedEnactmentSchema(ExpandableSchema):
         """
 
         selector_field_names = ["text", "exact", "prefix", "suffix", "start", "end"]
+        new_selector = {}
         for name in selector_field_names:
             if data.get(name):
-                if not data.get("selection"):
-                    data["selection"] = {}
-                data["selection"][name] = data[name]
+                new_selector[name] = data[name]
                 del data[name]
+        if new_selector:
+            data["selection"].append(new_selector)
         return data
 
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
         data = self.get_indexed_enactment(data)
-        data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "selection")
+        data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "anchors")
         data = self.consume_type_field(data)
         return data
