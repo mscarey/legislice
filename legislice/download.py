@@ -1,4 +1,5 @@
 import datetime
+from os import name
 from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import ValidationError
@@ -124,24 +125,34 @@ class JSONRepository(Client):
     def __init__(self, responses: ResponsesByDateByPath):
         self.responses = responses
 
+    def get_entry_closest_to_cited_path(self, path: str) -> Optional[ResponsesByDate]:
+        path = normalize_path(path)
+        if self.responses.get(path):
+            return self.responses[path]
+        branches_that_start_with_path = [
+            entry for entry in self.responses.keys() if entry.startswith(path)
+        ]
+        if not branches_that_start_with_path:
+            return None
+        name_of_best_entry = max(branches_that_start_with_path, key=len)
+        return self.responses[name_of_best_entry]
+
     def search_tree_for_path(
         self, path: str, branch: Dict
     ) -> Optional[ResponsesByDate]:
-        if branch.get(path):
-            return branch[path]
+        path = normalize_path(path)
+        if branch["node"] == path:
+            return branch
         branches_that_start_with_path = [
-            nested_path for nested_path in branch.keys() if nested_path.startswith(path)
+            nested_node
+            for nested_node in branch["children"]
+            if nested_node["node"].startswith(path)
         ]
         if branches_that_start_with_path:
             return self.search_tree_for_path(
                 path=path, branch=branches_that_start_with_path[0]
             )
         return None
-
-    def get_responses_for_path(self, path: str) -> ResponsesByDate:
-        path = normalize_path(path)
-        branch = self.responses
-        return self.search_tree_for_path(path=path, branch=branch)
 
     def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
         """
@@ -157,22 +168,28 @@ class JSONRepository(Client):
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        responses = self.get_responses_for_path(path)
+        responses = self.get_entry_closest_to_cited_path(path)
         if not responses:
-            raise ValueError(f"No enacted text found for query {query}")
+            raise ValueError(f"No enacted text found for query {path}")
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
 
         if not date:
-            return responses[-1]
+            selected_date = max(responses.keys())
+        else:
+            versions_not_later_than_query = [
+                version_date
+                for version_date in responses.keys()
+                if version_date <= date
+            ]
+            selected_date = max(versions_not_later_than_query)
 
-        versions_not_later_than_query = [
-            version_date for version_date in responses if version_date <= date
-        ]
-        if not versions_not_later_than_query:
-            return f"No enacted text found for query {query} after date {date}"
+            if not versions_not_later_than_query:
+                raise ValueError(
+                    f"No enacted text found for query {path} after date {date}"
+                )
+        selected_version = responses[selected_date]
 
-        desired_date = versions_not_later_than_query[-1]
-        return responses[desired_date]
+        return self.search_tree_for_path(path=path, branch=selected_version)
 
