@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import ValidationError
 import requests
@@ -111,3 +111,68 @@ class Client:
             if enactment_needs_api_update(value):
                 enactment_index[key] = self.update_enactment_from_api(value)
         return enactment_index
+
+
+# A dict indexing responses by iso-format date strings.
+ResponsesByDate = Dict[str, Dict]
+ResponsesByDateByPath = Dict[str, Dict[str, Dict]]
+
+
+class JSONRepository(Client):
+    """Repository for mocking API responses locally."""
+
+    def __init__(self, responses: ResponsesByDateByPath):
+        self.responses = responses
+
+    def search_tree_for_path(
+        self, path: str, branch: Dict
+    ) -> Optional[ResponsesByDate]:
+        if branch.get(path):
+            return branch[path]
+        branches_that_start_with_path = [
+            nested_path for nested_path in branch.keys() if nested_path.startswith(path)
+        ]
+        if branches_that_start_with_path:
+            return self.search_tree_for_path(
+                path=path, branch=branches_that_start_with_path[0]
+            )
+        return None
+
+    def get_responses_for_path(self, path: str) -> ResponsesByDate:
+        path = normalize_path(path)
+        branch = self.responses
+        return self.search_tree_for_path(path=path, branch=branch)
+
+    def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
+        """
+        Fetches data about legislation at specified path and date from Client's assigned endpoint.
+
+        :param path:
+            A path to the desired legislation section using the United States Legislation Markup
+            tree-like citation format. Examples: "/us/const/amendment/IV", "/us/usc/t17/s103"
+
+        :param date:
+            A date when the desired version of the legislation was in effect. This does not need to
+            be the "effective date" or the first date when the version was in effect. However, if
+            you select a date when two versions of the provision were in effect at the same time,
+            you will be given the version that became effective later.
+        """
+        responses = self.get_responses_for_path(path)
+        if not responses:
+            raise ValueError(f"No enacted text found for query {query}")
+
+        if isinstance(date, datetime.date):
+            date = date.isoformat()
+
+        if not date:
+            return responses[-1]
+
+        versions_not_later_than_query = [
+            version_date for version_date in responses if version_date <= date
+        ]
+        if not versions_not_later_than_query:
+            return f"No enacted text found for query {query} after date {date}"
+
+        desired_date = versions_not_later_than_query[-1]
+        return responses[desired_date]
+
