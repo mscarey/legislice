@@ -129,12 +129,12 @@ class JSONRepository(Client):
         path = normalize_path(path)
         if self.responses.get(path):
             return self.responses[path]
-        branches_that_start_with_path = [
-            entry for entry in self.responses.keys() if entry.startswith(path)
+        branches_that_start_path = [
+            entry for entry in self.responses.keys() if path.startswith(entry)
         ]
-        if not branches_that_start_with_path:
+        if not branches_that_start_path:
             return None
-        name_of_best_entry = max(branches_that_start_with_path, key=len)
+        name_of_best_entry = max(branches_that_start_path, key=len)
         return self.responses[name_of_best_entry]
 
     def search_tree_for_path(
@@ -143,14 +143,14 @@ class JSONRepository(Client):
         path = normalize_path(path)
         if branch["node"] == path:
             return branch
-        branches_that_start_with_path = [
+        branches_that_start_path = [
             nested_node
             for nested_node in branch["children"]
             if nested_node["node"].startswith(path)
         ]
-        if branches_that_start_with_path:
+        if branches_that_start_path:
             return self.search_tree_for_path(
-                path=path, branch=branches_that_start_with_path[0]
+                path=path, branch=branches_that_start_path[0]
             )
         return None
 
