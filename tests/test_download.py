@@ -5,7 +5,7 @@ from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
 import pytest
 
-from legislice.download import Client
+from legislice.download import Client, LegisliceDateError, LegislicePathError
 from legislice.name_index import collect_enactments
 
 
@@ -80,7 +80,7 @@ class TestDownloadAndLoad:
 
     @pytest.mark.vcr()
     def test_bad_uri_for_enactment(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(LegislicePathError):
             _ = self.client.read(path="/us/const/article-III/1")
 
     @pytest.mark.vcr()

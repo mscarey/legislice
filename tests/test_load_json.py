@@ -1,6 +1,7 @@
+import datetime
 import pytest
 
-from legislice.download import JSONRepository
+from legislice.download import JSONRepository, LegisliceDateError, LegislicePathError
 from legislice.name_index import EnactmentIndex
 
 
@@ -22,9 +23,21 @@ class TestLoadJson:
 
     def test_date_is_too_early(self, mock_responses):
         client = JSONRepository(responses=mock_responses)
-        with pytest.raises(ValueError):
-            client.read(path="/us/usc/t17/s102/a", date="2010-12-15")
-        assert True
+        with pytest.raises(LegisliceDateError):
+            client.read(path="/us/usc/t17/s102/a", date=datetime.date(2010, 12, 15))
+
+    def test_unavailable_path(self, mock_responses):
+        client = JSONRepository(responses=mock_responses)
+        with pytest.raises(LegislicePathError):
+            client.read(path="/test/acts/intolerable", date=datetime.date(2010, 12, 15))
+
+    def test_unavailable_path_within_partial_match(self, mock_responses):
+        """Test when a key appears to be an ancestor of the desired path, but isn't."""
+        client = JSONRepository(responses=mock_responses)
+        with pytest.raises(LegislicePathError):
+            client.read(
+                path="/us/const/amendment/XIV/2/b", date=datetime.date(2010, 12, 15)
+            )
 
     def test_find_subnode_of_entry(self, mock_responses):
         client = JSONRepository(responses=mock_responses)

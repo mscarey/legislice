@@ -7,9 +7,21 @@ import requests
 
 from legislice.enactments import Enactment
 from legislice.name_index import EnactmentIndex
-from legislice.schemas import get_schema_for_node, enactment_needs_api_update
+from legislice.schemas import (
+    ExpandableSchema,
+    get_schema_for_node,
+    enactment_needs_api_update,
+)
 
 RawEnactment = Dict[str, Any]
+
+
+class LegislicePathError(Exception):
+    pass
+
+
+class LegisliceDateError(Exception):
+    pass
 
 
 def normalize_path(path: str) -> str:
@@ -53,7 +65,7 @@ class Client:
 
         response = requests.get(query, headers=headers)
         if response.status_code == 404:
-            raise ValueError(f"No enacted text found for query {query}")
+            raise LegislicePathError(f"No enacted text found for query {query}")
 
         return response.json()
 
@@ -170,7 +182,7 @@ class JSONRepository(Client):
         """
         responses = self.get_entry_closest_to_cited_path(path)
         if not responses:
-            raise ValueError(f"No enacted text found for query {path}")
+            raise LegislicePathError(f"No enacted text found for query {path}")
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
@@ -183,13 +195,18 @@ class JSONRepository(Client):
                 for version_date in responses.keys()
                 if version_date <= date
             ]
-            selected_date = max(versions_not_later_than_query)
-
             if not versions_not_later_than_query:
-                raise ValueError(
+                raise LegisliceDateError(
                     f"No enacted text found for query {path} after date {date}"
                 )
+            selected_date = max(versions_not_later_than_query)
+
         selected_version = responses[selected_date]
 
-        return self.search_tree_for_path(path=path, branch=selected_version)
+        result = self.search_tree_for_path(path=path, branch=selected_version)
+        if not result:
+            raise LegislicePathError(
+                f"No enacted text found for query {path} after date {date}"
+            )
+        return result
 
