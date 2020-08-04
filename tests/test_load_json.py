@@ -57,3 +57,20 @@ class TestUpdateEnactments:
         assert updated_enactment["heading"] == "AMENDMENT IV."
         assert updated_enactment["url"].startswith("https")
 
+    def test_update_entry_without_date(self, mock_responses):
+        enactment_index = EnactmentIndex(
+            {
+                "person clause": {
+                    "node": "/us/const/amendment/XIV/3",
+                    "start": 3,
+                    "end": 15,
+                }
+            }
+        )
+        client = JSONRepository(responses=mock_responses)
+        updated_index = client.update_entries_in_enactment_index(enactment_index)
+        updated_enactment = updated_index.get_by_name("person clause")
+        assert updated_enactment["heading"].startswith("Loyalty as a qualification")
+        loaded_enactment = client.read_from_json(updated_enactment)
+        assert loaded_enactment.selected_text() == "...person shall..."
+
