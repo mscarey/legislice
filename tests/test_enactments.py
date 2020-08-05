@@ -1,5 +1,6 @@
 from datetime import date
 import os
+from typing import Type
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -776,6 +777,12 @@ class TestAddEnactments:
 
         combined = new_version + old_version
         assert combined.text == "...Department of Beards...Australian Federal Police..."
+
+    @pytest.mark.vcr()
+    def test_error_for_using_wrong_type_to_select_text(self):
+        new_version = self.client.read("/test/acts/47/8")
+        with pytest.raises(TypeError):
+            new_version.select_more(date(2000, 1, 1))
 
     @pytest.mark.vcr()
     def test_able_to_add_subsection_with_text_repeated_elsewhere(self):

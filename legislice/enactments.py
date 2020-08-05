@@ -255,6 +255,8 @@ class BaseEnactment:
             isinstance(item, TextQuoteSelector) for item in selection
         ):
             selection = self.get_positions_for_quotes(selection)
+        if not isinstance(selection, TextPositionSet):
+            selection = TextPositionSet(selection)
         return selection
 
     def get_positions_for_quotes(
@@ -612,7 +614,12 @@ class Enactment(BaseEnactment):
         Select text, in addition to any previous selection.
         """
         if not isinstance(selection, TextPositionSet):
-            selection = self.convert_selection_to_set(selection)
+            try:
+                selection = self.convert_selection_to_set(selection)
+            except ValueError:
+                raise TypeError(
+                    f"Cannot select more Enactment text with type {type(selection)}."
+                )
 
         # Ignore child nodes if selector was passed in without an end
         if any(selector.end > 99999 for selector in selection):
