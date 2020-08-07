@@ -6,110 +6,13 @@ from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
-from anchorpoint.schemas import SelectorSchema
+from anchorpoint.schemas import SelectorSchema, TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet
+from anchorpoint.textsequences import TextPassage, TextSequence
 
 # Path parts known to indicate the level of law they refer to.
 KNOWN_CONSTITUTIONS = ["const"]
 KNOWN_STATUTE_CODES = ["acts", "usc"]
-
-
-class TextPassage:
-    """
-    A contiguous passage of legislative text.
-
-    :param passage:
-    """
-
-    def __init__(self, text: str):
-        self.text = text
-
-    def means(self, other: Optional[TextPassage]) -> bool:
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for same meaning."
-            )
-
-        return self.text.strip(",:;. ") == other.text.strip(",:;. ")
-
-    def __ge__(self, other: Optional[TextPassage]) -> bool:
-        if not other:
-            return True
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
-            )
-        other_text = other.text.strip(",:;. ")
-        return other_text in self.text
-
-
-class TextSequence(Sequence[Union[None, TextPassage]]):
-    """
-    Sequential passages of legislative text that need not be consecutive.
-
-    Unlike an Enactment, a TextSequence does not preserve the citation structure
-    of the enacted statute.
-
-    :param passages:
-        the text passages included in the TextSequence, which should be chosen
-        to express a coherent idea. "None"s in the sequence represent spans of
-        text that exist in the source statute, but that haven't been chosen
-        to be part of the TextSequence.
-    """
-
-    def __init__(self, passages=Sequence[TextPassage]):
-        self.passages = passages
-
-    def __len__(self):
-        return len(self.passages)
-
-    def __getitem__(self, key):
-        return self.passages[key]
-
-    def __str__(self):
-        result = ""
-        for phrase in self.passages:
-            if phrase is None:
-                if not result.endswith("..."):
-                    result += "..."
-            else:
-                if result and not result.endswith(("...", " ")):
-                    result += " "
-                result += phrase.text
-        if result == "...":
-            return ""
-        return result
-
-    def __ge__(self, other: TextSequence):
-        for other_passage in other.passages:
-            if not any(self_passage >= other_passage for self_passage in self.passages):
-                return False
-        return True
-
-    def __gt__(self, other: TextSequence):
-        if self.means(other):
-            return False
-        return self >= other
-
-    def strip(self) -> TextSequence:
-        result = self.passages.copy()
-        if result and result[0] is None:
-            result = result[1:]
-        if result and result[-1] is None:
-            result = result[:-1]
-        return TextSequence(result)
-
-    def means(self, other: TextSequence) -> bool:
-        self_passages = self.strip().passages
-        other_passages = other.strip().passages
-        if len(self_passages) != len(other_passages):
-            return False
-
-        zipped = zip(self_passages, other_passages)
-        return all(
-            (pair[0] is None and pair[1] is None) or pair[0].means(pair[1])
-            for pair in zipped
-        )
 
 
 RawSelector = Union[str, Dict[str, str]]
@@ -234,36 +137,42 @@ class BaseEnactment:
     def selected_text(self) -> str:
         return str(self.text_sequence())
 
+    def get_passage(
+        self,
+        selection: Union[
+            bool,
+            str,
+            TextPositionSelector,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> str:
+
+        position_set = self.convert_selection_to_set(selection)
+        passage = position_set.as_text(passage=self.text)
+        return passage
+
     def convert_selection_to_set(
         self,
         selection: Union[
-            TextPositionSelector, TextQuoteSelector, Sequence[TextQuoteSelector],
+            bool,
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
         ],
     ) -> TextPositionSet:
-        if selection is True:
-            return TextPositionSet(TextPositionSelector(0, len(self.content)))
-        elif selection is False:
-            return TextPositionSet()
-        if isinstance(selection, str):
-            schema = SelectorSchema()
-            selection = schema.load(selection)
-        if isinstance(selection, TextQuoteSelector):
-            selection = [selection]
-        elif isinstance(selection, TextPositionSelector):
-            selection = TextPositionSet(selection)
-        if isinstance(selection, Sequence) and all(
-            isinstance(item, TextQuoteSelector) for item in selection
-        ):
-            selection = self.get_positions_for_quotes(selection)
-        if not isinstance(selection, TextPositionSet):
-            selection = TextPositionSet(selection)
-        return selection
+        factory = TextPositionSetFactory(self.text)
+        position_set = factory.from_selection(selection)
+        return position_set
 
-    def get_positions_for_quotes(
+    def convert_quotes_to_position(
         self, quotes: Sequence[TextQuoteSelector]
     ) -> TextPositionSet:
-        position_selectors = [quote.as_position(self.text) for quote in quotes]
-        return TextPositionSet(position_selectors)
+        factory = TextPositionSetFactory(passage=self.text)
+        positions = factory.from_quote_selectors(quotes)
+        return positions
 
     def select_from_text_positions_without_nesting(
         self, selections: Union[List[TextPositionSelector], RangeSet]

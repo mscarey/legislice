@@ -3,6 +3,7 @@ import os
 from typing import Type
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
+from anchorpoint.schemas import TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
@@ -234,6 +235,20 @@ class TestSelectFromEnactment:
         sequence = combined.text_sequence()
         assert str(sequence).strip(".").startswith("barbers")
 
+    @pytest.mark.vcr
+    def test_get_passage(self):
+        """
+        Use selector to get passage from Enactment without changing which part is selected.
+
+        Checks that `.selected_text()` is the same before and after `.get_passage()`.
+        """
+        section = self.client.read(path="/test/acts/47/11")
+        section.select(TextPositionSelector(61, 73))
+        assert section.selected_text() == "...hairdressers..."
+        passage = section.get_passage(TextPositionSelector(112, 127))
+        assert passage == "...as they see fit..."
+        assert section.selected_text() == "...hairdressers..."
+
     @pytest.mark.vcr()
     def test_select_nested_text_with_positions(self):
         phrases = TextPositionSet(
@@ -302,7 +317,7 @@ class TestSelectFromEnactment:
             TextQuoteSelector(exact="hairdressers", suffix=", or other male grooming"),
             TextQuoteSelector(exact="as they see fit"),
         ]
-        positions = section.get_positions_for_quotes(quotes)
+        positions = section.convert_quotes_to_position(quotes)
         assert positions == TextPositionSet(
             TextPositionSelector(0, 51),
             TextPositionSelector(61, 73),
