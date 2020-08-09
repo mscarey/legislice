@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import deque
 from copy import deepcopy
 from datetime import date
 from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, Union
@@ -195,33 +196,30 @@ class BaseEnactment:
 
         :param selection:
             A TextPositionSet of TextPositionSelectors to apply to this Enactment.
+
+        :returns:
+            Any unused selections (beyond the end of the node content)
         """
         self._selection: List[TextPositionSelector] = []
 
         if isinstance(selections, RangeSet):
             selections = selections.ranges()
+        selections = deque(selections)
+
         while selections and selections[0].start < len(self.content):
-            if selections[0].end <= len(self.content):
-                self._selection.append(
-                    TextPositionSelector(
-                        start=selections[0].start, end=selections[0].end
-                    )
-                )
-                selections = selections[1:]
+            current = selections.popleft()
+            if current.end < len(self.content):
+                self._selection.append(current)
             else:
                 self._selection.append(
-                    TextPositionSelector(
-                        start=selections[0].start, end=len(self.content)
-                    )
+                    TextPositionSelector(start=current.start, end=len(self.content))
                 )
-                if selections[0].end > self.padded_length:
-                    selections[0] = TextPositionSelector(
-                        start=self.padded_length, end=selections[0].end,
+                if current.end > self.padded_length:
+                    selections.appendleft(
+                        TextPositionSelector(start=self.padded_length, end=current.end)
                     )
-                else:
-                    selections = selections[1:]
         self._selection = TextPositionSet(self._selection)
-        return selections
+        return TextPositionSet(selections)
 
     def select_without_children(
         self,
