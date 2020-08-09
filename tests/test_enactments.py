@@ -179,7 +179,7 @@ class TestSelectText:
 
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted…",
+            content="Where an exemption is granted",
             node="/test/acts/47/6C",
             children=[subsection],
             end_date=None,
@@ -233,7 +233,7 @@ class TestSelectFromEnactment:
         )
         combined.select(selector)
         sequence = combined.text_sequence()
-        assert str(sequence).strip(".").startswith("barbers")
+        assert str(sequence).strip("…").startswith("barbers")
 
     @pytest.mark.vcr
     def test_get_passage(self):

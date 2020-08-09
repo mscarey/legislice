@@ -149,7 +149,7 @@ class BaseEnactment:
     ) -> str:
 
         position_set = self.convert_selection_to_set(selection)
-        passage = position_set.as_string(passage=self.text)
+        passage = position_set.as_string(text=self.text)
         return passage
 
     def convert_selection_to_set(
