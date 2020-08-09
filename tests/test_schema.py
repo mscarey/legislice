@@ -68,7 +68,7 @@ class TestLoadEnactment:
             child["selection"] = []
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
-        answer = "The Department of Beards may issue licenses to such...hairdressers..."
+        answer = "The Department of Beards may issue licenses to such…hairdressers…"
         assert result.selected_text() == answer
 
     def test_enactment_with_True_as_selector(self, section_11_subdivided):
@@ -76,7 +76,7 @@ class TestLoadEnactment:
         section_11_subdivided["selection"] = True
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
-        answer = "The Department of Beards may issue licenses to such...hairdressers..."
+        answer = "The Department of Beards may issue licenses to such…hairdressers…"
         assert result.selected_text() == answer
 
     def test_enactment_with_False_as_selector(self, section_11_subdivided):
@@ -84,20 +84,20 @@ class TestLoadEnactment:
         section_11_subdivided["selection"] = False
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
-        answer = "...hairdressers..."
+        answer = "…hairdressers…"
         assert result.selected_text() == answer
 
     def test_selector_not_wrapped_in_list(self, section_11_together):
         schema = EnactmentSchema()
         section_11_together["selection"] = {"start": 4, "end": 24}
         result = schema.load(section_11_together)
-        assert result.selected_text() == "...Department of Beards..."
+        assert result.selected_text() == "…Department of Beards…"
 
     def test_load_with_text_quote_selector(self, section_11_together):
         schema = EnactmentSchema()
         section_11_together["selection"] = [{"exact": "Department of Beards"}]
         result = schema.load(section_11_together)
-        assert result.selected_text() == "...Department of Beards..."
+        assert result.selected_text() == "…Department of Beards…"
 
     @pytest.mark.vcr()
     def test_load_enactment_with_text_anchor(self, provision_with_text_anchor):
@@ -120,7 +120,7 @@ class TestLoadEnactment:
         schema = EnactmentSchema(many=False)
         enactment = schema.load(section_11_subdivided)
 
-        assert enactment.selected_text() == exact + "..."
+        assert enactment.selected_text() == exact + "…"
 
     def test_node_field_needed_to_load_enactment(self):
         barbers_without_node = {

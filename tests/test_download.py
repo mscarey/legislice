@@ -76,7 +76,7 @@ class TestDownloadAndLoad:
         text = art_3.selected_text()
 
         assert text.startswith("The judicial Power")
-        assert text.endswith("the United States...")
+        assert text.endswith("the United States…")
 
     @pytest.mark.vcr()
     def test_bad_uri_for_enactment(self):
@@ -90,7 +90,7 @@ class TestDownloadAndLoad:
             prefix="and", exact="the persons or things", suffix="to be seized."
         )
         fourth_a.select(selector)
-        assert fourth_a.selected_text().endswith("or things...")
+        assert fourth_a.selected_text().endswith("or things…")
 
     @pytest.mark.vcr()
     def test_chapeau_and_subsections_from_uslm_code(self):

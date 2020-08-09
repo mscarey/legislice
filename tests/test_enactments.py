@@ -33,14 +33,14 @@ class TestMakeEnactment:
     def test_init_enactment_with_nesting(self):
         subsection = Enactment(
             heading="",
-            content="The beardcoin shall be a cryptocurrency token...",
+            content="The beardcoin shall be a cryptocurrency token…",
             node="/test/acts/47/6C/1",
             start_date=date(2013, 7, 18),
         )
 
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted under section 6...",
+            content="Where an exemption is granted under section 6…",
             node="/test/acts/47/6C",
             children=[subsection],
             end_date=None,
@@ -69,7 +69,7 @@ class TestMakeEnactment:
         assert isinstance(result.selection, TextPositionSet)
         assert (
             result.selected_text()
-            == "The Department of Beards may issue licenses to such...hairdressers..."
+            == "The Department of Beards may issue licenses to such…hairdressers…"
         )
 
 
@@ -85,7 +85,7 @@ class TestLinkedEnactment:
     def test_select_text_in_linked_enactment(self):
         enactment = self.client.read(path="/test", date="2020-01-01")
         enactment.select("for documentation.")
-        assert enactment.selected_text() == "...for documentation."
+        assert enactment.selected_text() == "…for documentation."
 
 
 class TestEnactmentDetails:
@@ -106,7 +106,7 @@ class TestEnactmentDetails:
         enactment.select(selection)
         assert enactment.level == "constitution"
         assert enactment.start_date == date(1791, 12, 15)
-        assert "secure in their persons..." in str(enactment)
+        assert "secure in their persons…" in str(enactment)
         assert enactment.node in str(enactment)
         assert enactment.source == enactment.node
         assert "1791-12-15" in str(enactment)
@@ -171,7 +171,7 @@ class TestSelectText:
     def test_select_text_with_bool(self):
         subsection = Enactment(
             heading="",
-            content="The beardcoin shall be a cryptocurrency token...",
+            content="The beardcoin shall be a cryptocurrency token…",
             node="/test/acts/47/6C/1",
             start_date=date(2013, 7, 18),
             selection=False,
@@ -179,25 +179,25 @@ class TestSelectText:
 
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted...",
+            content="Where an exemption is granted…",
             node="/test/acts/47/6C",
             children=[subsection],
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.selected_text() == "Where an exemption is granted..."
+        assert section.selected_text() == "Where an exemption is granted…"
         assert "cryptocurrency" not in section.selected_text()
 
     def test_text_sequence_selected_with_bool(self):
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted...",
+            content="Where an exemption is granted…",
             node="/test/acts/47/6C",
             children=[],
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.text_sequence()[0].text == "Where an exemption is granted..."
+        assert section.text_sequence()[0].text == "Where an exemption is granted…"
 
     @pytest.mark.vcr()
     def test_str_for_text_sequence(self):
@@ -213,7 +213,7 @@ class TestSelectText:
         text_sequence = section.text_sequence()
         assert str(text_sequence) == (
             "The Department of Beards may issue "
-            "licenses to such...hairdressers...as they see fit..."
+            "licenses to such…hairdressers…as they see fit…"
         )
 
     @pytest.mark.vcr()
@@ -244,10 +244,10 @@ class TestSelectFromEnactment:
         """
         section = self.client.read(path="/test/acts/47/11")
         section.select(TextPositionSelector(61, 73))
-        assert section.selected_text() == "...hairdressers..."
+        assert section.selected_text() == "…hairdressers…"
         passage = section.get_passage(TextPositionSelector(112, 127))
-        assert passage == "...as they see fit..."
-        assert section.selected_text() == "...hairdressers..."
+        assert passage == "…as they see fit…"
+        assert section.selected_text() == "…hairdressers…"
 
     @pytest.mark.vcr()
     def test_select_nested_text_with_positions(self):
@@ -261,7 +261,7 @@ class TestSelectFromEnactment:
         text_sequence = section.text_sequence()
         assert str(text_sequence) == (
             "The Department of Beards may issue licenses to "
-            "such...hairdressers...as they see fit..."
+            "such…hairdressers…as they see fit…"
         )
 
     def test_select_none(self, section_11_subdivided):
@@ -284,7 +284,7 @@ class TestSelectFromEnactment:
         combined.children[3].select()
         assert (
             combined.selected_text()
-            == "...as they see fit to purchase a beardcoin from a customer..."
+            == "…as they see fit to purchase a beardcoin from a customer…"
         )
         assert (
             combined.children[3].selected_text()
@@ -340,7 +340,7 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         section = schema.load(section_11_together)
         section.select(TextPositionSelector(start=29, end=43))
-        assert section.selected_text() == "...issue licenses..."
+        assert section.selected_text() == "…issue licenses…"
 
     def test_invalid_selector_text(self, section_11_subdivided):
         section_11_subdivided["selection"] = [
@@ -354,7 +354,7 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         fourth_a = schema.load(fourth_a)
         fourth_a.select("The right of the people")
-        assert fourth_a.selected_text() == "The right of the people..."
+        assert fourth_a.selected_text() == "The right of the people…"
 
     @pytest.mark.vcr()
     def test_select_method_clears_previous_selection(self):
@@ -362,14 +362,14 @@ class TestSelectFromEnactment:
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
         old_version.select(old_selector)
         assert old_version.selected_text() == (
-            "Any such person issued a notice to remedy under subsection 1 must..."
+            "Any such person issued a notice to remedy under subsection 1 must…"
         )
 
     @pytest.mark.vcr()
     def test_no_space_before_ellipsis(self):
         enactment = self.client.read(path="/us/usc/t17/s102/b")
         enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
-        assert " ..." not in enactment.selected_text()
+        assert " …" not in enactment.selected_text()
 
 
 class TestCompareEnactment:
@@ -599,8 +599,8 @@ class TestAddEnactments:
         right.select("shall not be violated")
         left.select_more_text_at_current_node(right.selection)
         assert left.selected_text() == (
-            "The right of the people to be secure in their persons..."
-            "shall not be violated..."
+            "The right of the people to be secure in their persons…"
+            "shall not be violated…"
         )
 
     def test_select_unavailable_text(self, fourth_a):
@@ -616,7 +616,7 @@ class TestAddEnactments:
         old_version.select("bona fide religious")
         new_version.select("reasons.")
         new_version.select_more_text_from_changed_version(old_version)
-        assert new_version.selected_text() == "...bona fide religious...reasons."
+        assert new_version.selected_text() == "…bona fide religious…reasons."
 
     @pytest.mark.vcr()
     def test_add_selection_from_changed_node_and_subnode(self):
@@ -628,7 +628,7 @@ class TestAddEnactments:
         )
         old_version.select("obtain a beardcoin")
         combined = new_version + old_version
-        assert combined.selected_text().endswith("must...obtain a beardcoin...")
+        assert combined.selected_text().endswith("must…obtain a beardcoin…")
         # Test that original Enactments unchanged
         assert "obtain a beardcoin" not in new_version.selected_text()
 
@@ -681,8 +681,8 @@ class TestAddEnactments:
             "obtain a beardcoin from the Department of Beards"
         )
         assert old_version.selected_text() == (
-            "Any such person issued a notice to remedy under subsection 1 must..."
-            "obtain a beardcoin from the Department of Beards..."
+            "Any such person issued a notice to remedy under subsection 1 must…"
+            "obtain a beardcoin from the Department of Beards…"
         )
 
         new_version = self.client.read("/test/acts/47/8/2/c", date="2015-01-01")
@@ -691,9 +691,9 @@ class TestAddEnactments:
         combined = old_version + new_version
 
         assert combined.selected_text() == (
-            "Any such person issued a notice to remedy under subsection 1 must..."
+            "Any such person issued a notice to remedy under subsection 1 must…"
             "remove the beard with a laser, or "
-            "obtain a beardcoin from the Department of Beards..."
+            "obtain a beardcoin from the Department of Beards…"
         )
 
     @pytest.mark.vcr()
@@ -708,15 +708,15 @@ class TestAddEnactments:
 
         combined = child_version + parent_version
         assert combined.selected_text() == (
-            "Any such person issued a notice to remedy under subsection 1 must..."
-            "remove the beard with a laser..."
+            "Any such person issued a notice to remedy under subsection 1 must…"
+            "remove the beard with a laser…"
         )
         # original Enactments should be unchanged
         assert (
             parent_version.selected_text()
-            == "Any such person issued a notice to remedy under subsection 1 must..."
+            == "Any such person issued a notice to remedy under subsection 1 must…"
         )
-        assert child_version.selected_text() == "remove the beard with a laser..."
+        assert child_version.selected_text() == "remove the beard with a laser…"
 
     @pytest.mark.vcr()
     def test_fail_to_add_repeated_text_from_changed_version(self):
@@ -791,7 +791,7 @@ class TestAddEnactments:
         )
 
         combined = new_version + old_version
-        assert combined.text == "...Department of Beards...Australian Federal Police..."
+        assert combined.text == "…Department of Beards…Australian Federal Police…"
 
     @pytest.mark.vcr()
     def test_error_for_using_wrong_type_to_select_text(self):
@@ -819,7 +819,7 @@ class TestAddEnactments:
 
         assert (
             new_version.selected_text()
-            == "...Department of Beards...Australian Federal Police..."
+            == "…Department of Beards…Australian Federal Police…"
         )
 
     def test_add_string_as_selector(self, section_11_subdivided):
@@ -829,7 +829,7 @@ class TestAddEnactments:
         more = section + "hairdressers"
         assert (
             more.selected_text()
-            == "The Department of Beards may issue licenses to such...hairdressers..."
+            == "The Department of Beards may issue licenses to such…hairdressers…"
         )
 
 
@@ -879,7 +879,7 @@ class TestConsolidateEnactments:
         assert len(combined) == 2
         assert any(
             law.selected_text().startswith("To promote the Progress")
-            and law.selected_text().endswith("their respective Writings...")
+            and law.selected_text().endswith("their respective Writings…")
             for law in combined
         )
 

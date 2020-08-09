@@ -149,7 +149,7 @@ class BaseEnactment:
     ) -> str:
 
         position_set = self.convert_selection_to_set(selection)
-        passage = position_set.as_text(passage=self.text)
+        passage = position_set.as_string(passage=self.text)
         return passage
 
     def convert_selection_to_set(
@@ -246,21 +246,6 @@ class BaseEnactment:
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        selected: List[Union[None, TextPassage]] = []
-
-        selection_ranges = self.selection.ranges()
-
-        if selection_ranges:
-            if include_nones and selection_ranges[0].start > 0:
-                selected.append(None)
-            for passage in selection_ranges:
-                end_value = None if passage.end > 999999 else passage.end
-                selected.append(TextPassage(self.content[passage.start : end_value]))
-                if include_nones and passage.end and (passage.end < len(self.content)):
-                    selected.append(None)
-        elif include_nones and (not selected or selected[-1] is not None):
-            selected.append(None)
-        return selected
 
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
@@ -270,7 +255,9 @@ class BaseEnactment:
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        return TextSequence(self._text_sequence(include_nones=include_nones))
+        return self.selection.as_text_sequence(
+            text=self.text, include_nones=include_nones
+        )
 
     def raise_error_for_extra_selector(
         self, unused_selectors: List[TextPositionSelector]
@@ -573,19 +560,14 @@ class Enactment(BaseEnactment):
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        selected = super()._text_sequence(include_nones=include_nones)
+        selected = super().text_sequence(include_nones=include_nones)
         for child in self.children:
-            child_passages = child.text_sequence(include_nones=include_nones)
-            if (
-                selected
-                and selected[-1] is None
-                and child_passages
-                and child_passages[0] is None
-            ):
-                selected += child_passages[1:]
+            if selected:
+                selected = selected + child.text_sequence(include_nones=include_nones)
             else:
-                selected += child_passages
-        return TextSequence(selected)
+                selected = child.text_sequence
+
+        return selected
 
     def means(self, other: Enactment) -> bool:
         r"""

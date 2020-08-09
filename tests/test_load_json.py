@@ -85,7 +85,7 @@ class TestUpdateEnactments:
         updated_enactment = updated_index.get_by_name("person clause")
         assert updated_enactment["heading"].startswith("Loyalty as a qualification")
         loaded_enactment = client.read_from_json(updated_enactment)
-        assert loaded_enactment.selected_text() == "...person shall..."
+        assert loaded_enactment.selected_text() == "…person shall…"
 
 
 class TestReadJSON:
@@ -98,4 +98,4 @@ class TestReadJSON:
         }
         client = JSONRepository(responses=mock_responses)
         enactment = client.read_from_json(raw_enactment)
-        assert enactment.selected_text().endswith("shall not be violated...")
+        assert enactment.selected_text().endswith("shall not be violated…")
