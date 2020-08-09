@@ -238,15 +238,6 @@ class BaseEnactment:
     ) -> None:
         self.select_without_children(selection)
 
-    def _text_sequence(self, include_nones: bool = True) -> List[Optional[TextPassage]]:
-        """
-        List the phrases in the Enactment selected by TextPositionSelectors.
-
-        :param include_nones:
-            Whether the list of phrases should include `None` to indicate a block of
-            unselected text
-        """
-
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
         List the phrases in the Enactment selected by TextPositionSelectors.
@@ -256,7 +247,7 @@ class BaseEnactment:
             unselected text
         """
         return self.selection.as_text_sequence(
-            text=self.text, include_nones=include_nones
+            text=self.content, include_nones=include_nones
         )
 
     def raise_error_for_extra_selector(
@@ -565,7 +556,7 @@ class Enactment(BaseEnactment):
             if selected:
                 selected = selected + child.text_sequence(include_nones=include_nones)
             else:
-                selected = child.text_sequence
+                selected = child.text_sequence(include_nones=include_nones)
 
         return selected
 
