@@ -127,6 +127,13 @@ class BaseEnactment:
             return "constitution"
         raise NotImplementedError
 
+    @property
+    def padded_length(self):
+        """Get length of self's content plus one character for space before next section."""
+        if self.content:
+            return len(self.content) + 1
+        return 0
+
     def __str__(self):
         text_sequence = self.text_sequence()
         return f'"{text_sequence}" ({self.node} {self.start_date})'
@@ -163,6 +170,10 @@ class BaseEnactment:
             Sequence[TextQuoteSelector],
         ],
     ) -> TextPositionSet:
+        if selection is True:
+            return TextPositionSet(
+                TextPositionSelector(0, len(self.content) + 1, include_end=False)
+            )
         factory = TextPositionSetFactory(self.text)
         position_set = factory.from_selection(selection)
         return position_set
@@ -203,9 +214,12 @@ class BaseEnactment:
                         start=selections[0].start, end=len(self.content)
                     )
                 )
-                selections[0] = TextPositionSelector(
-                    start=self.padded_length, end=selections[0].end
-                )
+                if selections[0].end > self.padded_length:
+                    selections[0] = TextPositionSelector(
+                        start=self.padded_length, end=selections[0].end,
+                    )
+                else:
+                    selections = selections[1:]
         self._selection = TextPositionSet(self._selection)
         return selections
 
@@ -322,13 +336,6 @@ class Enactment(BaseEnactment):
         self._selection = TextPositionSet()
         if selection:
             self.select_more(selection)
-
-    @property
-    def padded_length(self):
-        """Get length of self's content plus one character for space before next section."""
-        if self.content:
-            return len(self.content) + 1
-        return 0
 
     @property
     def text(self):
