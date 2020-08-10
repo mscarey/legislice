@@ -8,7 +8,7 @@ from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
 
-from legislice.download import Client
+from legislice.download import Client, JSONRepository
 from legislice.enactments import Enactment, consolidate_enactments
 from legislice.schemas import EnactmentSchema
 
@@ -143,6 +143,11 @@ class TestEnactmentDetails:
         amendment_14 = self.client.read(path="/us/const/amendment/XIV")
         assert amendment_14.start_date == date(1868, 7, 28)
         assert amendment_5.start_date < amendment_14.start_date
+
+    def test_regulation_level(self, mock_responses):
+        client = JSONRepository(responses=mock_responses)
+        enactment = client.read("/us/cfr/t37/s202.1")
+        assert enactment.level == "regulation"
 
 
 class TestSelectText:

@@ -14,6 +14,7 @@ from anchorpoint.textsequences import TextPassage, TextSequence
 # Path parts known to indicate the level of law they refer to.
 KNOWN_CONSTITUTIONS = ["const"]
 KNOWN_STATUTE_CODES = ["acts", "usc"]
+KNOWN_REGULATIONS = ["cfr"]
 
 
 RawSelector = Union[str, Dict[str, str]]
@@ -122,11 +123,13 @@ class BaseEnactment:
 
     @property
     def level(self):
-        if self.code in KNOWN_STATUTE_CODES:
+        codename = self.code
+        if codename in KNOWN_STATUTE_CODES:
             return "statute"
-        if self.code in KNOWN_CONSTITUTIONS:
+        if codename in KNOWN_CONSTITUTIONS:
             return "constitution"
-        raise NotImplementedError
+        if codename in KNOWN_REGULATIONS:
+            return "regulation"
 
     @property
     def padded_length(self):
