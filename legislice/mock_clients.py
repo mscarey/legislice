@@ -43,7 +43,7 @@ class JSONRepository(Client):
         branches_that_start_path = [
             nested_node
             for nested_node in branch["children"]
-            if nested_node["node"].startswith(path)
+            if path.startswith(nested_node["node"])
         ]
         if branches_that_start_path:
             return self.search_tree_for_path(
@@ -672,7 +672,7 @@ MOCK_BEARD_ACT_RESPONSES = {
             "parent": "https://authorityspoke.com/api/v1/test/acts/47/",
         }
     },
-    "/test/acts/47/8/1": {
+    "/test/acts/47/8": {
         "1935-04-01": {
             "heading": "Notice to remedy",
             "content": "",

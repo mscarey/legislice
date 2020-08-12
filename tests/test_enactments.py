@@ -3,14 +3,17 @@ import os
 from typing import Type
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.schemas import TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
 
 from legislice.download import Client
 from legislice.enactments import Enactment, consolidate_enactments
-from legislice.mock_clients import MOCK_USC_CLIENT
+from legislice.mock_clients import (
+    JSONRepository,
+    MOCK_BEARD_ACT_CLIENT,
+    MOCK_USC_CLIENT,
+)
 from legislice.schemas import EnactmentSchema
 
 load_dotenv()
@@ -75,14 +78,12 @@ class TestMakeEnactment:
 
 
 class TestLinkedEnactment:
-    client = Client(api_token=TOKEN)
+    client = MOCK_BEARD_ACT_CLIENT
 
-    @pytest.mark.vcr()
     def test_text_sequence_for_linked_enactment(self):
         enactment = self.client.read(path="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
 
-    @pytest.mark.vcr()
     def test_select_text_in_linked_enactment(self):
         enactment = self.client.read(path="/test", date="2020-01-01")
         enactment.select("for documentation.")
@@ -90,15 +91,13 @@ class TestLinkedEnactment:
 
 
 class TestEnactmentDetails:
-    client = Client(api_token=TOKEN)
+    client = MOCK_USC_CLIENT
 
-    @pytest.mark.vcr()
     def test_usc_enactment_is_statute(self):
         enactment = self.client.read(path="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
         assert enactment.level == "statute"
 
-    @pytest.mark.vcr()
     def test_str_representation(self):
         enactment = self.client.read(path="/us/const/amendment/IV")
         selection = TextQuoteSelector(
@@ -112,18 +111,15 @@ class TestEnactmentDetails:
         assert enactment.source == enactment.node
         assert "1791-12-15" in str(enactment)
 
-    @pytest.mark.vcr()
     def test_sovereign_representation(self):
         enactment = self.client.read(path="/us")
         assert enactment.code is None
         assert enactment.jurisdiction == "us"
 
-    @pytest.mark.vcr()
     def test_constitution_effective_date(self):
         ex_post_facto_provision = self.client.read(path="/us/const/article/I/9/3")
         assert ex_post_facto_provision.start_date == date(1788, 9, 13)
 
-    @pytest.mark.vcr()
     def test_date_and_text_from_path_and_regime(self):
         """
         This tests different parsing code because the date is
@@ -134,32 +130,28 @@ class TestEnactmentDetails:
         ``exact``, ``prefix``, or ``suffix`` parameter was
         passed to the TextQuoteSelector constructor.
         """
-        amendment_12 = self.client.read(path="/us/const/amendment/XII")
-        assert amendment_12.start_date == date(1804, 9, 25)
-        assert "Electors shall meet" in amendment_12.text
+        amendment_5 = self.client.read(path="/us/const/amendment/V")
+        assert amendment_5.start_date == date(1791, 12, 15)
+        assert "Electors shall meet" in amendment_5.text
 
-    @pytest.mark.vcr()
     def test_compare_effective_dates(self):
-        amendment_5 = self.client.read(path="/us/const/amendment/XII")
+        amendment_5 = self.client.read(path="/us/const/amendment/V")
         amendment_14 = self.client.read(path="/us/const/amendment/XIV")
         assert amendment_14.start_date == date(1868, 7, 28)
         assert amendment_5.start_date < amendment_14.start_date
 
     def test_regulation_level(self):
-        client = MOCK_USC_CLIENT
-        enactment = client.read("/us/cfr/t37/s202.1")
+        enactment = self.client.read("/us/cfr/t37/s202.1")
         assert enactment.level == "regulation"
 
 
 class TestSelectText:
-    client = Client(api_token=TOKEN)
+    client = MOCK_BEARD_ACT_CLIENT
 
-    @pytest.mark.vcr()
     def test_get_all_text(self):
         section = self.client.read(path="/test/acts/47/11")
         assert "barbers, hairdressers, or other" in section.text
 
-    @pytest.mark.vcr()
     def test_same_quotation_from_enactments_of_differing_depths(self):
         section = self.client.read(path="/test/acts/47/6C")
         section.select(
@@ -205,7 +197,6 @@ class TestSelectText:
         )
         assert section.text_sequence()[0].text == "Where an exemption is granted…"
 
-    @pytest.mark.vcr()
     def test_str_for_text_sequence(self):
         section = self.client.read(path="/test/acts/47/11")
         quotes = [
@@ -222,14 +213,13 @@ class TestSelectText:
             "licenses to such…hairdressers…as they see fit…"
         )
 
-    @pytest.mark.vcr()
     def test_no_double_spaces_around_repealed_section(self):
         section = self.client.read(path="/test/acts/47/8/2")
         assert "or  remove the beard with" not in section.text
 
 
 class TestSelectFromEnactment:
-    client = Client(api_token=TOKEN)
+    client = MOCK_BEARD_ACT_CLIENT
 
     def test_text_of_enactment_subset(self, section_11_together):
         schema = EnactmentSchema()
@@ -241,7 +231,6 @@ class TestSelectFromEnactment:
         sequence = combined.text_sequence()
         assert str(sequence).strip("…").startswith("barbers")
 
-    @pytest.mark.vcr
     def test_get_passage(self):
         """
         Use selector to get passage from Enactment without changing which part is selected.
@@ -255,7 +244,6 @@ class TestSelectFromEnactment:
         assert passage == "…as they see fit…"
         assert section.selected_text() == "…hairdressers…"
 
-    @pytest.mark.vcr()
     def test_select_nested_text_with_positions(self):
         phrases = TextPositionSet(
             TextPositionSelector(0, 51),
@@ -313,7 +301,6 @@ class TestSelectFromEnactment:
         with pytest.raises(ValueError):
             combined.children[3].select(selection)
 
-    @pytest.mark.vcr()
     def test_get_positions_from_quotes(self):
         section = self.client.read(path="/test/acts/47/11")
         quotes = [
@@ -330,9 +317,9 @@ class TestSelectFromEnactment:
             TextPositionSelector(112, 127),
         )
 
-    @pytest.mark.vcr()
     def test_text_sequence_has_no_consecutive_Nones(self):
-        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        client = MOCK_USC_CLIENT
+        amend_14 = client.read(path="/us/const/amendment/XIV")
         selector = TextQuoteSelector(exact="life, liberty, or property")
         amend_14.select(selector)
         selected_list = amend_14.text_sequence()
@@ -362,7 +349,6 @@ class TestSelectFromEnactment:
         fourth_a.select("The right of the people")
         assert fourth_a.selected_text() == "The right of the people…"
 
-    @pytest.mark.vcr()
     def test_select_method_clears_previous_selection(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
@@ -373,23 +359,23 @@ class TestSelectFromEnactment:
 
     @pytest.mark.vcr()
     def test_no_space_before_ellipsis(self):
-        enactment = self.client.read(path="/us/usc/t17/s102/b")
+        client = MOCK_USC_CLIENT
+        enactment = client.read(path="/us/usc/t17/s102/b")
         enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
         assert " …" not in enactment.selected_text()
 
 
 class TestCompareEnactment:
-    client = Client(api_token=TOKEN)
+    client = MOCK_BEARD_ACT_CLIENT
 
-    @pytest.mark.vcr()
     def test_equal_enactment_text(self):
         """Test provisions with the same text (different dates)."""
         old_version = self.client.read(path="/test/acts/47/6A", date=date(1999, 1, 1))
         new_version = self.client.read(path="/test/acts/47/6A", date=date(2020, 1, 1))
         assert old_version.means(new_version)
 
-    @pytest.mark.vcr()
     def test_unequal_enactment_text(self):
+        client = MOCK_USC_CLIENT
         fourth_a = self.client.fetch(path="/us/const/amendment/IV")
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
@@ -404,29 +390,26 @@ class TestCompareEnactment:
         assert not fourth_a.means(search_clause)
         assert fourth_a >= search_clause
 
-    @pytest.mark.vcr()
     def test_not_gt_if_equal(self):
         enactment = self.client.read(path="/test/acts/47/1", date=date(1999, 1, 1))
         assert enactment == enactment
         assert not enactment > enactment
         assert enactment >= enactment
 
-    @pytest.mark.vcr()
     def test_not_gt_if_equal_with_selection(self):
-        search_clause = self.client.read(path="/us/const/amendment/IV")
+        client = MOCK_USC_CLIENT
+        search_clause = client.read(path="/us/const/amendment/IV")
         search_clause.select(TextQuoteSelector(suffix=", and no Warrants"))
 
         assert search_clause == search_clause
         assert search_clause.means(search_clause)
         assert not search_clause > search_clause
 
-    @pytest.mark.vcr()
     def test_different_section_same_text(self):
         old_version = self.client.read("/test/acts/47/8/2/b", date=date(1999, 1, 1))
         new_version = self.client.read("/test/acts/47/8/2/d", date=date(2020, 1, 1))
         assert old_version.means(new_version)
 
-    @pytest.mark.vcr()
     def test_combined_section_implies_subdivided_section(
         self, section_11_together, section_11_subdivided
     ):
@@ -439,7 +422,6 @@ class TestCompareEnactment:
         assert combined > subdivided
         assert combined.text_sequence() > subdivided.text_sequence()
 
-    @pytest.mark.vcr()
     def test_more_provisions_implies_fewer(self):
         more_provisions = self.client.read(
             path="/test/acts/47/8/2", date=date(2020, 1, 1)
@@ -450,7 +432,6 @@ class TestCompareEnactment:
         assert more_provisions >= fewer_provisions
         assert more_provisions > fewer_provisions
 
-    @pytest.mark.vcr()
     def test_fewer_provisions_does_not_imply_more(self):
         more_provisions = self.client.read(
             path="/test/acts/47/8/2", date=date(2020, 1, 1)
@@ -473,10 +454,10 @@ class TestCompareEnactment:
         assert not combined.means(limited)
         assert combined > limited
 
-    @pytest.mark.vcr()
     def test_same_phrase_different_provisions_same_meaning(self):
-        amend_5 = self.client.read(path="/us/const/amendment/V")
-        amend_14 = self.client.read(path="/us/const/amendment/XIV/1")
+        client = MOCK_USC_CLIENT
+        amend_5 = client.read(path="/us/const/amendment/V")
+        amend_14 = client.read(path="/us/const/amendment/XIV/1")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -484,10 +465,10 @@ class TestCompareEnactment:
         amend_14.select(selector)
         assert amend_5.means(amend_14)
 
-    @pytest.mark.vcr()
     def test_same_phrase_different_provisions_implication(self):
-        amend_5 = self.client.read(path="/us/const/amendment/V")
-        amend_14 = self.client.read(path="/us/const/amendment/XIV/1")
+        client = MOCK_USC_CLIENT
+        amend_5 = client.read(path="/us/const/amendment/V")
+        amend_14 = client.read(path="/us/const/amendment/XIV/1")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -495,10 +476,10 @@ class TestCompareEnactment:
         amend_14.select(selector)
         assert amend_5 >= amend_14
 
-    @pytest.mark.vcr()
     def test_same_phrase_selected_in_nested_provision_same_meaning(self):
-        amend_5 = self.client.read(path="/us/const/amendment/V")
-        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        client = MOCK_USC_CLIENT
+        amend_5 = client.read(path="/us/const/amendment/V")
+        amend_14 = client.read(path="/us/const/amendment/XIV")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -506,10 +487,10 @@ class TestCompareEnactment:
         amend_14.select(selector)
         assert amend_5.means(amend_14)
 
-    @pytest.mark.vcr()
     def test_same_phrase_selected_in_nested_provision_implication(self):
-        amend_5 = self.client.read(path="/us/const/amendment/V")
-        amend_14 = self.client.read(path="/us/const/amendment/XIV")
+        client = MOCK_USC_CLIENT
+        amend_5 = client.read(path="/us/const/amendment/V")
+        amend_14 = client.read(path="/us/const/amendment/XIV")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -542,9 +523,8 @@ class TestCompareEnactment:
 
 
 class TestAddEnactments:
-    client = Client(api_token=TOKEN)
+    client = MOCK_BEARD_ACT_CLIENT
 
-    @pytest.mark.vcr()
     def test_add_subset_nested_enactment(self):
         """Test that adding an included Enactment returns the same Enactment."""
         greater = self.client.read(path="/test/acts/47/8/2")
@@ -552,7 +532,6 @@ class TestAddEnactments:
         combined = greater + lesser
         assert combined.means(greater)
 
-    @pytest.mark.vcr()
     def test_add_superset_nested_enactment(self):
         """Test that adding an included Enactment returns the same Enactment."""
         greater = self.client.read(path="/test/acts/47/8/2")
@@ -615,7 +594,6 @@ class TestAddEnactments:
         with pytest.raises(TextSelectionError):
             fourth.select("right to privacy")
 
-    @pytest.mark.vcr()
     def test_add_selection_from_changed_section(self):
         old_version = self.client.read("/test/acts/47/6D/1", date="1935-04-01")
         new_version = self.client.read("/test/acts/47/6D/1", date="2013-07-18")
@@ -624,7 +602,6 @@ class TestAddEnactments:
         new_version.select_more_text_from_changed_version(old_version)
         assert new_version.selected_text() == "…bona fide religious…reasons."
 
-    @pytest.mark.vcr()
     def test_add_selection_from_changed_node_and_subnode(self):
         """Test that text that has changed subsections can still be added."""
         old_version = self.client.read("/test/acts/47/8/2", date="1935-04-01")
@@ -659,7 +636,6 @@ class TestAddEnactments:
         # Test that original Enactments unchanged
         assert "and no Warrants" not in search.selected_text()
 
-    @pytest.mark.vcr()
     def test_get_recursive_selection(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
@@ -678,7 +654,6 @@ class TestAddEnactments:
         as_quotes = selector_set.as_quotes(old_version.text)
         assert as_quotes[1].exact == "obtain a beardcoin from the Department of Beards"
 
-    @pytest.mark.vcr()
     def test_add_selection_from_child_node(self):
         old_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
@@ -702,7 +677,6 @@ class TestAddEnactments:
             "obtain a beardcoin from the Department of Beards…"
         )
 
-    @pytest.mark.vcr()
     def test_add_selection_from_parent_node(self):
         parent_version = self.client.read("/test/acts/47/8/2", date="2015-01-01")
         child_version = self.client.read("/test/acts/47/8/2/c", date="2015-01-01")
@@ -724,7 +698,6 @@ class TestAddEnactments:
         )
         assert child_version.selected_text() == "remove the beard with a laser…"
 
-    @pytest.mark.vcr()
     def test_fail_to_add_repeated_text_from_changed_version(self):
         """Fail to place selection because "Department of Beards" occurs twice in this scope."""
         new_version = self.client.read("/test/acts/47/8")
@@ -742,14 +715,12 @@ class TestAddEnactments:
         with pytest.raises(ValueError):
             _ = new_version + old_version
 
-    @pytest.mark.vcr()
     def test_fail_to_add_non_parent_or_child_enactment(self):
         left = self.client.read("/test/acts/47/1")
         right = self.client.read("/test/acts/47/2")
         with pytest.raises(ValueError):
             _ = left + right
 
-    @pytest.mark.vcr()
     def test_fail_to_add_text_not_in_this_version(self):
         """Fail to add selection from new version because it isn't in the old version."""
         old_version = self.client.read("/test/acts/47/8", date="1935-04-01")
@@ -767,7 +738,6 @@ class TestAddEnactments:
         with pytest.raises(TextSelectionError):
             _ = old_version + new_version
 
-    @pytest.mark.vcr()
     def test_fail_to_add_node_not_in_this_version(self):
         """Fail to add new selection because its node isn't in the old version."""
         old_version = self.client.read("/test/acts/47/8/2", date="1935-04-01")
@@ -775,7 +745,6 @@ class TestAddEnactments:
         with pytest.raises(ValueError):
             _ = old_version + new_version
 
-    @pytest.mark.vcr()
     @pytest.mark.xfail()
     def test_locate_anchor_by_remembering_prefix(self):
         """
@@ -799,13 +768,11 @@ class TestAddEnactments:
         combined = new_version + old_version
         assert combined.text == "…Department of Beards…Australian Federal Police…"
 
-    @pytest.mark.vcr()
     def test_error_for_using_wrong_type_to_select_text(self):
         new_version = self.client.read("/test/acts/47/8")
         with pytest.raises(TypeError):
             new_version.select_more(date(2000, 1, 1))
 
-    @pytest.mark.vcr()
     def test_able_to_add_subsection_with_text_repeated_elsewhere(self):
         new_version = self.client.read("/test/acts/47/8")
         new_version.select(
@@ -842,7 +809,7 @@ class TestAddEnactments:
 class TestConsolidateEnactments:
     """Test function for combining a list of Enactments."""
 
-    client = Client(api_token=TOKEN)
+    client = MOCK_USC_CLIENT
 
     def test_consolidate_enactments(self, fourth_a):
         search_clause = fourth_a.copy()
