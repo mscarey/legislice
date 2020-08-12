@@ -194,12 +194,3 @@ def provision_with_text_anchor():
         "anchors": "qualify for copyright protection. |17 U.S.C. § 102(a)|.",
     }
 
-
-@pytest.fixture(scope="module")
-def mock_responses():
-    """Responses for JSONRepository to provide as a mock API client."""
-    this_directory = os.path.dirname(os.path.abspath(__file__))
-    responses_filepath = this_directory + "/mock_responses/usc.json"
-    with open(responses_filepath, "r") as f:
-        responses = json.load(f)
-    return responses
