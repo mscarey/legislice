@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test/acts/47/6D@1940-01-01
+  response:
+    body:
+      string: '{"heading":"Waiver of beard tax in special circumstances","content":"","children":[{"heading":"","content":"The
+        Department of Beards shall waive the collection of beard tax upon issuance
+        of beardcoin under Section 6C where the reason the maintainer wears a beard
+        is due to bona fide religious or cultural reasons.","children":[],"end_date":"2013-07-18","node":"/test/acts/47/6D/1","start_date":"1935-04-01","url":"https://authorityspoke.com/api/v1/test/acts/47/6D/1@1940-01-01"},{"heading":"","content":"The
+        determination of the Department of Beards as to what constitutes bona fide
+        religious or cultural reasons shall be final and no right of appeal shall
+        exist.","children":[],"end_date":null,"node":"/test/acts/47/6D/2","start_date":"1935-04-01","url":"https://authorityspoke.com/api/v1/test/acts/47/6D/2@1940-01-01"}],"end_date":null,"node":"/test/acts/47/6D","start_date":"1935-04-01","url":"https://authorityspoke.com/api/v1/test/acts/47/6D@1940-01-01","parent":"https://authorityspoke.com/api/v1/test/acts/47@1940-01-01"}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1028'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 12 Aug 2020 10:17:40 GMT
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

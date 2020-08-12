@@ -78,14 +78,11 @@ class TestMakeEnactment:
 
 
 class TestLinkedEnactment:
-    client = MOCK_BEARD_ACT_CLIENT
+    client = Client(api_token=TOKEN)
 
     def test_text_sequence_for_linked_enactment(self):
         enactment = self.client.read(path="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
-
-    def test_select_text_in_linked_enactment(self):
-        enactment = self.client.read(path="/test", date="2020-01-01")
         enactment.select("for documentation.")
         assert enactment.selected_text() == "…for documentation."
 
@@ -111,13 +108,16 @@ class TestEnactmentDetails:
         assert enactment.source == enactment.node
         assert "1791-12-15" in str(enactment)
 
+    @pytest.mark.vcr
     def test_sovereign_representation(self):
-        enactment = self.client.read(path="/us")
+        client = Client(api_token=TOKEN)
+        enactment = client.read(path="/us")
         assert enactment.code is None
         assert enactment.jurisdiction == "us"
 
+    @pytest.mark.vcr
     def test_constitution_effective_date(self):
-        ex_post_facto_provision = self.client.read(path="/us/const/article/I/9/3")
+        ex_post_facto_provision = self.client.read(path="/us/const/article/I/8/8")
         assert ex_post_facto_provision.start_date == date(1788, 9, 13)
 
     def test_date_and_text_from_path_and_regime(self):
@@ -132,7 +132,7 @@ class TestEnactmentDetails:
         """
         amendment_5 = self.client.read(path="/us/const/amendment/V")
         assert amendment_5.start_date == date(1791, 12, 15)
-        assert "Electors shall meet" in amendment_5.text
+        assert "otherwise infamous crime" in amendment_5.text
 
     def test_compare_effective_dates(self):
         amendment_5 = self.client.read(path="/us/const/amendment/V")
@@ -376,7 +376,7 @@ class TestCompareEnactment:
 
     def test_unequal_enactment_text(self):
         client = MOCK_USC_CLIENT
-        fourth_a = self.client.fetch(path="/us/const/amendment/IV")
+        fourth_a = client.fetch(path="/us/const/amendment/IV")
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
 

@@ -587,6 +587,35 @@ MOCK_BEARD_ACT_RESPONSES = {
         }
     },
     "/test/acts/47/6D": {
+        "1935-04-01": {
+            "heading": "Waiver of beard tax in special circumstances",
+            "content": "",
+            "children": [
+                {
+                    "heading": "",
+                    "content": "The Department of Beards shall waive the collection of beard tax upon issuance of beardcoin under Section 6C where the reason the maintainer wears a beard is due to bona fide religious or cultural reasons.",
+                    "children": [],
+                    "end_date": "2013-07-18",
+                    "node": "/test/acts/47/6D/1",
+                    "start_date": "1935-04-01",
+                    "url": "https://authorityspoke.com/api/v1/test/acts/47/6D/1@1935-04-01",
+                },
+                {
+                    "heading": "",
+                    "content": "The determination of the Department of Beards as to what constitutes bona fide religious or cultural reasons shall be final and no right of appeal shall exist.",
+                    "children": [],
+                    "end_date": None,
+                    "node": "/test/acts/47/6D/2",
+                    "start_date": "1935-04-01",
+                    "url": "https://authorityspoke.com/api/v1/test/acts/47/6D/2@1935-04-01",
+                },
+            ],
+            "end_date": None,
+            "node": "/test/acts/47/6D",
+            "start_date": "1935-04-01",
+            "url": "https://authorityspoke.com/api/v1/test/acts/47/6D@1935-04-01",
+            "parent": "https://authorityspoke.com/api/v1/test/acts/47@1935-04-01",
+        },
         "2013-07-18": {
             "heading": "Waiver of beard tax in special circumstances",
             "content": "",
@@ -615,7 +644,7 @@ MOCK_BEARD_ACT_RESPONSES = {
             "start_date": "1935-04-01",
             "url": "https://authorityspoke.com/api/v1/test/acts/47/6D/",
             "parent": "https://authorityspoke.com/api/v1/test/acts/47/",
-        }
+        },
     },
     "/test/acts/47/7": {
         "1935-04-01": {

@@ -1,0 +1,83 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test/acts/47/1
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Wed, 12 Aug 2020 10:17:39 GMT
+      Location:
+      - /api/v1/test/acts/47/1/
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test/acts/47/1/
+  response:
+    body:
+      string: '{"heading":"Short title","content":"This Act may be cited as the Australian
+        Beard Tax (Promotion of Enlightenment Values) Act 1934.","children":[],"end_date":null,"node":"/test/acts/47/1","start_date":"1935-04-01","url":"https://authorityspoke.com/api/v1/test/acts/47/1/","parent":"https://authorityspoke.com/api/v1/test/acts/47/"}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '331'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 12 Aug 2020 10:17:39 GMT
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,85 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/b
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Wed, 12 Aug 2020 10:17:40 GMT
+      Location:
+      - /api/v1/us/usc/t17/s102/b/
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/b/
+  response:
+    body:
+      string: '{"heading":"","content":"In no case does copyright protection for an
+        original work of authorship extend to any idea, procedure, process, system,
+        method of operation, concept, principle, or discovery, regardless of the form
+        in which it is described, explained, illustrated, or embodied in such work.","children":[],"end_date":null,"node":"/us/usc/t17/s102/b","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/b/","parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '507'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 12 Aug 2020 10:17:40 GMT
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

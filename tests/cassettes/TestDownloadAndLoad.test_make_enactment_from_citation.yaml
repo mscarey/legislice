@@ -1,0 +1,86 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Wed, 12 Aug 2020 10:17:41 GMT
+      Location:
+      - /api/v1/us/const/amendment/IV/
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV/
+  response:
+    body:
+      string: '{"heading":"AMENDMENT IV.","content":"The right of the people to be
+        secure in their persons, houses, papers, and effects, against unreasonable
+        searches and seizures, shall not be violated, and no Warrants shall issue,
+        but upon probable cause, supported by Oath or affirmation, and particularly
+        describing the place to be searched, and the persons or things to be seized.","children":[],"end_date":null,"node":"/us/const/amendment/IV","start_date":"1791-12-15","url":"https://authorityspoke.com/api/v1/us/const/amendment/IV/","parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '590'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 12 Aug 2020 10:17:41 GMT
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

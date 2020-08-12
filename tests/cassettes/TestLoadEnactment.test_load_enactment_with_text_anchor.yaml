@@ -1,0 +1,94 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Wed, 12 Aug 2020 10:17:48 GMT
+      Location:
+      - /api/v1/us/usc/t17/s102/a/
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a/
+  response:
+    body:
+      string: '{"heading":"","content":"Copyright protection subsists, in accordance
+        with this title, in original works of authorship fixed in any tangible medium
+        of expression, now known or later developed, from which they can be perceived,
+        reproduced, or otherwise communicated, either directly or with the aid of
+        a machine or device. Works of authorship include the following categories:","children":[{"heading":"","content":"literary
+        works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/1","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/1/"},{"heading":"","content":"musical
+        works, including any accompanying words;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/2","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/2/"},{"heading":"","content":"dramatic
+        works, including any accompanying music;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/3","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/3/"},{"heading":"","content":"pantomimes
+        and choreographic works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/4","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/4/"},{"heading":"","content":"pictorial,
+        graphic, and sculptural works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/5","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/5/"},{"heading":"","content":"motion
+        pictures and other audiovisual works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/6","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/6/"},{"heading":"","content":"sound
+        recordings; and","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/7","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/7/"},{"heading":"","content":"architectural
+        works.","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/8","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/8/"}],"end_date":null,"node":"/us/usc/t17/s102/a","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/","parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2272'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 12 Aug 2020 10:17:48 GMT
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

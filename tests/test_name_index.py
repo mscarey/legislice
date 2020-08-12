@@ -2,6 +2,7 @@ from datetime import date
 import os
 
 from dotenv import load_dotenv
+from legislice.mock_clients import MOCK_BEARD_ACT_CLIENT
 from legislice.name_index import EnactmentIndex, collect_enactments
 from legislice.schemas import EnactmentSchema
 import pytest
@@ -134,20 +135,20 @@ class TestCollectEnactments:
         assert mentioned["ear rule"]["anchors"][0]["start"] == 10
         assert mentioned["ear rule"]["anchors"][2]["start"] == 100
 
-    @pytest.mark.vcr
     def test_update_unloaded_enactment_from_api(self):
+        client = MOCK_BEARD_ACT_CLIENT
         example_rules, mentioned = collect_enactments(self.example_rules)
-        updated = self.client.update_enactment_from_api(mentioned["ear rule"])
+        updated = client.update_enactment_from_api(mentioned["ear rule"])
         assert updated["node"] == "/test/acts/47/4/b"
         assert updated["anchors"][0]["start"] == 10
         assert updated["anchors"][2]["start"] == 100
         assert updated["content"].startswith("exists in an uninterrupted")
         assert updated["start_date"] == "1935-04-01"
 
-    @pytest.mark.vcr
     def test_load_updated_enactment_data(self):
+        client = MOCK_BEARD_ACT_CLIENT
         example_rules, mentioned = collect_enactments(self.example_rules)
-        updated = self.client.update_enactment_from_api(mentioned["ear rule"])
+        updated = client.update_enactment_from_api(mentioned["ear rule"])
         schema = EnactmentSchema()
         enactment = schema.load(updated)
         assert enactment.start_date == date(1935, 4, 1)

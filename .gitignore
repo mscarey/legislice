@@ -8,6 +8,5 @@ docs/_build/
 holdings/
 old/
 prof/
-tests/cassettes/
 venv/
 .env
