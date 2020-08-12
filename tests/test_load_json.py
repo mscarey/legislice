@@ -1,7 +1,7 @@
 import datetime
 import pytest
 
-from legislice.download import JSONRepository, LegisliceDateError, LegislicePathError
+from legislice.download import LegisliceDateError, LegislicePathError
 from legislice.name_index import EnactmentIndex
 from legislice.mock_clients import MOCK_USC_CLIENT
 
