@@ -75,11 +75,16 @@ class Client:
 
         If fields are missing from the JSON, they will be fetched using the API key.
         """
+        data_has_selection_field = "selection" in data.keys()
+
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
         schema_class = get_schema_for_node(data["node"])
         schema = schema_class()
         enactment = schema.load(data)
+
+        if not enactment.selected_text() and not data_has_selection_field:
+            enactment.select_all()
         return enactment
 
     def read(self, path: str, date: Union[datetime.date, str] = "",) -> Enactment:
