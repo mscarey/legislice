@@ -46,6 +46,16 @@ class TestLoadJson:
         enactment = client.read(path="/us/usc/t17/s102/a/2")
         assert enactment.content.startswith("musical works")
 
+    def test_load_all_text_by_default(self):
+        client = MOCK_USC_CLIENT
+        enactment = client.read(path="/us/usc/t17/s410/c")
+        assert enactment.selected_text().startswith("In any judicial")
+
+    def test_text_is_selected_by_default(self):
+        client = MOCK_USC_CLIENT
+        enactment = client.read_from_json(data={"node": "/us/const/amendment/IV"})
+        assert enactment.selected_text().startswith("The right")
+
 
 class TestUpdateEnactments:
     """
