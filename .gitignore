@@ -5,8 +5,11 @@
 .mypy_cache/
 .pytest*
 .vscode/
+build/
+dist/
 docs/_build/
 holdings/
+htmlcov/
 old/
 prof/
 venv/

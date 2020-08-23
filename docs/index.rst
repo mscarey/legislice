@@ -8,6 +8,10 @@ Legislice Documentation
 
 Release v\. |release|.
 
+Legislice is a utility for downloading the text of statutes and constitutional
+provisions, and then creating computable objects representing passages from
+those provisions.
+
 .. toctree::
    :maxdepth: 2
 
