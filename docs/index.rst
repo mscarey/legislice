@@ -10,8 +10,8 @@ Release v\. |release|.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   guides/downloading
 
 
 Indices and tables
