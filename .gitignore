@@ -1,6 +1,7 @@
 *__pycache__*
 *.egg-info/
 .coverage
+*.ipynb_checkpoints
 .mypy_cache/
 .pytest*
 .vscode/
