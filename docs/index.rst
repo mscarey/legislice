@@ -17,9 +17,16 @@ those provisions.
 
    guides/downloading
 
+Development Updates
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    history/releases
 
 Indices and tables
-==================
+-------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
