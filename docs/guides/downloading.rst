@@ -290,7 +290,7 @@ And here’s the same provision as of 2020.
 
 
 
-5. Exploring the Structure of a Legislative Code
+5. Exploring the structure of a legislative code
 ------------------------------------------------
 
 When you query the API for a provision at a path with less than four

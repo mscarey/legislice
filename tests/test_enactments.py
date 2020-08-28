@@ -197,6 +197,20 @@ class TestSelectText:
         )
         assert section.text_sequence()[0].text == "Where an exemption is granted…"
 
+    def test_select_with_list_of_strings(self):
+        section = self.client.read(path="/test/acts/47/8")
+        section.select(
+            [
+                "Where an officer of the",
+                "state or territorial police",
+                "finds a person to be wearing a beard",
+                "that officer shall in the first instance issue such person a notice to remedy.",
+            ]
+        )
+        assert section.selected_text().startswith(
+            "Where an officer of the…state or territorial police…finds"
+        )
+
     def test_str_for_text_sequence(self):
         section = self.client.read(path="/test/acts/47/11")
         quotes = [
