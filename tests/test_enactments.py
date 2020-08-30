@@ -207,7 +207,8 @@ class TestSelectText:
                 "that officer shall in the first instance issue such person a notice to remedy.",
             ]
         )
-        assert section.selected_text().startswith(
+        selected_text = section.selected_text()
+        assert selected_text.startswith(
             "Where an officer of the…state or territorial police…finds"
         )
 
@@ -230,6 +231,21 @@ class TestSelectText:
     def test_no_double_spaces_around_repealed_section(self):
         section = self.client.read(path="/test/acts/47/8/2")
         assert "or  remove the beard with" not in section.text
+
+    def test_select_space_between_selected_passages(self):
+        """Test that the space between "property," and "without" is selected."""
+        section_1 = MOCK_USC_CLIENT.read(path="/us/const/amendment/XIV/1")
+        section_1.select(
+            [
+                "No State shall",
+                "deprive any person of",
+                "liberty",
+                "without due process of law",
+            ]
+        )
+        section_1.select_more("life, liberty, or property,")
+        now_selected = section_1.selected_text()
+        assert "or property, without" in now_selected
 
 
 class TestSelectFromEnactment:
@@ -371,12 +387,17 @@ class TestSelectFromEnactment:
             "Any such person issued a notice to remedy under subsection 1 must…"
         )
 
-    @pytest.mark.vcr()
     def test_no_space_before_ellipsis(self):
         client = MOCK_USC_CLIENT
         enactment = client.read(path="/us/usc/t17/s102/b")
         enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
         assert " …" not in enactment.selected_text()
+
+    def test_select_near_end_of_section(self):
+        amendment = MOCK_USC_CLIENT.read(path="/us/const/amendment/XIV")
+        selector = TextPositionSelector(1920, 1980)
+        amendment.select(selector)
+        assert "The validity of the public debt" in amendment.selected_text()
 
 
 class TestCompareEnactment:

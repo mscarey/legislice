@@ -146,7 +146,8 @@ class BaseEnactment:
         return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
 
     def selected_text(self) -> str:
-        return str(self.text_sequence())
+        text_sequence = self.text_sequence()
+        return str(text_sequence)
 
     def get_passage(
         self,
@@ -587,13 +588,8 @@ class Enactment(BaseEnactment):
         other_selected_passages = other.text_sequence()
         return self_selected_passages.means(other_selected_passages)
 
-    def __ge__(self, other: Enactment):
-        """
-        Tells whether ``self`` implies ``other``.
-
-        :returns:
-            Whether ``self`` contains at least all the same text as ``other``.
-        """
+    def implies(self, other: Enactment) -> bool:
+        """Test whether ``self`` has all the text passages of ``other``."""
         if not isinstance(other, self.__class__):
             raise TypeError(
                 f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
@@ -602,11 +598,20 @@ class Enactment(BaseEnactment):
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
 
+    def __ge__(self, other: Enactment) -> bool:
+        """
+        Test whether ``self`` implies ``other``.
+
+        :returns:
+            Whether ``self`` contains at least all the same text as ``other``.
+        """
+        return self.implies(other)
+
     def __gt__(self, other) -> bool:
         """Test whether ``self`` implies ``other`` without having same meaning."""
         if self.means(other):
             return False
-        return self >= other
+        return self.implies(other)
 
 
 def consolidate_enactments(enactments: List[Enactment]) -> List[Enactment]:
