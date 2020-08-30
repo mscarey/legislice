@@ -15,6 +15,14 @@ those provisions.
 .. toctree::
    :maxdepth: 2
 
+Guides
+------------
+To access interactive versions of these guides in Jupyter Notebooks, you can download the
+`Legislice repository <https://github.com/mscarey/legislice>`_ on GitHub.
+
+.. toctree::
+   :maxdepth: 2
+
    guides/downloading
    guides/enactments
 

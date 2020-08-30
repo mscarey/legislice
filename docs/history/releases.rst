@@ -1,5 +1,18 @@
 .. _releases:
 
+=========================
+Reporting Bugs and Issues
+=========================
+
+Your feedback is very valuable. If you discover a bug, 
+if Legislice isn't behaving as expected, or if you want to suggest a new feature, 
+please comment or open an issue on 
+`Legislice's GitHub issue tracker <https://github.com/mscarey/legislice/issues>`_. For
+other comments please use the Twitter contact information below.
+
+If you want to submit a pull request for either Legislice or AuthoritySpoke, please also submit 
+the `AuthoritySpoke contributor license agreement <https://github.com/mscarey/AuthoritySpoke/blob/master/contributor_agreement.txt>`_.
+
 =====================
 Current Updates
 =====================
