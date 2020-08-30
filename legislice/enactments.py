@@ -223,6 +223,7 @@ class BaseEnactment:
                         TextPositionSelector(start=self.padded_length, end=current.end)
                     )
         self._selection = TextPositionSet(self._selection)
+        self._selection = self._selection.add_margin(text=self.content, margin_width=4)
         return TextPositionSet(selections)
 
     def select_without_children(

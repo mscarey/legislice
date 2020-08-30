@@ -235,14 +235,7 @@ class TestSelectText:
     def test_select_space_between_selected_passages(self):
         """Test that the space between "property," and "without" is selected."""
         section_1 = MOCK_USC_CLIENT.read(path="/us/const/amendment/XIV/1")
-        section_1.select(
-            [
-                "No State shall",
-                "deprive any person of",
-                "liberty",
-                "without due process of law",
-            ]
-        )
+        section_1.select("without due process of law")
         section_1.select_more("life, liberty, or property,")
         now_selected = section_1.selected_text()
         assert "or property, without" in now_selected
@@ -827,7 +820,7 @@ class TestAddEnactments:
 
         assert (
             new_version.selected_text()
-            == "…Department of Beards…Australian Federal Police…"
+            == "…Department of Beards, Australian Federal Police…"
         )
 
     def test_add_string_as_selector(self, section_11_subdivided):
