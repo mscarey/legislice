@@ -1,6 +1,6 @@
 Changelog
 =========
-dev
+0.2.0 (2020-08-30)
 ------------------
 - don't add ellipsis to selected_text for node with no text
 - accept list of strings to generate anchorpoint `TextPositionSet`

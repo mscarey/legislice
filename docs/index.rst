@@ -16,6 +16,7 @@ those provisions.
    :maxdepth: 2
 
    guides/downloading
+   guides/enactments
 
 Development Updates
 -------------------

@@ -1,3 +1,5 @@
+.. _downloading:
+
 Downloading Legislation
 =======================================
 
