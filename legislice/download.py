@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import ValidationError
 import requests
+from requests import status_codes
 
 from legislice.enactments import Enactment
 from legislice.name_index import EnactmentIndex
@@ -21,6 +22,10 @@ class LegislicePathError(Exception):
 
 
 class LegisliceDateError(Exception):
+    pass
+
+
+class LegisliceTokenError(Exception):
     pass
 
 
@@ -66,6 +71,8 @@ class Client:
         response = requests.get(query, headers=headers)
         if response.status_code == 404:
             raise LegislicePathError(f"No enacted text found for query {query}")
+        if response.status_code == 403:
+            raise LegisliceTokenError(f"{response.json().get('detail')}")
 
         return response.json()
 
