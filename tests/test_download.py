@@ -5,7 +5,12 @@ from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
 import pytest
 
-from legislice.download import Client, LegisliceDateError, LegislicePathError
+from legislice.download import (
+    Client,
+    LegisliceDateError,
+    LegislicePathError,
+    LegisliceTokenError,
+)
 from legislice.name_index import collect_enactments
 
 
@@ -23,6 +28,18 @@ class TestDownloadJSON:
         assert s102["start_date"] == "1935-04-01"
         assert s102["end_date"] is None
         assert s102["heading"] == "Short title"
+
+    @pytest.mark.vcr()
+    def test_wrong_api_token(self):
+        bad_client = Client(api_token="wr0ngToken")
+        with pytest.raises(LegisliceTokenError):
+            bad_client.fetch(path="/test/acts/47/1")
+
+    @pytest.mark.vcr()
+    def test_no_api_token(self):
+        bad_client = Client()
+        with pytest.raises(LegisliceTokenError):
+            bad_client.fetch(path="/test/acts/47/1")
 
     @pytest.mark.vcr()
     def test_extraneous_word_token_before_api_token(self):
