@@ -53,7 +53,7 @@ class JSONRepository(Client):
 
     def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
         """
-        Fetches data about legislation at specified path and date from Client's assigned endpoint.
+        Fetches data about legislation at specified path and date from Client's assigned API root.
 
         :param path:
             A path to the desired legislation section using the United States Legislation Markup

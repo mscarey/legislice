@@ -35,9 +35,9 @@ def normalize_path(path: str) -> str:
 
 class Client:
     def __init__(
-        self, api_token: str = "", endpoint: str = "https://authorityspoke.com/api/v1"
+        self, api_token: str = "", api_root: str = "https://authorityspoke.com/api/v1"
     ):
-        self.endpoint = endpoint
+        self.api_root = api_root
 
         if api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
@@ -45,7 +45,7 @@ class Client:
 
     def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
         """
-        Fetches data about legislation at specified path and date from Client's assigned endpoint.
+        Fetches data about legislation at specified path and date from Client's assigned API root.
 
         :param path:
             A path to the desired legislation section using the United States Legislation Markup
@@ -57,7 +57,7 @@ class Client:
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        query = self.endpoint + normalize_path(path)
+        query = self.api_root + normalize_path(path)
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
@@ -96,7 +96,7 @@ class Client:
 
     def read(self, path: str, date: Union[datetime.date, str] = "",) -> Enactment:
         """
-        Fetches data from Client's assigned endpoint and builds Enactment or LinkedEnactment.
+        Fetches data from Client's assigned API root and builds Enactment or LinkedEnactment.
 
         All text is selected by default.
 
