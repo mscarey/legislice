@@ -63,6 +63,10 @@ class TestLoadCrossReference:
         schema = CrossReferenceSchema()
         result = schema.load(citation_to_6c)
         assert result.target_uri == "/test/acts/47/6C"
+        assert (
+            str(result)
+            == 'CrossReference(target_uri="/test/acts/47/6C", reference_text="Section 6C")'
+        )
 
 
 class TestLoadEnactment:
@@ -148,7 +152,7 @@ class TestLoadEnactment:
 
     def test_nest_selector_fields_before_loading(self):
         client = MOCK_USC_CLIENT
-        raw_enactment = client.fetch(path="/us/const/amendment/IV", date="1791-12-15")
+        raw_enactment = client.fetch(query="/us/const/amendment/IV", date="1791-12-15")
         raw_enactment["selection"] = [{"start": 10, "end": 20}]
         raw_enactment["suffix"] = ", and no Warrants shall issue"
         schema = EnactmentSchema()

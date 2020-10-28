@@ -9,46 +9,48 @@ from legislice.mock_clients import MOCK_USC_CLIENT
 class TestLoadJson:
     def test_load_exact_date(self):
         enactment = MOCK_USC_CLIENT.read(
-            path="/us/const/amendment/V", date="1791-12-15"
+            query="/us/const/amendment/V", date="1791-12-15"
         )
         assert enactment.content.startswith("No person shall be held")
 
     def test_load_after_start_date(self):
         client = MOCK_USC_CLIENT
-        enactment = client.read(path="/us/const/amendment/IV", date="1801-12-15")
+        enactment = client.read(query="/us/const/amendment/IV", date="1801-12-15")
         assert enactment.content.startswith("The right of the people")
 
     def test_load_no_date_specified(self):
         client = MOCK_USC_CLIENT
-        enactment = client.read(path="/us/const/article/I/8/8")
+        enactment = client.read(query="/us/const/article/I/8/8")
         assert enactment.heading == "Patents and copyrights."
 
     def test_date_is_too_early(self):
         client = MOCK_USC_CLIENT
         with pytest.raises(LegisliceDateError):
-            client.read(path="/us/usc/t17/s102/a", date=datetime.date(2010, 12, 15))
+            client.read(query="/us/usc/t17/s102/a", date=datetime.date(2010, 12, 15))
 
     def test_unavailable_path(self):
         client = MOCK_USC_CLIENT
         with pytest.raises(LegislicePathError):
-            client.read(path="/test/acts/intolerable", date=datetime.date(2010, 12, 15))
+            client.read(
+                query="/test/acts/intolerable", date=datetime.date(2010, 12, 15)
+            )
 
     def test_unavailable_path_within_partial_match(self):
         """Test when a key appears to be an ancestor of the desired path, but isn't."""
         client = MOCK_USC_CLIENT
         with pytest.raises(LegislicePathError):
             client.read(
-                path="/us/const/amendment/XIV/2/b", date=datetime.date(2010, 12, 15)
+                query="/us/const/amendment/XIV/2/b", date=datetime.date(2010, 12, 15)
             )
 
     def test_find_subnode_of_entry(self):
         client = MOCK_USC_CLIENT
-        enactment = client.read(path="/us/usc/t17/s102/a/2")
+        enactment = client.read(query="/us/usc/t17/s102/a/2")
         assert enactment.content.startswith("musical works")
 
     def test_load_all_text_by_default(self):
         client = MOCK_USC_CLIENT
-        enactment = client.read(path="/us/usc/t17/s410/c")
+        enactment = client.read(query="/us/usc/t17/s410/c")
         assert enactment.selected_text().startswith("In any judicial")
 
     def test_text_is_selected_by_default(self):

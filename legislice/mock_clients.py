@@ -10,6 +10,7 @@ from legislice.download import (
     RawEnactment,
     normalize_path,
 )
+from legislice.enactments import CrossReference
 
 # A dict indexing responses by iso-format date strings.
 ResponsesByDate = Dict[str, Dict]
@@ -51,7 +52,9 @@ class JSONRepository(Client):
             )
         return None
 
-    def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
+    def fetch(
+        self, query: Union[str, CrossReference], date: Union[datetime.date, str] = ""
+    ) -> RawEnactment:
         """
         Fetches data about legislation at specified path and date from Client's assigned API root.
 
@@ -65,9 +68,9 @@ class JSONRepository(Client):
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        responses = self.get_entry_closest_to_cited_path(path)
+        responses = self.get_entry_closest_to_cited_path(query)
         if not responses:
-            raise LegislicePathError(f"No enacted text found for query {path}")
+            raise LegislicePathError(f"No enacted text found for query {query}")
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
@@ -82,16 +85,16 @@ class JSONRepository(Client):
             ]
             if not versions_not_later_than_query:
                 raise LegisliceDateError(
-                    f"No enacted text found for query {path} after date {date}"
+                    f"No enacted text found for query {query} after date {date}"
                 )
             selected_date = max(versions_not_later_than_query)
 
         selected_version = responses[selected_date]
 
-        result = self.search_tree_for_path(path=path, branch=selected_version)
+        result = self.search_tree_for_path(path=query, branch=selected_version)
         if not result:
             raise LegislicePathError(
-                f"No enacted text found for query {path} after date {date}"
+                f"No enacted text found for query {query} after date {date}"
             )
         return result
 

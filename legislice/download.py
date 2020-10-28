@@ -51,7 +51,7 @@ class Client:
 
         response = requests.get(url, headers=headers)
         if response.status_code == 404:
-            raise LegislicePathError(f"No enacted text found for query {query}")
+            raise LegislicePathError(f"No enacted text found for query {url}")
         if response.status_code == 403:
             raise LegisliceTokenError(f"{response.json().get('detail')}")
 
@@ -80,7 +80,7 @@ class Client:
         if date:
             query_with_root = f"{query_with_root}@{date}"
 
-        return self.fetch_from_url(url=query_with_root)
+        return self._fetch_from_url(url=query_with_root)
 
     def fetch_cross_reference(
         self, query: CrossReference, date: Union[datetime.date, str] = ""
@@ -154,7 +154,7 @@ class Client:
         return enactment
 
     def update_enactment_from_api(self, data: RawEnactment) -> RawEnactment:
-        data_from_api = self.fetch(path=data["node"], date=data.get("start_date"))
+        data_from_api = self.fetch(query=data["node"], date=data.get("start_date"))
         new_data = {**data, **data_from_api}
         return new_data
 

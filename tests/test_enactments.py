@@ -83,7 +83,7 @@ class TestLinkedEnactment:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     def test_text_sequence_for_linked_enactment(self):
-        enactment = self.client.read(path="/test", date="2020-01-01")
+        enactment = self.client.read(query="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
         enactment.select("for documentation.")
         assert enactment.selected_text() == "…for documentation."
@@ -93,12 +93,12 @@ class TestEnactmentDetails:
     client = MOCK_USC_CLIENT
 
     def test_usc_enactment_is_statute(self):
-        enactment = self.client.read(path="/us/usc/t17/s103", date="2020-01-01")
+        enactment = self.client.read(query="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
         assert enactment.level == "statute"
 
     def test_str_representation(self):
-        enactment = self.client.read(path="/us/const/amendment/IV")
+        enactment = self.client.read(query="/us/const/amendment/IV")
         selection = TextQuoteSelector(
             exact="The right of the people to be secure in their persons"
         )
@@ -113,13 +113,13 @@ class TestEnactmentDetails:
     @pytest.mark.vcr
     def test_sovereign_representation(self):
         client = Client(api_token=TOKEN, api_root=API_ROOT)
-        enactment = client.read(path="/us")
+        enactment = client.read(query="/us")
         assert enactment.code is None
         assert enactment.jurisdiction == "us"
 
     @pytest.mark.vcr
     def test_constitution_effective_date(self):
-        ex_post_facto_provision = self.client.read(path="/us/const/article/I/8/8")
+        ex_post_facto_provision = self.client.read(query="/us/const/article/I/8/8")
         assert ex_post_facto_provision.start_date == date(1788, 9, 13)
 
     def test_date_and_text_from_path_and_regime(self):
@@ -132,13 +132,13 @@ class TestEnactmentDetails:
         ``exact``, ``prefix``, or ``suffix`` parameter was
         passed to the TextQuoteSelector constructor.
         """
-        amendment_5 = self.client.read(path="/us/const/amendment/V")
+        amendment_5 = self.client.read(query="/us/const/amendment/V")
         assert amendment_5.start_date == date(1791, 12, 15)
         assert "otherwise infamous crime" in amendment_5.text
 
     def test_compare_effective_dates(self):
-        amendment_5 = self.client.read(path="/us/const/amendment/V")
-        amendment_14 = self.client.read(path="/us/const/amendment/XIV")
+        amendment_5 = self.client.read(query="/us/const/amendment/V")
+        amendment_14 = self.client.read(query="/us/const/amendment/XIV")
         assert amendment_14.start_date == date(1868, 7, 28)
         assert amendment_5.start_date < amendment_14.start_date
 
@@ -150,11 +150,13 @@ class TestEnactmentDetails:
 class TestCrossReferences:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
 
+    @pytest.mark.vcr()
     def test_no_local_cross_references(self):
         enactment = self.client.read("/test/acts/47/6D")
         citations = enactment._cross_references
         assert len(citations) == 0
 
+    @pytest.mark.vcr()
     def test_collect_nested_cross_references(self):
         enactment = self.client.read("/test/acts/47/6D")
         citations = enactment.cross_references()
@@ -166,15 +168,15 @@ class TestSelectText:
     client = MOCK_BEARD_ACT_CLIENT
 
     def test_get_all_text(self):
-        section = self.client.read(path="/test/acts/47/11")
+        section = self.client.read(query="/test/acts/47/11")
         assert "barbers, hairdressers, or other" in section.text
 
     def test_same_quotation_from_enactments_of_differing_depths(self):
-        section = self.client.read(path="/test/acts/47/6C")
+        section = self.client.read(query="/test/acts/47/6C")
         section.select(
             TextQuoteSelector(exact="The beardcoin shall be a cryptocurrency")
         )
-        subsection = self.client.read(path="/test/acts/47/6C/1")
+        subsection = self.client.read(query="/test/acts/47/6C/1")
         subsection.select(
             TextQuoteSelector(exact="The beardcoin shall be a cryptocurrency")
         )
@@ -215,7 +217,7 @@ class TestSelectText:
         assert section.text_sequence()[0].text == "Where an exemption is granted…"
 
     def test_select_with_list_of_strings(self):
-        section = self.client.read(path="/test/acts/47/8")
+        section = self.client.read(query="/test/acts/47/8")
         section.select(
             [
                 "Where an officer of the",
@@ -230,7 +232,7 @@ class TestSelectText:
         )
 
     def test_str_for_text_sequence(self):
-        section = self.client.read(path="/test/acts/47/11")
+        section = self.client.read(query="/test/acts/47/11")
         quotes = [
             TextQuoteSelector(
                 exact="The Department of Beards may issue licenses to such"
@@ -246,12 +248,12 @@ class TestSelectText:
         )
 
     def test_no_double_spaces_around_repealed_section(self):
-        section = self.client.read(path="/test/acts/47/8/2")
+        section = self.client.read(query="/test/acts/47/8/2")
         assert "or  remove the beard with" not in section.text
 
     def test_select_space_between_selected_passages(self):
         """Test that the space between "property," and "without" is selected."""
-        section_1 = MOCK_USC_CLIENT.read(path="/us/const/amendment/XIV/1")
+        section_1 = MOCK_USC_CLIENT.read(query="/us/const/amendment/XIV/1")
         section_1.select("without due process of law")
         section_1.select_more("life, liberty, or property,")
         now_selected = section_1.selected_text()
@@ -277,7 +279,7 @@ class TestSelectFromEnactment:
 
         Checks that `.selected_text()` is the same before and after `.get_passage()`.
         """
-        section = self.client.read(path="/test/acts/47/11")
+        section = self.client.read(query="/test/acts/47/11")
         section.select(TextPositionSelector(61, 73))
         assert section.selected_text() == "…hairdressers…"
         passage = section.get_passage(TextPositionSelector(112, 127))
@@ -290,7 +292,7 @@ class TestSelectFromEnactment:
             TextPositionSelector(61, 73),
             TextPositionSelector(112, 127),
         )
-        section = self.client.read(path="/test/acts/47/11")
+        section = self.client.read(query="/test/acts/47/11")
         section.select(phrases)
         text_sequence = section.text_sequence()
         assert str(text_sequence) == (
@@ -342,7 +344,7 @@ class TestSelectFromEnactment:
             combined.children[3].select(selection)
 
     def test_get_positions_from_quotes(self):
-        section = self.client.read(path="/test/acts/47/11")
+        section = self.client.read(query="/test/acts/47/11")
         quotes = [
             TextQuoteSelector(
                 exact="The Department of Beards may issue licenses to such"
@@ -359,7 +361,7 @@ class TestSelectFromEnactment:
 
     def test_text_sequence_has_no_consecutive_Nones(self):
         client = MOCK_USC_CLIENT
-        amend_14 = client.read(path="/us/const/amendment/XIV")
+        amend_14 = client.read(query="/us/const/amendment/XIV")
         selector = TextQuoteSelector(exact="life, liberty, or property")
         amend_14.select(selector)
         selected_list = amend_14.text_sequence()
@@ -399,12 +401,12 @@ class TestSelectFromEnactment:
 
     def test_no_space_before_ellipsis(self):
         client = MOCK_USC_CLIENT
-        enactment = client.read(path="/us/usc/t17/s102/b")
+        enactment = client.read(query="/us/usc/t17/s102/b")
         enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
         assert " …" not in enactment.selected_text()
 
     def test_select_near_end_of_section(self):
-        amendment = MOCK_USC_CLIENT.read(path="/us/const/amendment/XIV")
+        amendment = MOCK_USC_CLIENT.read(query="/us/const/amendment/XIV")
         selector = TextPositionSelector(1920, 1980)
         amendment.select(selector)
         assert "The validity of the public debt" in amendment.selected_text()
@@ -415,13 +417,13 @@ class TestCompareEnactment:
 
     def test_equal_enactment_text(self):
         """Test provisions with the same text (different dates)."""
-        old_version = self.client.read(path="/test/acts/47/6A", date=date(1999, 1, 1))
-        new_version = self.client.read(path="/test/acts/47/6A", date=date(2020, 1, 1))
+        old_version = self.client.read(query="/test/acts/47/6A", date=date(1999, 1, 1))
+        new_version = self.client.read(query="/test/acts/47/6A", date=date(2020, 1, 1))
         assert old_version.means(new_version)
 
     def test_unequal_enactment_text(self):
         client = MOCK_USC_CLIENT
-        fourth_a = client.fetch(path="/us/const/amendment/IV")
+        fourth_a = client.fetch(query="/us/const/amendment/IV")
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
 
@@ -436,14 +438,14 @@ class TestCompareEnactment:
         assert fourth_a >= search_clause
 
     def test_not_gt_if_equal(self):
-        enactment = self.client.read(path="/test/acts/47/1", date=date(1999, 1, 1))
+        enactment = self.client.read(query="/test/acts/47/1", date=date(1999, 1, 1))
         assert enactment == enactment
         assert not enactment > enactment
         assert enactment >= enactment
 
     def test_not_gt_if_equal_with_selection(self):
         client = MOCK_USC_CLIENT
-        search_clause = client.read(path="/us/const/amendment/IV")
+        search_clause = client.read(query="/us/const/amendment/IV")
         search_clause.select(TextQuoteSelector(suffix=", and no Warrants"))
 
         assert search_clause == search_clause
@@ -469,20 +471,20 @@ class TestCompareEnactment:
 
     def test_more_provisions_implies_fewer(self):
         more_provisions = self.client.read(
-            path="/test/acts/47/8/2", date=date(2020, 1, 1)
+            query="/test/acts/47/8/2", date=date(2020, 1, 1)
         )
         fewer_provisions = self.client.read(
-            path="/test/acts/47/8/2", date=date(1999, 1, 1)
+            query="/test/acts/47/8/2", date=date(1999, 1, 1)
         )
         assert more_provisions >= fewer_provisions
         assert more_provisions > fewer_provisions
 
     def test_fewer_provisions_does_not_imply_more(self):
         more_provisions = self.client.read(
-            path="/test/acts/47/8/2", date=date(2020, 1, 1)
+            query="/test/acts/47/8/2", date=date(2020, 1, 1)
         )
         fewer_provisions = self.client.read(
-            path="/test/acts/47/8/2", date=date(1999, 1, 1)
+            query="/test/acts/47/8/2", date=date(1999, 1, 1)
         )
         assert not fewer_provisions >= more_provisions
         assert not fewer_provisions > more_provisions
@@ -501,8 +503,8 @@ class TestCompareEnactment:
 
     def test_same_phrase_different_provisions_same_meaning(self):
         client = MOCK_USC_CLIENT
-        amend_5 = client.read(path="/us/const/amendment/V")
-        amend_14 = client.read(path="/us/const/amendment/XIV/1")
+        amend_5 = client.read(query="/us/const/amendment/V")
+        amend_14 = client.read(query="/us/const/amendment/XIV/1")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -512,8 +514,8 @@ class TestCompareEnactment:
 
     def test_same_phrase_different_provisions_implication(self):
         client = MOCK_USC_CLIENT
-        amend_5 = client.read(path="/us/const/amendment/V")
-        amend_14 = client.read(path="/us/const/amendment/XIV/1")
+        amend_5 = client.read(query="/us/const/amendment/V")
+        amend_14 = client.read(query="/us/const/amendment/XIV/1")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -523,8 +525,8 @@ class TestCompareEnactment:
 
     def test_same_phrase_selected_in_nested_provision_same_meaning(self):
         client = MOCK_USC_CLIENT
-        amend_5 = client.read(path="/us/const/amendment/V")
-        amend_14 = client.read(path="/us/const/amendment/XIV")
+        amend_5 = client.read(query="/us/const/amendment/V")
+        amend_14 = client.read(query="/us/const/amendment/XIV")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -534,8 +536,8 @@ class TestCompareEnactment:
 
     def test_same_phrase_selected_in_nested_provision_implication(self):
         client = MOCK_USC_CLIENT
-        amend_5 = client.read(path="/us/const/amendment/V")
-        amend_14 = client.read(path="/us/const/amendment/XIV")
+        amend_5 = client.read(query="/us/const/amendment/V")
+        amend_14 = client.read(query="/us/const/amendment/XIV")
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
@@ -572,15 +574,15 @@ class TestAddEnactments:
 
     def test_add_subset_nested_enactment(self):
         """Test that adding an included Enactment returns the same Enactment."""
-        greater = self.client.read(path="/test/acts/47/8/2")
-        lesser = self.client.read(path="/test/acts/47/8/2/a")
+        greater = self.client.read(query="/test/acts/47/8/2")
+        lesser = self.client.read(query="/test/acts/47/8/2/a")
         combined = greater + lesser
         assert combined.means(greater)
 
     def test_add_superset_nested_enactment(self):
         """Test that adding an included Enactment returns the same Enactment."""
-        greater = self.client.read(path="/test/acts/47/8/2")
-        lesser = self.client.read(path="/test/acts/47/8/2/a")
+        greater = self.client.read(query="/test/acts/47/8/2")
+        lesser = self.client.read(query="/test/acts/47/8/2/a")
         combined = lesser + greater
         assert combined.means(greater)
 

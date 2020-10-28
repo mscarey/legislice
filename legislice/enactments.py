@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import date
 from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, Union
 
@@ -21,6 +22,7 @@ RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
 
 
+@dataclass
 class CrossReference:
     """
     :param target_uri:
@@ -37,18 +39,13 @@ class CrossReference:
         an identifier for the target URI in the API.
     """
 
-    def __init__(
-        self,
-        target_uri: str,
-        target_url: str,
-        reference_text: str,
-        target_node: Optional[int] = None,
-    ) -> None:
+    target_uri: str
+    target_url: str
+    reference_text: str
+    target_node: Optional[int] = None
 
-        self.target_uri = target_uri
-        self.target_url = target_url
-        self.reference_text = reference_text
-        self.target_node = target_node
+    def __str__(self):
+        return f'CrossReference(target_uri="{self.target_uri}", reference_text="{self.reference_text}")'
 
 
 class BaseEnactment:
