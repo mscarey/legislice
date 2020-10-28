@@ -17,10 +17,11 @@ from legislice.name_index import collect_enactments
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
+API_ROOT = os.getenv("API_ROOT")
 
 
 class TestDownloadJSON:
-    client = Client(api_token=TOKEN)
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     @pytest.mark.vcr()
     def test_fetch_section(self):
@@ -44,7 +45,7 @@ class TestDownloadJSON:
     @pytest.mark.vcr()
     def test_extraneous_word_token_before_api_token(self):
         extraneous_word_token = "Token " + TOKEN
-        client = Client(api_token=extraneous_word_token)
+        client = Client(api_token=extraneous_word_token, api_root=API_ROOT)
         s102 = client.fetch(path="/test/acts/47/1")
         assert s102["start_date"] == "1935-04-01"
         assert s102["end_date"] is None
@@ -78,7 +79,7 @@ class TestDownloadJSON:
 
 
 class TestDownloadAndLoad:
-    client = Client(api_token=TOKEN)
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     @pytest.mark.vcr()
     def test_make_enactment_from_citation(self):
@@ -126,7 +127,7 @@ class TestDownloadAndLoad:
 
 
 class TestReadJSON:
-    client = Client(api_token=TOKEN)
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     @pytest.mark.vcr()
     def test_list_enactments_needing_updates(

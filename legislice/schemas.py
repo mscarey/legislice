@@ -5,7 +5,12 @@ from typing import Dict, List, Union
 from anchorpoint.schemas import SelectorSchema
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE, ValidationError
 
-from legislice.enactments import Enactment, LinkedEnactment, RawEnactment
+from legislice.enactments import (
+    Enactment,
+    LinkedEnactment,
+    RawEnactment,
+    CrossReference,
+)
 from legislice.name_index import EnactmentIndex
 
 
@@ -24,6 +29,19 @@ def enactment_needs_api_update(data: RawEnactment) -> bool:
     ):
         return True
     return False
+
+
+class CrossReferenceSchema(Schema):
+    __model__ = CrossReference
+
+    target_uri = fields.Str(required=True)
+    target_url = fields.Url(relative=False, required=True)
+    reference_text = fields.Str(required=True)
+    target_node = fields.Int(required=False)
+
+    @post_load
+    def make_object(self, data, **kwargs) -> CrossReference:
+        return self.__model__(**data)
 
 
 class ExpandableSchema(Schema):
@@ -83,6 +101,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     children = fields.List(fields.Url(relative=False))
     selection = fields.Nested(SelectorSchema, many=True, missing=list)
     anchors = fields.Nested(SelectorSchema, many=True, missing=list)
+    citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
 
     class Meta:
         unknown = EXCLUDE

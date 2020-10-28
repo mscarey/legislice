@@ -87,8 +87,6 @@ class TestCollectEnactments:
         },
     ]
 
-    client = Client(api_token=TOKEN)
-
     def test_collect_enactments_from_list(
         self, section6d, section_11_subdivided, fifth_a
     ):

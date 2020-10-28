@@ -6,6 +6,7 @@ from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
+from requests import api
 
 from legislice.download import Client
 from legislice.enactments import Enactment, consolidate_enactments
@@ -19,6 +20,7 @@ from legislice.schemas import EnactmentSchema
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
+API_ROOT = os.getenv("API_ROOT")
 
 
 class TestMakeEnactment:
@@ -78,7 +80,7 @@ class TestMakeEnactment:
 
 
 class TestLinkedEnactment:
-    client = Client(api_token=TOKEN)
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     def test_text_sequence_for_linked_enactment(self):
         enactment = self.client.read(path="/test", date="2020-01-01")
@@ -110,7 +112,7 @@ class TestEnactmentDetails:
 
     @pytest.mark.vcr
     def test_sovereign_representation(self):
-        client = Client(api_token=TOKEN)
+        client = Client(api_token=TOKEN, api_root=API_ROOT)
         enactment = client.read(path="/us")
         assert enactment.code is None
         assert enactment.jurisdiction == "us"

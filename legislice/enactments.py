@@ -21,6 +21,36 @@ RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
 
 
+class CrossReference:
+    """
+    :param target_uri:
+        the path to the target provision from the document root.
+
+    :param target_url:
+        the URL to fetch the target provision from an API.
+
+    :param reference_text:
+        The text in the cititng provision that represents the cross-reference.
+        Generally, this text identifies the target provision.
+
+    :param target_node:
+        an identifier for the target URI in the API.
+    """
+
+    def __init__(
+        self,
+        target_uri: str,
+        target_url: str,
+        reference_text: str,
+        target_node: Optional[int] = None,
+    ) -> None:
+
+        self.target_uri = target_uri
+        self.target_url = target_url
+        self.reference_text = reference_text
+        self.target_node = target_node
+
+
 class BaseEnactment:
     """
     :param node:
@@ -60,6 +90,7 @@ class BaseEnactment:
         start_date: date,
         end_date: Optional[date] = None,
         anchors: Union[List[TextPositionSelector], List[TextQuoteSelector]] = None,
+        citations: List[CrossReference] = None,
         name: str = "",
         *args,
         **kwargs,
@@ -70,7 +101,8 @@ class BaseEnactment:
         self._heading = heading
         self._start_date = start_date
         self._end_date = end_date
-        self.anchors = anchors
+        self.anchors = anchors or []
+        self.citations = citations or []
         self.name = name
 
     @property

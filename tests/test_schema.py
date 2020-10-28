@@ -11,6 +11,7 @@ import pytest
 from legislice.download import Client
 from legislice.name_index import collect_enactments
 from legislice.schemas import (
+    CrossReferenceSchema,
     EnactmentSchema,
     LinkedEnactmentSchema,
     SelectorSchema,
@@ -20,6 +21,7 @@ from legislice.schemas import (
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
+API_ROOT = os.getenv("API_ROOT")
 
 
 class TestLoadSelector:
@@ -54,8 +56,17 @@ class TestLoadSelector:
             _ = schema.load(data)
 
 
+class TestLoadCrossReference:
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
+
+    def test_load_citation(self, citation_to_6c):
+        schema = CrossReferenceSchema()
+        result = schema.load(citation_to_6c)
+        assert result.target_uri == "/test/acts/47/6C"
+
+
 class TestLoadEnactment:
-    client = Client(api_token=TOKEN)
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     def test_load_nested_enactment(self, section6d):
         schema = EnactmentSchema()
@@ -167,7 +178,7 @@ class TestLoadLinkedEnactment:
 
 class TestDumpEnactment:
 
-    client = Client(api_token=TOKEN)
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     @pytest.mark.vcr()
     def test_dump_enactment_with_selector_to_dict(self):

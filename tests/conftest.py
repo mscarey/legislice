@@ -3,7 +3,12 @@ import os
 from typing import Dict
 
 from anchorpoint import TextQuoteSelector
+from dotenv import load_dotenv
 import pytest
+
+load_dotenv()
+
+API_ROOT = os.getenv("API_ROOT")
 
 
 @pytest.fixture(scope="module")
@@ -58,6 +63,16 @@ def section_11_together():
         "start_date": "1935-04-01",
         "url": "https://authorityspoke.com/api/v1/test/acts/47/11@1999-01-01",
         "parent": "https://authorityspoke.com/api/v1/test/acts/47@1999-01-01",
+    }
+
+
+@pytest.fixture(scope="class")
+def citation_to_6c():
+    return {
+        "target_uri": "/test/acts/47/6C",
+        "target_url": f"{API_ROOT}/test/acts/47/6C@1940-01-01",
+        "target_node": 1660695,
+        "reference_text": "Section 6C",
     }
 
 
