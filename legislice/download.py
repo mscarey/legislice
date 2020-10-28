@@ -3,10 +3,11 @@ from os import name
 from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import ValidationError
+from marshmallow.fields import Raw
 import requests
 from requests import status_codes
 
-from legislice.enactments import Enactment
+from legislice.enactments import Enactment, CrossReference
 from legislice.name_index import EnactmentIndex
 from legislice.schemas import (
     ExpandableSchema,
@@ -43,7 +44,22 @@ class Client:
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token
 
-    def fetch(self, path: str, date: Union[datetime.date, str] = "") -> RawEnactment:
+    def _fetch_from_url(self, url: str) -> RawEnactment:
+        headers = {}
+        if self.api_token:
+            headers["Authorization"] = f"Token {self.api_token}"
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 404:
+            raise LegislicePathError(f"No enacted text found for query {query}")
+        if response.status_code == 403:
+            raise LegisliceTokenError(f"{response.json().get('detail')}")
+
+        return response.json()
+
+    def fetch_uri(
+        self, query: str, date: Union[datetime.date, str] = ""
+    ) -> RawEnactment:
         """
         Fetches data about legislation at specified path and date from Client's assigned API root.
 
@@ -57,24 +73,44 @@ class Client:
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        query = self.api_root + normalize_path(path)
+        query_with_root = self.api_root + normalize_path(query)
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
         if date:
-            query = f"{query}@{date}"
+            query_with_root = f"{query_with_root}@{date}"
 
-        headers = {}
-        if self.api_token:
-            headers["Authorization"] = f"Token {self.api_token}"
+        return self.fetch_from_url(url=query_with_root)
 
-        response = requests.get(query, headers=headers)
-        if response.status_code == 404:
-            raise LegislicePathError(f"No enacted text found for query {query}")
-        if response.status_code == 403:
-            raise LegisliceTokenError(f"{response.json().get('detail')}")
+    def fetch_cross_reference(
+        self, query: CrossReference, date: Union[datetime.date, str] = ""
+    ) -> RawEnactment:
+        if isinstance(date, datetime.date):
+            date = date.isoformat()
 
-        return response.json()
+        target = query.target_url
+
+        if date:
+            if "@" in target:
+                if target.endswith(date):
+                    raise ValueError(
+                        f"Date param {date} does not match date in URL {target}"
+                    )
+            else:
+                target = f"{target}@{date}"
+
+        if not target.startswith(self.api_root):
+            raise ValueError(
+                f'target_url of cross-reference, "{target}", does not start with Client\'s api_root, "{self.api_root}"'
+            )
+        return self._fetch_from_url(url=target)
+
+    def fetch(
+        self, query: Union[str, CrossReference], date: Union[datetime.date, str] = ""
+    ) -> RawEnactment:
+        if isinstance(query, CrossReference):
+            return self.fetch_cross_reference(query=query, date=date)
+        return self.fetch_uri(query=query, date=date)
 
     def read_from_json(self, data: RawEnactment) -> Enactment:
         r"""
@@ -94,7 +130,7 @@ class Client:
             enactment.select_all()
         return enactment
 
-    def read(self, path: str, date: Union[datetime.date, str] = "",) -> Enactment:
+    def read(self, query: str, date: Union[datetime.date, str] = "",) -> Enactment:
         """
         Fetches data from Client's assigned API root and builds Enactment or LinkedEnactment.
 
@@ -110,7 +146,7 @@ class Client:
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        raw_enactment = self.fetch(path=path, date=date)
+        raw_enactment = self.fetch(query=query, date=date)
         enactment = self.read_from_json(raw_enactment)
         enactment.select_all()
         return enactment

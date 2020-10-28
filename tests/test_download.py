@@ -130,12 +130,12 @@ class TestDownloadAndLoad:
     def test_download_from_cross_reference(self):
         ref = CrossReference(
             target_uri="/test/acts/47/6C",
-            target_url="{API_ROOT}/test/acts/47/6C@2020-01-01",
+            target_url=f"{API_ROOT}/test/acts/47/6C@2020-01-01",
             target_node=1660695,
             reference_text="Section 6C",
         )
         cited = self.client.fetch(ref)
-        assert cited.content.startswith("Where an exemption is granted")
+        assert cited["content"].startswith("Where an exemption is granted")
 
 
 class TestReadJSON:
