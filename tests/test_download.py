@@ -160,3 +160,14 @@ class TestReadJSON:
         enactment = self.client.read_from_json(data={"node": "/us/const/amendment/IV"})
         assert enactment.start_date.isoformat() == "1791-12-15"
 
+    @pytest.mark.vcr()
+    def test_read_from_cross_reference(self):
+        """Test reading old version of statute by passing date param."""
+        ref = CrossReference(
+            target_uri="/test/acts/47/6D",
+            target_url=f"{API_ROOT}/test/acts/47/6D",
+            reference_text="Section 6D",
+        )
+        cited = self.client.read(ref, date="1950-01-01")
+        assert "bona fide religious or cultural reasons." in str(cited)
+

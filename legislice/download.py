@@ -130,7 +130,9 @@ class Client:
             enactment.select_all()
         return enactment
 
-    def read(self, query: str, date: Union[datetime.date, str] = "",) -> Enactment:
+    def read(
+        self, query: Union[str, CrossReference], date: Union[datetime.date, str] = "",
+    ) -> Enactment:
         """
         Fetches data from Client's assigned API root and builds Enactment or LinkedEnactment.
 
