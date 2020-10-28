@@ -102,7 +102,7 @@ class BaseEnactment:
         self._start_date = start_date
         self._end_date = end_date
         self.anchors = anchors or []
-        self.citations = citations or []
+        self._cross_references = citations or []
         self.name = name
 
     @property
@@ -176,6 +176,12 @@ class BaseEnactment:
 
     def __repr__(self):
         return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
+
+    def cross_references(self) -> List[CrossReference]:
+        result = self._cross_references[:]
+        for child in self.children:
+            result += child.cross_references()
+        return result
 
     def selected_text(self) -> str:
         text_sequence = self.text_sequence()

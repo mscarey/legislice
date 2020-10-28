@@ -155,6 +155,63 @@ class TestLoadEnactment:
         updated = schema.move_selector_fields(raw_enactment)
         assert updated["selection"][1]["suffix"] == ", and no Warrants shall issue"
 
+    def test_load_enactment_with_cross_reference(self):
+        data = {
+            "heading": "",
+            "content": "The Department of Beards shall waive the collection of beard tax upon issuance of beardcoin under Section 6C where the reason the maintainer wears a beard is due to bona fide religious, cultural, or medical reasons.",
+            "start_date": "2013-07-18",
+            "node": "/test/acts/47/6D/1",
+            "children": [],
+            "end_date": None,
+            "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@2020-01-01",
+            "citations": [
+                {
+                    "target_uri": "/test/acts/47/6C",
+                    "target_url": "http://127.0.0.1:8000/api/v1/test/acts/47/6C@2020-01-01",
+                    "target_node": 1660695,
+                    "reference_text": "Section 6C",
+                }
+            ],
+        }
+        schema = EnactmentSchema(many=False)
+        enactment = schema.load(data)
+        assert len(enactment._cross_references) == 1
+
+    def test_load_enactment_with_nested_cross_reference(self):
+        data = {
+            "heading": "Waiver of beard tax in special circumstances",
+            "content": "",
+            "start_date": "1935-04-01",
+            "node": "/test/acts/47/6D",
+            "children": [
+                {
+                    "heading": "",
+                    "content": "The Department of Beards shall waive the collection of beard tax upon issuance of beardcoin under Section 6C where the reason the maintainer wears a beard is due to bona fide religious, cultural, or medical reasons.",
+                    "start_date": "2013-07-18",
+                    "node": "/test/acts/47/6D/1",
+                    "children": [],
+                    "end_date": None,
+                    "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@2020-01-01",
+                    "citations": [
+                        {
+                            "target_uri": "/test/acts/47/6C",
+                            "target_url": "http://127.0.0.1:8000/api/v1/test/acts/47/6C@2020-01-01",
+                            "target_node": 1660695,
+                            "reference_text": "Section 6C",
+                        }
+                    ],
+                }
+            ],
+            "end_date": None,
+            "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D@2020-01-01",
+            "citations": [],
+            "parent": "http://127.0.0.1:8000/api/v1/test/acts/47@2020-01-01",
+        }
+        schema = EnactmentSchema(many=False)
+        enactment = schema.load(data)
+        refs = enactment.children[0]._cross_references
+        assert len(refs) == 1
+
 
 class TestLoadLinkedEnactment:
     def test_load_linked_enactment(self):

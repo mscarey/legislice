@@ -147,6 +147,21 @@ class TestEnactmentDetails:
         assert enactment.level == "regulation"
 
 
+class TestCrossReferences:
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
+
+    def test_no_local_cross_references(self):
+        enactment = self.client.read("/test/acts/47/6D")
+        citations = enactment._cross_references
+        assert len(citations) == 0
+
+    def test_collect_nested_cross_references(self):
+        enactment = self.client.read("/test/acts/47/6D")
+        citations = enactment.cross_references()
+        assert len(citations) == 1
+        assert citations[0].target_uri == "/test/acts/47/6C"
+
+
 class TestSelectText:
     client = MOCK_BEARD_ACT_CLIENT
 
