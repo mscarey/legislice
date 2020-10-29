@@ -23,9 +23,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Sun, 20 Sep 2020 04:17:24 GMT
+      - Thu, 29 Oct 2020 06:26:07 GMT
       Location:
       - /api/v1/test/acts/47/1/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -61,7 +63,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 20 Sep 2020 04:17:24 GMT
+      - Thu, 29 Oct 2020 06:26:07 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

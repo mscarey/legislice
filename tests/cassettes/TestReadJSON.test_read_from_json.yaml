@@ -25,9 +25,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Wed, 12 Aug 2020 10:17:46 GMT
+      - Thu, 29 Oct 2020 06:26:11 GMT
       Location:
       - /api/v1/us/const/amendment/IV/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -58,18 +60,20 @@ interactions:
         secure in their persons, houses, papers, and effects, against unreasonable
         searches and seizures, shall not be violated, and no Warrants shall issue,
         but upon probable cause, supported by Oath or affirmation, and particularly
-        describing the place to be searched, and the persons or things to be seized.","children":[],"end_date":null,"node":"/us/const/amendment/IV","start_date":"1791-12-15","url":"https://authorityspoke.com/api/v1/us/const/amendment/IV/","parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
+        describing the place to be searched, and the persons or things to be seized.","start_date":"1791-12-15","node":"/us/const/amendment/IV","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/const/amendment/IV/","citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
     headers:
       Allow:
       - GET, POST, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '590'
+      - '605'
       Content-Type:
       - application/json
       Date:
-      - Wed, 12 Aug 2020 10:17:46 GMT
+      - Thu, 29 Oct 2020 06:26:11 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

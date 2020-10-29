@@ -25,9 +25,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Wed, 12 Aug 2020 10:17:49 GMT
+      - Thu, 29 Oct 2020 06:26:14 GMT
       Location:
       - /api/v1/us/const/article/I/8/8/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -56,18 +58,20 @@ interactions:
     body:
       string: '{"heading":"Patents and copyrights.","content":"To promote the Progress
         of Science and useful Arts, by securing for limited Times to Authors and Inventors
-        the exclusive Right to their respective Writings and Discoveries;","children":[],"end_date":null,"node":"/us/const/article/I/8/8","start_date":"1788-09-13","url":"https://authorityspoke.com/api/v1/us/const/article/I/8/8/","parent":"https://authorityspoke.com/api/v1/us/const/article/I/8/"}'
+        the exclusive Right to their respective Writings and Discoveries;","start_date":"1788-09-13","node":"/us/const/article/I/8/8","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/const/article/I/8/8/","citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/article/I/8/"}'
     headers:
       Allow:
       - GET, POST, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '444'
+      - '459'
       Content-Type:
       - application/json
       Date:
-      - Wed, 12 Aug 2020 10:17:49 GMT
+      - Thu, 29 Oct 2020 06:26:14 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

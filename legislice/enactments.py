@@ -44,7 +44,7 @@ class CrossReference:
     reference_text: str
     target_node: Optional[int] = None
 
-    def __str__(self):
+    def __repr__(self):
         return f'CrossReference(target_uri="{self.target_uri}", reference_text="{self.reference_text}")'
 
 

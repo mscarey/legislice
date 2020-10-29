@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test/acts/47/6C@2020-01-01
+  response:
+    body:
+      string: "{\"heading\":\"Issuance of beardcoin\",\"content\":\"Where an exemption
+        is granted under section 6, the Department of Beards shall issue to the person
+        so exempted a token, hereinafter referred to as a beardcoin, that shall for
+        all purposes be regarded as substantive proof of such exemption.\",\"start_date\":\"1935-04-01\",\"node\":\"/test/acts/47/6C\",\"children\":[{\"heading\":\"\",\"content\":\"The
+        beardcoin shall be a cryptocurrency token using a blockchain approved by the
+        Department of Beards.\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1\",\"children\":[],\"end_date\":null,\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C/1@2020-01-01\",\"citations\":[]},{\"heading\":\"\",\"content\":\"The
+        beardcoin's blockchain shall be in substantially the following form: WHEREAS
+        this beardcoin is approved by the Department of Beards under section 6, it
+        is secured by the following blockchain: \u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1.\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1-con\",\"children\":[],\"end_date\":null,\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C/1-con@2020-01-01\",\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"https://authorityspoke.com/api/v1/test/acts/47/6@2020-01-01\",\"target_node\":1386965,\"reference_text\":\"section
+        6\"}]}],\"end_date\":null,\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C@2020-01-01\",\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"https://authorityspoke.com/api/v1/test/acts/47/6@2020-01-01\",\"target_node\":1386965,\"reference_text\":\"section
+        6\"}],\"parent\":\"https://authorityspoke.com/api/v1/test/acts/47@2020-01-01\"}"
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1569'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 29 Oct 2020 06:26:10 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

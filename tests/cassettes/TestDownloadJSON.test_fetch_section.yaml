@@ -25,9 +25,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Wed, 12 Aug 2020 10:17:39 GMT
+      - Thu, 29 Oct 2020 06:26:06 GMT
       Location:
       - /api/v1/test/acts/47/1/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -55,18 +57,20 @@ interactions:
   response:
     body:
       string: '{"heading":"Short title","content":"This Act may be cited as the Australian
-        Beard Tax (Promotion of Enlightenment Values) Act 1934.","children":[],"end_date":null,"node":"/test/acts/47/1","start_date":"1935-04-01","url":"https://authorityspoke.com/api/v1/test/acts/47/1/","parent":"https://authorityspoke.com/api/v1/test/acts/47/"}'
+        Beard Tax (Promotion of Enlightenment Values) Act 1934.","start_date":"1935-04-01","node":"/test/acts/47/1","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/test/acts/47/1/","citations":[],"parent":"https://authorityspoke.com/api/v1/test/acts/47/"}'
     headers:
       Allow:
       - GET, POST, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '331'
+      - '346'
       Content-Type:
       - application/json
       Date:
-      - Wed, 12 Aug 2020 10:17:39 GMT
+      - Thu, 29 Oct 2020 06:26:06 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

@@ -25,9 +25,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Wed, 12 Aug 2020 10:17:41 GMT
+      - Thu, 29 Oct 2020 06:26:09 GMT
       Location:
       - /api/v1/us/const/article-III/1/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -65,7 +67,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 12 Aug 2020 10:17:41 GMT
+      - Thu, 29 Oct 2020 06:26:09 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

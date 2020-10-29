@@ -25,9 +25,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Wed, 12 Aug 2020 10:17:41 GMT
+      - Thu, 29 Oct 2020 06:26:09 GMT
       Location:
       - /api/v1/us/const/article/III/1/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -60,18 +62,20 @@ interactions:
         establish. The Judges, both of the supreme and inferior Courts, shall hold
         their Offices during good Behaviour, and shall, at stated Times, receive for
         their Services, a Compensation, which shall not be diminished during their
-        Continuance in Office.","children":[],"end_date":null,"node":"/us/const/article/III/1","start_date":"1788-09-13","url":"https://authorityspoke.com/api/v1/us/const/article/III/1/","parent":"https://authorityspoke.com/api/v1/us/const/article/III/"}'
+        Continuance in Office.","start_date":"1788-09-13","node":"/us/const/article/III/1","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/const/article/III/1/","citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/article/III/"}'
     headers:
       Allow:
       - GET, POST, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '696'
+      - '711'
       Content-Type:
       - application/json
       Date:
-      - Wed, 12 Aug 2020 10:17:41 GMT
+      - Thu, 29 Oct 2020 06:26:09 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

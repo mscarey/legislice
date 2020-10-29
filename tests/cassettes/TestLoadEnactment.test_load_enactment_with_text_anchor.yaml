@@ -25,9 +25,11 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Wed, 12 Aug 2020 10:17:48 GMT
+      - Thu, 29 Oct 2020 06:26:14 GMT
       Location:
       - /api/v1/us/usc/t17/s102/a/
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Via:
@@ -58,26 +60,28 @@ interactions:
         with this title, in original works of authorship fixed in any tangible medium
         of expression, now known or later developed, from which they can be perceived,
         reproduced, or otherwise communicated, either directly or with the aid of
-        a machine or device. Works of authorship include the following categories:","children":[{"heading":"","content":"literary
-        works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/1","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/1/"},{"heading":"","content":"musical
-        works, including any accompanying words;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/2","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/2/"},{"heading":"","content":"dramatic
-        works, including any accompanying music;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/3","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/3/"},{"heading":"","content":"pantomimes
-        and choreographic works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/4","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/4/"},{"heading":"","content":"pictorial,
-        graphic, and sculptural works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/5","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/5/"},{"heading":"","content":"motion
-        pictures and other audiovisual works;","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/6","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/6/"},{"heading":"","content":"sound
-        recordings; and","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/7","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/7/"},{"heading":"","content":"architectural
-        works.","children":[],"end_date":null,"node":"/us/usc/t17/s102/a/8","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/8/"}],"end_date":null,"node":"/us/usc/t17/s102/a","start_date":"2013-07-18","url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/","parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
+        a machine or device. Works of authorship include the following categories:","start_date":"2013-07-18","node":"/us/usc/t17/s102/a","children":[{"heading":"","content":"literary
+        works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/1","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/1/","citations":[]},{"heading":"","content":"musical
+        works, including any accompanying words;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/2","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/2/","citations":[]},{"heading":"","content":"dramatic
+        works, including any accompanying music;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/3","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/3/","citations":[]},{"heading":"","content":"pantomimes
+        and choreographic works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/4","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/4/","citations":[]},{"heading":"","content":"pictorial,
+        graphic, and sculptural works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/5","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/5/","citations":[]},{"heading":"","content":"motion
+        pictures and other audiovisual works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/6","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/6/","citations":[]},{"heading":"","content":"sound
+        recordings; and","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/7","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/7/","citations":[]},{"heading":"","content":"architectural
+        works.","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/8","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/8/","citations":[]}],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/","citations":[],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
     headers:
       Allow:
       - GET, POST, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '2272'
+      - '2407'
       Content-Type:
       - application/json
       Date:
-      - Wed, 12 Aug 2020 10:17:48 GMT
+      - Thu, 29 Oct 2020 06:26:14 GMT
+      Referrer-Policy:
+      - same-origin
       Server:
       - gunicorn/20.0.4
       Vary:

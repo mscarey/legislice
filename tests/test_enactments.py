@@ -162,6 +162,10 @@ class TestCrossReferences:
         citations = enactment.cross_references()
         assert len(citations) == 1
         assert citations[0].target_uri == "/test/acts/47/6C"
+        assert (
+            str(citations[0])
+            == 'CrossReference(target_uri="/test/acts/47/6C", reference_text="Section 6C")'
+        )
 
 
 class TestSelectText:
