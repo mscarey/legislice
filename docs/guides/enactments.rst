@@ -29,7 +29,7 @@ as a Python ``date`` object.
 
 .. code:: ipython3
 
-    fourteenth_amendment = client.read(path="/us/const/amendment/XIV")
+    fourteenth_amendment = client.read(query="/us/const/amendment/XIV")
     fourteenth_amendment.start_date
 
 
@@ -403,7 +403,7 @@ to the first section of the Fourteenth Amendment.
 
 .. code:: ipython3
 
-    fifth_amendment = client.read(path="/us/const/amendment/V")
+    fifth_amendment = client.read(query="/us/const/amendment/V")
     fifth_amendment.selected_text()
 
 
@@ -417,7 +417,7 @@ to the first section of the Fourteenth Amendment.
 
 .. code:: ipython3
 
-    fourteenth_amendment_section_1 = client.read(path="/us/const/amendment/XIV/1")
+    fourteenth_amendment_section_1 = client.read(query="/us/const/amendment/XIV/1")
     fifth_amendment.means(fourteenth_amendment_section_1)
 
 
@@ -480,7 +480,7 @@ text from subsection ``a`` and subsection ``b`` in the correct order.
 
 .. code:: ipython3
 
-    s103 = client.read(path="/us/usc/t17/s103", date="2020-01-01")
+    s103 = client.read(query="/us/usc/t17/s103", date="2020-01-01")
     selections = ["The copyright in such work is independent of",
                   "any copyright protection in the preexisting material."]
     s103.select(selections)
@@ -500,7 +500,7 @@ text from subsection ``a`` and subsection ``b`` in the correct order.
 
 .. code:: ipython3
 
-    s103a = client.read(path="/us/usc/t17/s103/a", date="2020-01-01")
+    s103a = client.read(query="/us/usc/t17/s103/a", date="2020-01-01")
     s103a.selected_text()
 
 

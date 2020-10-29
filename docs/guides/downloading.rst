@@ -57,7 +57,7 @@ Here’s an example of loading an API token from a ``.env`` file using
     import os
     from dotenv import load_dotenv
     load_dotenv()
-
+    
     TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 Now you can use the API token to create a Legislice ``Client`` object.
@@ -102,7 +102,7 @@ the ``Client``.
 
 .. code:: ipython3
 
-    fourth_a = client.fetch(path="/us/const/amendment/IV")
+    fourth_a = client.fetch(query="/us/const/amendment/IV")
 
 The ``client.fetch`` method made an API call to AuthoritySpoke, and
 return JSON that has been converted to a Python ``dict``. There are
@@ -120,11 +120,12 @@ when the provision went into effect, and more.
 
     {'heading': 'AMENDMENT IV.',
      'content': 'The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.',
+     'start_date': '1791-12-15',
+     'node': '/us/const/amendment/IV',
      'children': [],
      'end_date': None,
-     'node': '/us/const/amendment/IV',
-     'start_date': '1791-12-15',
      'url': 'https://authorityspoke.com/api/v1/us/const/amendment/IV/',
+     'citations': [],
      'parent': 'https://authorityspoke.com/api/v1/us/const/amendment/'}
 
 
@@ -161,7 +162,7 @@ object.
 
 .. code:: ipython3
 
-    thirteenth_a = client.read(path="/us/const/amendment/XIII")
+    thirteenth_a = client.read(query="/us/const/amendment/XIII")
 
 The string representation of this provision includes both the selected
 text (which is the full text of the amendment) as well as a citation to
@@ -232,7 +233,7 @@ the statute was displaced by a new version.
 
 .. code:: ipython3
 
-    old_grant_objective = client.read(path="/us/usc/t42/s300hh-31/a/1", date="2015-01-01")
+    old_grant_objective = client.read(query="/us/usc/t42/s300hh-31/a/1", date="2015-01-01")
 
 .. code:: ipython3
 
@@ -260,11 +261,11 @@ the statute was displaced by a new version.
 
 
 
-And here’s the same provision as of 2020.
+And here’s the same provision as of 2020. Its content has changed.
 
 .. code:: ipython3
 
-    new_grant_objective = client.read(path="/us/usc/t42/s300hh-31/a/1", date="2020-01-01")
+    new_grant_objective = client.read(query="/us/usc/t42/s300hh-31/a/1", date="2020-01-01")
 
 .. code:: ipython3
 
@@ -278,6 +279,9 @@ And here’s the same provision as of 2020.
     'strengthening epidemiologic capacity to identify and monitor the occurrence of infectious diseases, including mosquito and other vector-borne diseases, and other conditions of public health importance;'
 
 
+
+The 2020 version of the statute has ``None`` in its ``end_date`` field
+because it’s still in effect.
 
 .. code:: ipython3
 
@@ -305,7 +309,7 @@ the URLs for the articles of the US Constitution.
 
 .. code:: ipython3
 
-    articles = client.read(path="/us/const/article")
+    articles = client.read(query="/us/const/article")
 
 .. code:: ipython3
 
@@ -325,3 +329,68 @@ the URLs for the articles of the US Constitution.
      'https://authorityspoke.com/api/v1/us/const/article/VII/']
 
 
+
+6. Downloading provisions from cross-references
+-----------------------------------------------
+
+If an Enactment loaded from the API references other provisions, it may
+provide a list of ``CrossReference`` objects when you call its
+``cross_references()`` method. You can pass one of these
+``CrossReference`` objects to the ``fetch()`` or ``read()`` method of
+the download client to get the referenced Enactment.
+
+.. code:: ipython3
+
+    infringement_provision = client.read("/us/usc/t17/s109/b/4")
+
+.. code:: ipython3
+
+    str(infringement_provision)
+
+
+
+
+.. parsed-literal::
+
+    '"Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18." (/us/usc/t17/s109/b/4 2013-07-18)'
+
+
+
+.. code:: ipython3
+
+    infringement_provision.cross_references()
+
+
+
+
+.. parsed-literal::
+
+    [CrossReference(target_uri="/us/usc/t17/s501", reference_text="section 501 of this title"),
+     CrossReference(target_uri="/us/usc/t18/s2319", reference_text="section 2319 of title 18")]
+
+
+
+.. code:: ipython3
+
+    reference_to_title_18 = infringement_provision.cross_references()[1]
+    referenced_enactment = client.read(reference_to_title_18)
+
+.. code:: ipython3
+
+    str(referenced_enactment)[:240]
+
+
+
+
+.. parsed-literal::
+
+    '"Any person who violates section 506(a) (relating to criminal offenses) of title 17 shall be punished as provided in subsections (b), (c), and (d) and such penalties shall be in addition to any other provisions of title 17 or any other law.'
+
+
+
+An important caveat for this feature is that the return value of the
+``cross_references()`` method will only be populated with internal links
+that have been marked up in the United States Legislative Markup XML
+published by the legislature. Unfortunately, some parts of the United
+States Code don’t include any link markup when making references to
+other legislation.
