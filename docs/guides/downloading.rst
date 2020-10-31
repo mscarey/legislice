@@ -57,7 +57,7 @@ Here’s an example of loading an API token from a ``.env`` file using
     import os
     from dotenv import load_dotenv
     load_dotenv()
-    
+
     TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 Now you can use the API token to create a Legislice ``Client`` object.
@@ -173,34 +173,16 @@ used in United States Legislative Markup. Future versions of Legislice
 may support the ability to convert to traditional statute citation
 styles.
 
-.. code:: ipython3
-
-    str(thirteenth_a)
-
-
-
-
-.. parsed-literal::
-
+    >>> str(thirteenth_a)
     '"Neither slavery nor involuntary servitude, except as a punishment for crime whereof the party shall have been duly convicted, shall exist within the United States, or any place subject to their jurisdiction. Congress shall have power to enforce this article by appropriate legislation." (/us/const/amendment/XIII 1865-12-18)'
-
-
 
 The text of the Thirteenth Amendment is all within Section 1 and Section
 2 of the amendment. You can use the ``Enactment.children`` property to
 get a list of provisions contained within an ``Enactment``.
 
-.. code:: ipython3
-
-    thirteenth_a.children
-
-
-
-
-.. parsed-literal::
-
+    >>> thirteenth_a.children
     [Enactment(source=/us/const/amendment/XIII/1, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 207)])),
-     Enactment(source=/us/const/amendment/XIII/2, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 77)]))]
+    Enactment(source=/us/const/amendment/XIII/2, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 77)]))]
 
 
 
@@ -209,15 +191,7 @@ from the ``children`` list. Remember that lists in Python start at index
 0, so if you want Section 2, you’ll find it at index 1 of the
 ``children`` list.
 
-.. code:: ipython3
-
-    str(thirteenth_a.children[1])
-
-
-
-
-.. parsed-literal::
-
+    >>> str(thirteenth_a.children[1])
     '"Congress shall have power to enforce this article by appropriate legislation." (/us/const/amendment/XIII/2 1865-12-18)'
 
 
@@ -330,7 +304,7 @@ the URLs for the articles of the US Constitution.
 
 
 
-6. Downloading provisions from cross-references
+6. Downloading Enactments from cross-references
 -----------------------------------------------
 
 If an Enactment loaded from the API references other provisions, it may

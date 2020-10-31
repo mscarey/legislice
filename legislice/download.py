@@ -7,7 +7,7 @@ from marshmallow.fields import Raw
 import requests
 from requests import status_codes
 
-from legislice.enactments import Enactment, CrossReference
+from legislice.enactments import Enactment, CrossReference, InboundReference
 from legislice.name_index import EnactmentIndex
 from legislice.schemas import (
     ExpandableSchema,
@@ -111,6 +111,11 @@ class Client:
         if isinstance(query, CrossReference):
             return self.fetch_cross_reference(query=query, date=date)
         return self.fetch_uri(query=query, date=date)
+
+    def citations_to(
+        self, enactment: Enactment, limit: int = 1
+    ) -> List[InboundReference]:
+        pass
 
     def read_from_json(self, data: RawEnactment) -> Enactment:
         r"""

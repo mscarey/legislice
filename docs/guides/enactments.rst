@@ -181,7 +181,7 @@ text you’ve already selected.
 
 
 If you need to select a passage that occurs more than once in the
-Enactment, you can import the ``TextQuoteSelector`` class instead of
+Enactment, you can import the :class:`anchorpoint.textselectors.TextQuoteSelector` class instead of
 using strings. With a ``TextQuoteSelector``, you specify not just the
 ``exact`` phrase you want to select, but also a ``prefix`` or ``suffix``
 that makes the phrase uniquely identifiable. In this example, the text

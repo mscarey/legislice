@@ -34,6 +34,15 @@ Development Updates
 
     history/releases
 
+API Documentation
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    api_docs/download
+    api_docs/enactments
+
 Indices and tables
 -------------------
 

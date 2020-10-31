@@ -48,6 +48,10 @@ class CrossReference:
         return f'CrossReference(target_uri="{self.target_uri}", reference_text="{self.reference_text}")'
 
 
+class InboundReference:
+    pass
+
+
 class BaseEnactment:
     """
     :param node:
