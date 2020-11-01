@@ -60,8 +60,8 @@ Here’s an example of loading an API token from a ``.env`` file using
 
     TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
-Now you can use the API token to create a Legislice ``Client`` object.
-This object holds your API token, so you can reuse the ``Client``
+Now you can use the API token to create a Legislice :class:`~legislice.download.Client` object.
+This object holds your API token, so you can reuse the :class:`~legislice.download.Client`
 without re-entering your API token repeatedly.
 
 .. code:: ipython3
@@ -72,7 +72,7 @@ without re-entering your API token repeatedly.
 2. Fetching a provision from the API
 ------------------------------------
 
-To download legislation using the ``Client``, you must specify a
+To download legislation using the :class:`~legislice.download.Client`, you must specify a
 ``path`` to the provision you want, and optionally you can specify the
 ``date`` of the version of the provision you want. If you don’t specify
 a date, you’ll be given the most recent version of the provision.
@@ -88,45 +88,34 @@ jurisdiction, the second part (if any) identifies the legislative code
 within that jurisdiction, and so on.
 
 If you don’t know the right citation for the provision you want, you can
+sign in to your AuthoritySpoke account and
 browse the `directory of available
 provisions <https://authorityspoke.com/legislice/>`__, where the links
-to each provision show the correct ``path`` for that provision. Or, if
-you’re signed in to your AuthoritySpoke account, you can browse an `HTML
+to each provision show the correct ``path`` for that provision. Or you can browse an `HTML
 version of the API itself <https://authorityspoke.com/api/v1/>`__. If
 you see the error message “Authentication credentials were not
 provided”, that means you aren’t signed in, and you might want to go
 back to the `login page <https://authorityspoke.com/account/login/>`__.
 
-Here’s an example of how to fetch the text of the Fourth Amendment using
-the ``Client``.
-
-.. code:: ipython3
-
-    fourth_a = client.fetch(query="/us/const/amendment/IV")
-
-The ``client.fetch`` method made an API call to AuthoritySpoke, and
-return JSON that has been converted to a Python ``dict``. There are
+The :meth:`~legislice.download.Client.fetch` method makes an API call to AuthoritySpoke, and
+returns JSON that is been converted to a Python :py:class:`dict`. There are
 fields representing the ``content`` of the provision, the ``start_date``
 when the provision went into effect, and more.
 
-.. code:: ipython3
+Here’s an example of how to fetch the text of the Fourth Amendment using
+the :class:`~legislice.download.Client`.
 
-    fourth_a
-
-
-
-
-.. parsed-literal::
-
+    >>> fourth_a = client.fetch(query="/us/const/amendment/IV")
+    >>> fourth_a
     {'heading': 'AMENDMENT IV.',
-     'content': 'The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.',
-     'start_date': '1791-12-15',
-     'node': '/us/const/amendment/IV',
-     'children': [],
-     'end_date': None,
-     'url': 'https://authorityspoke.com/api/v1/us/const/amendment/IV/',
-     'citations': [],
-     'parent': 'https://authorityspoke.com/api/v1/us/const/amendment/'}
+    'content': 'The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.',
+    'start_date': '1791-12-15',
+    'node': '/us/const/amendment/IV',
+    'children': [],
+    'end_date': None,
+    'url': 'https://authorityspoke.com/api/v1/us/const/amendment/IV/',
+    'citations': [],
+    'parent': 'https://authorityspoke.com/api/v1/us/const/amendment/'}
 
 
 
@@ -135,20 +124,12 @@ when the provision went into effect, and more.
 
 If all you needed was to get a JSON response from the API, you could
 have used a more general Python library like ``requests``. Legislice
-also lets you load the JSON response as an ``Enactment`` object, which
+also lets you load the JSON response as a :class:`legislice.enactments.Enactment` object, which
 has methods that allow you to select some but not all of the provision’s
-text. One way to load an ``Enactment`` is with the
-``Client.read_from_json`` method.
+text. One way to load an :class:`~legislice.enactments.Enactment` is with the
+:meth:`legislice.downloads.Client.read_from_json` method.
 
-.. code:: ipython3
-
-    client.read_from_json(fourth_a)
-
-
-
-
-.. parsed-literal::
-
+    >>> client.read_from_json(fourth_a)
     Enactment(source=/us/const/amendment/IV, start_date=1791-12-15, selection=TextPositionSet([TextPositionSelector[0, 332)]))
 
 

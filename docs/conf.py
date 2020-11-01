@@ -34,7 +34,8 @@ release = legislice.__version__
 # ones.
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.intersphinx", "sphinx.ext.coverage"]
 intersphinx_mapping = {
-    "anchorpoint": ("https://anchorpoint.readthedocs.io/en/latest/", None)
+    "python": ("https://docs.python.org/3", None),
+    "anchorpoint": ("https://anchorpoint.readthedocs.io/en/latest/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.

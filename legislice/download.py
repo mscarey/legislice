@@ -38,24 +38,58 @@ class Client:
     def __init__(
         self, api_token: str = "", api_root: str = "https://authorityspoke.com/api/v1"
     ):
+        """Create download client with an API token and an API address."""
         self.api_root = api_root
 
         if api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token
 
-    def _fetch_from_url(self, url: str) -> RawEnactment:
-        headers = {}
-        if self.api_token:
-            headers["Authorization"] = f"Token {self.api_token}"
+    def fetch(
+        self, query: Union[str, CrossReference], date: Union[datetime.date, str] = ""
+    ) -> RawEnactment:
+        """Download legislative provision from string identifier or cross-reference."""
+        if isinstance(query, CrossReference):
+            return self.fetch_cross_reference(query=query, date=date)
+        return self.fetch_uri(query=query, date=date)
 
-        response = requests.get(url, headers=headers)
-        if response.status_code == 404:
-            raise LegislicePathError(f"No enacted text found for query {url}")
-        if response.status_code == 403:
-            raise LegisliceTokenError(f"{response.json().get('detail')}")
+    def fetch_cross_reference(
+        self, query: CrossReference, date: Union[datetime.date, str] = ""
+    ) -> RawEnactment:
+        """
+        Download legislative provision from cross-reference.
 
-        return response.json()
+        :param query:
+            A cross-reference to the desired legislative provision. Found by calling the
+            :meth:`~legislice.enactments.Enactment.cross_references` method on an
+            :class:`~legislice.enactments.Enactment` that contains one or more citations
+            to other provisions.
+
+        :param date:
+            The date of the desired version of the provision to be downloaded. This is
+            not needed if the :class:`~legislice.enactments.CrossReference` passed to the
+            ``query`` param specifies a date. If no date is provided, the API will use the
+            most recent date.
+        """
+        if isinstance(date, datetime.date):
+            date = date.isoformat()
+
+        target = query.target_url
+
+        if date:
+            if "@" in target:
+                if not target.endswith(date):
+                    raise ValueError(
+                        f"Date param {date} does not match date in URL {target}"
+                    )
+            else:
+                target = f"{target}@{date}"
+
+        if not target.startswith(self.api_root):
+            raise ValueError(
+                f'target_url of cross-reference, "{target}", does not start with Client\'s api_root, "{self.api_root}"'
+            )
+        return self._fetch_from_url(url=target)
 
     def fetch_uri(
         self, query: str, date: Union[datetime.date, str] = ""
@@ -63,7 +97,7 @@ class Client:
         """
         Fetches data about legislation at specified path and date from Client's assigned API root.
 
-        :param path:
+        :param query:
             A path to the desired legislation section using the United States Legislation Markup
             tree-like citation format. Examples: "/us/const/amendment/IV", "/us/usc/t17/s103"
 
@@ -82,40 +116,10 @@ class Client:
 
         return self._fetch_from_url(url=query_with_root)
 
-    def fetch_cross_reference(
-        self, query: CrossReference, date: Union[datetime.date, str] = ""
-    ) -> RawEnactment:
-        if isinstance(date, datetime.date):
-            date = date.isoformat()
-
-        target = query.target_url
-
-        if date:
-            if "@" in target:
-                if target.endswith(date):
-                    raise ValueError(
-                        f"Date param {date} does not match date in URL {target}"
-                    )
-            else:
-                target = f"{target}@{date}"
-
-        if not target.startswith(self.api_root):
-            raise ValueError(
-                f'target_url of cross-reference, "{target}", does not start with Client\'s api_root, "{self.api_root}"'
-            )
-        return self._fetch_from_url(url=target)
-
-    def fetch(
-        self, query: Union[str, CrossReference], date: Union[datetime.date, str] = ""
-    ) -> RawEnactment:
-        if isinstance(query, CrossReference):
-            return self.fetch_cross_reference(query=query, date=date)
-        return self.fetch_uri(query=query, date=date)
-
     def citations_to(
         self, enactment: Enactment, limit: int = 1
     ) -> List[InboundReference]:
-        pass
+        return []
 
     def read_from_json(self, data: RawEnactment) -> Enactment:
         r"""
@@ -179,3 +183,16 @@ class Client:
             if enactment_needs_api_update(value):
                 enactment_index[key] = self.update_enactment_from_api(value)
         return enactment_index
+
+    def _fetch_from_url(self, url: str) -> RawEnactment:
+        headers = {}
+        if self.api_token:
+            headers["Authorization"] = f"Token {self.api_token}"
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 404:
+            raise LegislicePathError(f"No enacted text found for query {url}")
+        if response.status_code == 403:
+            raise LegisliceTokenError(f"{response.json().get('detail')}")
+
+        return response.json()
