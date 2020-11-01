@@ -189,6 +189,7 @@ class Client:
     def update_entries_in_enactment_index(
         self, enactment_index: EnactmentIndex
     ) -> EnactmentIndex:
+        """Fill in missing fields in every entry in an :class:`~legislice.name_index.EnactmentIndex`."""
         for key, value in enactment_index.items():
             if enactment_needs_api_update(value):
                 enactment_index[key] = self.update_enactment_from_api(value)

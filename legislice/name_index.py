@@ -22,11 +22,14 @@ class EnactmentIndex(OrderedDict):
     def get_by_name(self, name: str) -> Dict:
         """
         Convert retrieved record so name is a field rather than the key for the whole record.
+
         :param name:
             the name of the key where the record can be found in the Mentioned dict.
+
         :returns:
             the value stored at the key "name", plus a name field.
         """
+
         if not self.get(name):
             raise ValueError(
                 f'Name "{name}" not found in the index of mentioned Enactments'
