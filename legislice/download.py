@@ -48,7 +48,20 @@ class Client:
     def fetch(
         self, query: Union[str, CrossReference], date: Union[datetime.date, str] = ""
     ) -> RawEnactment:
-        """Download legislative provision from string identifier or cross-reference."""
+        """
+        Download legislative provision from string identifier or cross-reference.
+
+        :param query:
+            A cross-reference to the desired legislative provision, or a path to the
+            desired legislation section using the United States Legislation Markup
+            tree-like citation format.
+
+        :param date:
+            The date of the desired version of the provision to be downloaded. This is
+            not needed if a :class:`~legislice.enactments.CrossReference` passed to the
+            ``query`` param specifies a date. If no date is provided, the API will use the
+            most recent date.
+        """
         if isinstance(query, CrossReference):
             return self.fetch_cross_reference(query=query, date=date)
         return self.fetch_uri(query=query, date=date)
@@ -163,18 +176,15 @@ class Client:
         return enactment
 
     def update_enactment_from_api(self, data: RawEnactment) -> RawEnactment:
+        """
+        Use API to fill in missing fields in a dict representing an :class:`~legislice.enactments.Enactment`.
+
+        Useful when the dict has missing data because it was created by a user.
+        """
+
         data_from_api = self.fetch(query=data["node"], date=data.get("start_date"))
         new_data = {**data, **data_from_api}
         return new_data
-
-    def list_enactments_needing_updates(
-        self, enactment_index: EnactmentIndex
-    ) -> List[str]:
-        need_updates = []
-        for name, record in enactment_index.items():
-            if enactment_needs_api_update(record):
-                need_updates.append(name)
-        return need_updates
 
     def update_entries_in_enactment_index(
         self, enactment_index: EnactmentIndex
