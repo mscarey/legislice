@@ -104,7 +104,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     __model__ = LinkedEnactment
     node = fields.Url(relative=True, required=True)
     heading = fields.Str(required=True)
-    text_version = fields.Nested(TextVersionSchema, required=False)
+    text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Url(relative=False))
