@@ -135,7 +135,9 @@ class TestDownloadAndLoad:
             reference_text="Section 6C",
         )
         cited = self.client.fetch(ref)
-        assert cited["content"].startswith("Where an exemption is granted")
+        assert cited["text_version"]["content"].startswith(
+            "Where an exemption is granted"
+        )
 
 
 class TestReadJSON:

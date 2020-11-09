@@ -10,6 +10,7 @@ from legislice.enactments import (
     LinkedEnactment,
     RawEnactment,
     CrossReference,
+    TextVersion,
 )
 from legislice.name_index import EnactmentIndex
 
@@ -86,13 +87,24 @@ class ExpandableSchema(Schema):
         return self.__model__(**data)
 
 
+class TextVersionSchema(Schema):
+    __model__ = TextVersion
+    content = fields.Str(required=True)
+    url = fields.Str(required=False)
+    id = fields.Int(required=False)
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        return self.__model__(**data)
+
+
 class LinkedEnactmentSchema(ExpandableSchema):
     """Schema for passages from legislation without the full text of child nodes."""
 
     __model__ = LinkedEnactment
     node = fields.Url(relative=True, required=True)
     heading = fields.Str(required=True)
-    content = fields.Str(required=True)
+    text_version = fields.Nested(TextVersionSchema, missing=None)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Url(relative=False))
@@ -130,9 +142,17 @@ class LinkedEnactmentSchema(ExpandableSchema):
             data["selection"].append(new_selector)
         return data
 
+    def nest_content_in_textversion(self, data):
+        if data.get("content"):
+            if not data.get("text_version"):
+                data["text_version"] = {}
+            data["text_version"] = data["content"]
+        return data
+
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
+        data = self.nest_content_in_textversion(data)
         data = self.get_indexed_enactment(data)
         data = self.wrap_single_element_in_list(data, "selection")
         data = self.move_selector_fields(data)

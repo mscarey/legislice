@@ -249,5 +249,5 @@ class TestDumpEnactment:
         schema = EnactmentSchema()
         dumped = schema.dump(copyright_clause)
         selection = dumped["selection"][0]
-        quote = dumped["content"][selection["start"] : selection["end"]]
+        quote = dumped["text_version"]["content"][selection["start"] : selection["end"]]
         assert quote == "Science and useful Arts"

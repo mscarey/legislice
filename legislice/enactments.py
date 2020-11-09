@@ -56,7 +56,7 @@ class TextVersion:
     def __init__(
         self, content: str, url: Optional[str] = None, id: Optional[int] = None,
     ):
-        self._content = content
+        self.content = content
         self.url = url
         self.id = id
 
@@ -129,7 +129,7 @@ class BaseEnactment:
 
     @property
     def content(self):
-        return self.text_version._content
+        return self.text_version.content
 
     @property
     def start_date(self):
