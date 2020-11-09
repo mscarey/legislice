@@ -104,7 +104,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     __model__ = LinkedEnactment
     node = fields.Url(relative=True, required=True)
     heading = fields.Str(required=True)
-    text_version = fields.Nested(TextVersionSchema, missing=None)
+    text_version = fields.Nested(TextVersionSchema, required=False)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     children = fields.List(fields.Url(relative=False))
@@ -146,7 +146,8 @@ class LinkedEnactmentSchema(ExpandableSchema):
         if data.get("content"):
             if not data.get("text_version"):
                 data["text_version"] = {}
-            data["text_version"] = data["content"]
+            data["text_version"]["content"] = data["content"]
+        data.pop("content", None)
         return data
 
     @pre_load

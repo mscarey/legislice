@@ -56,6 +56,8 @@ class TextVersion:
     def __init__(
         self, content: str, url: Optional[str] = None, id: Optional[int] = None,
     ):
+        if not content:
+            raise ValueError("TextVersion should not be created with no content.")
         self.content = content
         self.url = url
         self.id = id
@@ -109,8 +111,10 @@ class BaseEnactment:
         self.node = node
         if text_version:
             self.text_version = text_version
-        else:
+        elif content:
             self.text_version = TextVersion(content=content)
+        else:
+            self.text_version = None
 
         self._heading = heading
         self._start_date = start_date
@@ -128,7 +132,9 @@ class BaseEnactment:
         return self._heading
 
     @property
-    def content(self):
+    def content(self) -> str:
+        if not self.text_version:
+            return ""
         return self.text_version.content
 
     @property
