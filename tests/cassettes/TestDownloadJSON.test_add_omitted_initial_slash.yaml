@@ -13,27 +13,23 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/b
+    uri: http://127.0.0.1:8000/api/v1/us/usc/t17/s102/b
   response:
     body:
       string: ''
     headers:
-      Connection:
-      - keep-alive
       Content-Length:
       - '0'
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Thu, 29 Oct 2020 06:26:08 GMT
+      - Mon, 09 Nov 2020 10:17:32 GMT
       Location:
       - /api/v1/us/usc/t17/s102/b/
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
-      Via:
-      - 1.1 vegur
+      - WSGIServer/0.2 CPython/3.8.4
       X-Content-Type-Options:
       - nosniff
     status:
@@ -53,32 +49,29 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/b/
+    uri: http://127.0.0.1:8000/api/v1/us/usc/t17/s102/b/
   response:
     body:
-      string: '{"heading":"","content":"In no case does copyright protection for an
-        original work of authorship extend to any idea, procedure, process, system,
-        method of operation, concept, principle, or discovery, regardless of the form
-        in which it is described, explained, illustrated, or embodied in such work.","start_date":"2013-07-18","node":"/us/usc/t17/s102/b","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/b/","citations":[],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
+      string: '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/b","text_version":{"id":1030580,"url":"http://127.0.0.1:8000/api/v1/textversions/1030580/","content":"In
+        no case does copyright protection for an original work of authorship extend
+        to any idea, procedure, process, system, method of operation, concept, principle,
+        or discovery, regardless of the form in which it is described, explained,
+        illustrated, or embodied in such work."},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/b/","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/"}'
     headers:
       Allow:
-      - GET, POST, HEAD, OPTIONS
-      Connection:
-      - keep-alive
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Content-Length:
-      - '522'
+      - '601'
       Content-Type:
       - application/json
       Date:
-      - Thu, 29 Oct 2020 06:26:08 GMT
+      - Mon, 09 Nov 2020 10:17:32 GMT
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
+      - WSGIServer/0.2 CPython/3.8.4
       Vary:
       - Accept, Cookie
-      Via:
-      - 1.1 vegur
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:

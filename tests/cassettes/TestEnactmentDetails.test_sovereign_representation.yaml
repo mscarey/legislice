@@ -13,27 +13,23 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us
+    uri: http://127.0.0.1:8000/api/v1/us
   response:
     body:
       string: ''
     headers:
-      Connection:
-      - keep-alive
       Content-Length:
       - '0'
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Thu, 29 Oct 2020 06:26:12 GMT
+      - Mon, 09 Nov 2020 10:17:36 GMT
       Location:
       - /api/v1/us/
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
-      Via:
-      - 1.1 vegur
+      - WSGIServer/0.2 CPython/3.8.4
       X-Content-Type-Options:
       - nosniff
     status:
@@ -53,29 +49,65 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/
+    uri: http://127.0.0.1:8000/api/v1/us/
   response:
     body:
-      string: '{"heading":"United States Legislation","content":"","start_date":"1776-07-04","node":"/us","children":["https://authorityspoke.com/api/v1/us/const/","https://authorityspoke.com/api/v1/us/usc/"],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/","citations":[],"parent":null}'
+      string: '{"heading":"United States Legislation","start_date":"1776-07-04","node":"/us","text_version":null,"url":"http://127.0.0.1:8000/api/v1/us/","end_date":null,"children":["http://127.0.0.1:8000/api/v1/us/const/","http://127.0.0.1:8000/api/v1/us/usc/"],"citations":[],"parent":null}'
     headers:
       Allow:
-      - GET, POST, HEAD, OPTIONS
-      Connection:
-      - keep-alive
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Content-Length:
-      - '285'
+      - '277'
       Content-Type:
       - application/json
       Date:
-      - Thu, 29 Oct 2020 06:26:12 GMT
+      - Mon, 09 Nov 2020 10:17:36 GMT
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
+      - WSGIServer/0.2 CPython/3.8.4
       Vary:
       - Accept, Cookie
-      Via:
-      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: http://127.0.0.1:8000/api/v1/us@1776-07-04
+  response:
+    body:
+      string: '{"heading":"United States Legislation","start_date":"1776-07-04","node":"/us","text_version":null,"url":"http://127.0.0.1:8000/api/v1/us@1776-07-04","end_date":null,"children":["http://127.0.0.1:8000/api/v1/us/const@1776-07-04","http://127.0.0.1:8000/api/v1/us/usc@1776-07-04"],"citations":[],"parent":null}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Content-Length:
+      - '307'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 09 Nov 2020 10:17:36 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.4
+      Vary:
+      - Accept, Cookie
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:

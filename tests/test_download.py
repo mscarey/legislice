@@ -18,7 +18,7 @@ from legislice.name_index import collect_enactments
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
-API_ROOT = os.getenv("API_ROOT")
+API_ROOT = os.getenv("LOCAL_API_ROOT")
 
 
 class TestDownloadJSON:
@@ -156,4 +156,16 @@ class TestReadJSON:
         )
         cited = self.client.read(ref, date="1950-01-01")
         assert "bona fide religious or cultural reasons." in str(cited)
+
+
+class TestInboundCitations:
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
+
+    @pytest.mark.vcr()
+    def test_get_inbound_citations_to_node(self):
+        infringement_statute = self.client.read(query="/us/usc/t17/s501",)
+        inbound_refs = self.client.citations_to(infringement_statute)
+        period_ref = inbound_refs.locations[0]
+        citing_period = self.client.read(period_ref)
+        assert citing_period.node.uri == "/us/usc/t17/s109/b/4"
 

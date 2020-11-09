@@ -22,13 +22,10 @@ def enactment_needs_api_update(data: RawEnactment) -> bool:
             "with a citation path to a legislative provision, "
             'for example "/us/const/amendment/IV"'
         )
-    if (
-        data.get("heading") is None
-        or data.get("content") is None
-        or data.get("start_date") is None
-    ):
+    if data.get("heading") is None or data.get("start_date") is None:
         return True
-    return False
+    if data.get("content") is None and data.get("text_version") is None:
+        return False
 
 
 class CrossReferenceSchema(Schema):

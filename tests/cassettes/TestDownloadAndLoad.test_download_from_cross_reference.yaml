@@ -13,39 +13,35 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/6C@2020-01-01
+    uri: http://127.0.0.1:8000/api/v1/test/acts/47/6C@2020-01-01
   response:
     body:
-      string: "{\"heading\":\"Issuance of beardcoin\",\"content\":\"Where an exemption
-        is granted under section 6, the Department of Beards shall issue to the person
-        so exempted a token, hereinafter referred to as a beardcoin, that shall for
-        all purposes be regarded as substantive proof of such exemption.\",\"start_date\":\"1935-04-01\",\"node\":\"/test/acts/47/6C\",\"children\":[{\"heading\":\"\",\"content\":\"The
+      string: "{\"heading\":\"Issuance of beardcoin\",\"start_date\":\"1935-04-01\",\"node\":\"/test/acts/47/6C\",\"text_version\":{\"id\":1376011,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1376011/\",\"content\":\"Where
+        an exemption is granted under section 6, the Department of Beards shall issue
+        to the person so exempted a token, hereinafter referred to as a beardcoin,
+        that shall for all purposes be regarded as substantive proof of such exemption.\"},\"url\":\"http://127.0.0.1:8000/api/v1/test/acts/47/6C@2020-01-01\",\"end_date\":null,\"children\":[{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1\",\"text_version\":{\"id\":1376037,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1376037/\",\"content\":\"The
         beardcoin shall be a cryptocurrency token using a blockchain approved by the
-        Department of Beards.\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1\",\"children\":[],\"end_date\":null,\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C/1@2020-01-01\",\"citations\":[]},{\"heading\":\"\",\"content\":\"The
+        Department of Beards.\"},\"url\":\"http://127.0.0.1:8000/api/v1/test/acts/47/6C/1@2020-01-01\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1-con\",\"text_version\":{\"id\":1376038,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1376038/\",\"content\":\"The
         beardcoin's blockchain shall be in substantially the following form: WHEREAS
         this beardcoin is approved by the Department of Beards under section 6, it
-        is secured by the following blockchain: \u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1.\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1-con\",\"children\":[],\"end_date\":null,\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C/1-con@2020-01-01\",\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"https://authorityspoke.com/api/v1/test/acts/47/6@2020-01-01\",\"target_node\":1386965,\"reference_text\":\"section
-        6\"}]}],\"end_date\":null,\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C@2020-01-01\",\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"https://authorityspoke.com/api/v1/test/acts/47/6@2020-01-01\",\"target_node\":1386965,\"reference_text\":\"section
-        6\"}],\"parent\":\"https://authorityspoke.com/api/v1/test/acts/47@2020-01-01\"}"
+        is secured by the following blockchain: \u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1.\"},\"url\":\"http://127.0.0.1:8000/api/v1/test/acts/47/6C/1-con@2020-01-01\",\"end_date\":null,\"children\":[],\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"http://127.0.0.1:8000/api/v1/test/acts/47/6@2020-01-01\",\"target_node\":1660690,\"reference_text\":\"section
+        6\"}]}],\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"http://127.0.0.1:8000/api/v1/test/acts/47/6@2020-01-01\",\"target_node\":1660690,\"reference_text\":\"section
+        6\"}],\"parent\":\"http://127.0.0.1:8000/api/v1/test/acts/47@2020-01-01\"}"
     headers:
       Allow:
-      - GET, POST, HEAD, OPTIONS
-      Connection:
-      - keep-alive
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Content-Length:
-      - '1569'
+      - '1806'
       Content-Type:
       - application/json
       Date:
-      - Thu, 29 Oct 2020 06:26:10 GMT
+      - Mon, 09 Nov 2020 10:17:34 GMT
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
+      - WSGIServer/0.2 CPython/3.8.4
       Vary:
       - Accept, Cookie
-      Via:
-      - 1.1 vegur
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:

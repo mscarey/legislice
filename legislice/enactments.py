@@ -52,6 +52,15 @@ class InboundReference:
     pass
 
 
+class TextVersion:
+    def __init__(
+        self, content: str, url: Optional[str] = None, id: Optional[int] = None,
+    ):
+        self._content = content
+        self.url = url
+        self.id = id
+
+
 class BaseEnactment:
     """
     :param node:
@@ -87,8 +96,9 @@ class BaseEnactment:
         self,
         node: str,
         heading: str,
-        content: str,
         start_date: date,
+        text_version: Optional[TextVersion] = None,
+        content: Optional[str] = None,
         end_date: Optional[date] = None,
         anchors: Union[List[TextPositionSelector], List[TextQuoteSelector]] = None,
         citations: List[CrossReference] = None,
@@ -97,8 +107,11 @@ class BaseEnactment:
         **kwargs,
     ):
         self.node = node
+        if text_version:
+            self.text_version = text_version
+        else:
+            self.text_version = TextVersion(content=content)
 
-        self._content = content
         self._heading = heading
         self._start_date = start_date
         self._end_date = end_date
@@ -116,7 +129,7 @@ class BaseEnactment:
 
     @property
     def content(self):
-        return self._content
+        return self.text_version._content
 
     @property
     def start_date(self):

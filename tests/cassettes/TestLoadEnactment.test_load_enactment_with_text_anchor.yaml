@@ -13,27 +13,23 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a
+    uri: http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a
   response:
     body:
       string: ''
     headers:
-      Connection:
-      - keep-alive
       Content-Length:
       - '0'
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Thu, 29 Oct 2020 06:26:14 GMT
+      - Mon, 09 Nov 2020 10:17:37 GMT
       Location:
       - /api/v1/us/usc/t17/s102/a/
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
-      Via:
-      - 1.1 vegur
+      - WSGIServer/0.2 CPython/3.8.4
       X-Content-Type-Options:
       - nosniff
     status:
@@ -53,41 +49,38 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a/
+    uri: http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/
   response:
     body:
-      string: '{"heading":"","content":"Copyright protection subsists, in accordance
-        with this title, in original works of authorship fixed in any tangible medium
-        of expression, now known or later developed, from which they can be perceived,
-        reproduced, or otherwise communicated, either directly or with the aid of
-        a machine or device. Works of authorship include the following categories:","start_date":"2013-07-18","node":"/us/usc/t17/s102/a","children":[{"heading":"","content":"literary
-        works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/1","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/1/","citations":[]},{"heading":"","content":"musical
-        works, including any accompanying words;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/2","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/2/","citations":[]},{"heading":"","content":"dramatic
-        works, including any accompanying music;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/3","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/3/","citations":[]},{"heading":"","content":"pantomimes
-        and choreographic works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/4","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/4/","citations":[]},{"heading":"","content":"pictorial,
-        graphic, and sculptural works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/5","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/5/","citations":[]},{"heading":"","content":"motion
-        pictures and other audiovisual works;","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/6","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/6/","citations":[]},{"heading":"","content":"sound
-        recordings; and","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/7","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/7/","citations":[]},{"heading":"","content":"architectural
-        works.","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/8","children":[],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/8/","citations":[]}],"end_date":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/","citations":[],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
+      string: '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a","text_version":{"id":1030579,"url":"http://127.0.0.1:8000/api/v1/textversions/1030579/","content":"Copyright
+        protection subsists, in accordance with this title, in original works of authorship
+        fixed in any tangible medium of expression, now known or later developed,
+        from which they can be perceived, reproduced, or otherwise communicated, either
+        directly or with the aid of a machine or device. Works of authorship include
+        the following categories:"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/1","text_version":{"id":1030571,"url":"http://127.0.0.1:8000/api/v1/textversions/1030571/","content":"literary
+        works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/1/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/2","text_version":{"id":1030572,"url":"http://127.0.0.1:8000/api/v1/textversions/1030572/","content":"musical
+        works, including any accompanying words;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/2/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/3","text_version":{"id":1030573,"url":"http://127.0.0.1:8000/api/v1/textversions/1030573/","content":"dramatic
+        works, including any accompanying music;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/3/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/4","text_version":{"id":1030574,"url":"http://127.0.0.1:8000/api/v1/textversions/1030574/","content":"pantomimes
+        and choreographic works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/4/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/5","text_version":{"id":1030575,"url":"http://127.0.0.1:8000/api/v1/textversions/1030575/","content":"pictorial,
+        graphic, and sculptural works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/5/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/6","text_version":{"id":1030576,"url":"http://127.0.0.1:8000/api/v1/textversions/1030576/","content":"motion
+        pictures and other audiovisual works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/6/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/7","text_version":{"id":1030577,"url":"http://127.0.0.1:8000/api/v1/textversions/1030577/","content":"sound
+        recordings; and"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/7/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/8","text_version":{"id":1030578,"url":"http://127.0.0.1:8000/api/v1/textversions/1030578/","content":"architectural
+        works."},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/8/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/"}'
     headers:
       Allow:
-      - GET, POST, HEAD, OPTIONS
-      Connection:
-      - keep-alive
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Content-Length:
-      - '2407'
+      - '3158'
       Content-Type:
       - application/json
       Date:
-      - Thu, 29 Oct 2020 06:26:14 GMT
+      - Mon, 09 Nov 2020 10:17:38 GMT
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
+      - WSGIServer/0.2 CPython/3.8.4
       Vary:
       - Accept, Cookie
-      Via:
-      - 1.1 vegur
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:

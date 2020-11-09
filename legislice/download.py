@@ -130,7 +130,7 @@ class Client:
         return self._fetch_from_url(url=query_with_root)
 
     def citations_to(
-        self, enactment: Enactment, limit: int = 1
+        self, enactment: Enactment, limit: int = 10
     ) -> List[InboundReference]:
         return []
 

@@ -20,7 +20,7 @@ from legislice.schemas import EnactmentSchema
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
-API_ROOT = os.getenv("API_ROOT")
+API_ROOT = os.getenv("LOCAL_API_ROOT")
 
 
 class TestMakeEnactment:
