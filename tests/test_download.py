@@ -164,10 +164,9 @@ class TestInboundCitations:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     @pytest.mark.vcr()
-    def test_get_inbound_citations_to_node(self):
+    def test_fetch_inbound_citations_to_node(self):
         infringement_statute = self.client.read(query="/us/usc/t17/s501",)
-        inbound_refs = self.client.citations_to(infringement_statute)
-        period_ref = inbound_refs.locations[0]
-        citing_period = self.client.read(period_ref)
-        assert citing_period.node.uri == "/us/usc/t17/s109/b/4"
+        inbound_refs = self.client.fetch_citations_to(infringement_statute)
+        period_ref = inbound_refs["results"][0]["locations"][0]
+        assert period_ref["text_version"].get("content") is None
 

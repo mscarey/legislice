@@ -153,8 +153,8 @@ class LinkedEnactmentSchema(ExpandableSchema):
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
-        data = self.nest_content_in_textversion(data)
         data = self.get_indexed_enactment(data)
+        data = self.nest_content_in_textversion(data)
         data = self.wrap_single_element_in_list(data, "selection")
         data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "anchors")

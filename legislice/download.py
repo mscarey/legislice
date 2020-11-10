@@ -129,10 +129,23 @@ class Client:
 
         return self._fetch_from_url(url=query_with_root)
 
-    def citations_to(
-        self, enactment: Enactment, limit: int = 10
-    ) -> List[InboundReference]:
-        return []
+    def uri_from_query(self, target: Union[str, Enactment, CrossReference]) -> str:
+        if isinstance(target, Enactment):
+            return target.node
+        elif isinstance(target, CrossReference):
+            return target.target_uri
+        return target
+
+    def fetch_citations_to(self, target) -> List[Dict]:
+        uri = self.uri_from_query(target)
+        query_with_root = self.api_root + "/citations_to" + uri
+        return self._fetch_from_url(query_with_root)
+
+    def citations_to(self, target) -> List[InboundReference]:
+        response = self.fetch_citations_to(target)
+        json_citations = response["results"]
+        citations = [InboundReference(**citation) for citation in json_citations]
+        return citations
 
     def read_from_json(self, data: RawEnactment) -> Enactment:
         r"""
