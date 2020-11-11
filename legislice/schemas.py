@@ -100,28 +100,12 @@ class ExpandableSchema(Schema):
         mentioned = self.context.get("enactment_index") or EnactmentIndex()
         return deepcopy(mentioned.get_by_name(name_to_retrieve))
 
-    def consume_type_field(self, data, **kwargs):
-        """Verify that type field is correct and then get rid of it."""
-        if data.get("type"):
-            ty = data.pop("type").lower()
-            if ty != self.__model__.__name__.lower():
-                raise ValidationError(
-                    f'type field "{ty} does not match model type {self.__model__}'
-                )
-        return data
-
     def wrap_single_element_in_list(self, data: Dict, many_element: str):
         """Make a specified field a list if it isn't already a list."""
         if data.get(many_element) is None:
             data[many_element] = []
         elif not isinstance(data[many_element], list):
             data[many_element] = [data[many_element]]
-        return data
-
-    @pre_load
-    def format_data_to_load(self, data: Union[str, Dict], **kwargs) -> Dict:
-        """Expand data if it was just a name reference in the JSON input."""
-        data = self.consume_type_field(data)
         return data
 
     @post_load
@@ -201,7 +185,6 @@ class LinkedEnactmentSchema(ExpandableSchema):
         data = self.wrap_single_element_in_list(data, "selection")
         data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "anchors")
-        data = self.consume_type_field(data)
         return data
 
 

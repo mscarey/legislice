@@ -184,3 +184,10 @@ class TestInboundCitations:
         assert isinstance(period_ref, CitingProvisionLocation)
         assert period_ref.node == "/us/usc/t17/s109/b/4"
         assert period_ref.start_date.isoformat() == "2013-07-18"
+
+    @pytest.mark.vcr()
+    def test_download_inbound_citations_from_uri(self):
+        inbound_refs = self.client.citations_to("/us/usc/t17/s501")
+        assert inbound_refs[0].content.startswith(
+            "Any person who distributes a phonorecord"
+        )

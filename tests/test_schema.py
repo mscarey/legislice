@@ -223,6 +223,7 @@ class TestLoadLinkedEnactment:
     def test_load_linked_enactment(self):
         schema = LinkedEnactmentSchema()
         data = {
+            "type": "Enactment",
             "children": [
                 "https://authorityspoke.com/api/v1/us/const/",
                 "https://authorityspoke.com/api/v1/us/usc/",
