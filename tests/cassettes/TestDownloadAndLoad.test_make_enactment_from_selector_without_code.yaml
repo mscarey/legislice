@@ -1,130 +1,132 @@
 interactions:
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/us/const/article/III/1
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 09 Nov 2020 10:17:32 GMT
-      Location:
-      - /api/v1/us/const/article/III/1/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/us/const/article/III/1/
-  response:
-    body:
-      string: '{"heading":"The judges, their terms, and compensation.","start_date":"1788-09-13","node":"/us/const/article/III/1","text_version":{"id":735685,"url":"http://127.0.0.1:8000/api/v1/textversions/735685/","content":"The
-        judicial Power of the United States, shall be vested in one supreme Court,
-        and in such inferior Courts as the Congress may from time to time ordain and
-        establish. The Judges, both of the supreme and inferior Courts, shall hold
-        their Offices during good Behaviour, and shall, at stated Times, receive for
-        their Services, a Compensation, which shall not be diminished during their
-        Continuance in Office."},"url":"http://127.0.0.1:8000/api/v1/us/const/article/III/1/","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/article/III/"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '788'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/us/const/article/III/1@1788-09-13
-  response:
-    body:
-      string: '{"heading":"The judges, their terms, and compensation.","start_date":"1788-09-13","node":"/us/const/article/III/1","text_version":{"id":735685,"url":"http://127.0.0.1:8000/api/v1/textversions/735685/","content":"The
-        judicial Power of the United States, shall be vested in one supreme Court,
-        and in such inferior Courts as the Congress may from time to time ordain and
-        establish. The Judges, both of the supreme and inferior Courts, shall hold
-        their Offices during good Behaviour, and shall, at stated Times, receive for
-        their Services, a Compensation, which shall not be diminished during their
-        Continuance in Office."},"url":"http://127.0.0.1:8000/api/v1/us/const/article/III/1@1788-09-13","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/article/III@1788-09-13"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '808'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/us/const/article/III/1
+    response:
+      body:
+        string: ""
+      headers:
+        Content-Length:
+          - "0"
+        Content-Type:
+          - text/html; charset=utf-8
+        Date:
+          - Mon, 09 Nov 2020 10:17:32 GMT
+        Location:
+          - /api/v1/us/const/article/III/1/
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        X-Content-Type-Options:
+          - nosniff
+      status:
+        code: 301
+        message: Moved Permanently
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/us/const/article/III/1/
+    response:
+      body:
+        string:
+          '{"heading":"The judges, their terms, and compensation.","start_date":"1788-09-13","node":"/us/const/article/III/1","text_version":{"id":735685,"url":"http://127.0.0.1:8000/api/v1/textversions/735685/","content":"The
+          judicial Power of the United States, shall be vested in one supreme Court,
+          and in such inferior Courts as the Congress may from time to time ordain and
+          establish. The Judges, both of the supreme and inferior Courts, shall hold
+          their Offices during good Behaviour, and shall, at stated Times, receive for
+          their Services, a Compensation, which shall not be diminished during their
+          Continuance in Office."},"url":"http://127.0.0.1:8000/api/v1/us/const/article/III/1/","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/article/III/"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "788"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/us/const/article/III/1@1788-09-13
+    response:
+      body:
+        string:
+          '{"heading":"The judges, their terms, and compensation.","start_date":"1788-09-13","node":"/us/const/article/III/1","text_version":{"id":735685,"url":"http://127.0.0.1:8000/api/v1/textversions/735685/","content":"The
+          judicial Power of the United States, shall be vested in one supreme Court,
+          and in such inferior Courts as the Congress may from time to time ordain and
+          establish. The Judges, both of the supreme and inferior Courts, shall hold
+          their Offices during good Behaviour, and shall, at stated Times, receive for
+          their Services, a Compensation, which shall not be diminished during their
+          Continuance in Office."},"url":"http://127.0.0.1:8000/api/v1/us/const/article/III/1@1788-09-13","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/article/III@1788-09-13"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "808"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
 version: 1

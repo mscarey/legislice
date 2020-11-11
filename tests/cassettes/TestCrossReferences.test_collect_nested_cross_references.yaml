@@ -1,132 +1,134 @@
 interactions:
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/test/acts/47/6D
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 09 Nov 2020 10:17:36 GMT
-      Location:
-      - /api/v1/test/acts/47/6D/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/test/acts/47/6D/
-  response:
-    body:
-      string: '{"heading":"Waiver of beard tax in special circumstances","start_date":"1935-04-01","node":"/test/acts/47/6D","text_version":null,"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/test/acts/47/6D/1","text_version":{"id":1376039,"url":"http://127.0.0.1:8000/api/v1/textversions/1376039/","content":"The
-        Department of Beards shall waive the collection of beard tax upon issuance
-        of beardcoin under Section 6C where the reason the maintainer wears a beard
-        is due to bona fide religious, cultural, or medical reasons."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/1/","end_date":null,"children":[],"citations":[{"target_uri":"/test/acts/47/6C","target_url":"http://127.0.0.1:8000/api/v1/test/acts/47/6C/","target_node":1660695,"reference_text":"Section
-        6C"}]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/6D/2","text_version":{"id":1376013,"url":"http://127.0.0.1:8000/api/v1/textversions/1376013/","content":"The
-        determination of the Department of Beards as to what constitutes bona fide
-        religious or cultural reasons shall be final and no right of appeal shall
-        exist."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/2/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47/"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '1346'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:37 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/test/acts/47/6D@1935-04-01
-  response:
-    body:
-      string: '{"heading":"Waiver of beard tax in special circumstances","start_date":"1935-04-01","node":"/test/acts/47/6D","text_version":null,"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D@1935-04-01","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/6D/1","text_version":{"id":1376012,"url":"http://127.0.0.1:8000/api/v1/textversions/1376012/","content":"The
-        Department of Beards shall waive the collection of beard tax upon issuance
-        of beardcoin under Section 6C where the reason the maintainer wears a beard
-        is due to bona fide religious or cultural reasons."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@1935-04-01","end_date":"2013-07-18","children":[],"citations":[{"target_uri":"/test/acts/47/6C","target_url":"http://127.0.0.1:8000/api/v1/test/acts/47/6C@1935-04-01","target_node":1660695,"reference_text":"Section
-        6C"}]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/6D/2","text_version":{"id":1376013,"url":"http://127.0.0.1:8000/api/v1/textversions/1376013/","content":"The
-        determination of the Department of Beards as to what constitutes bona fide
-        religious or cultural reasons shall be final and no right of appeal shall
-        exist."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/2@1935-04-01","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47@1935-04-01"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '1394'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:37 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/test/acts/47/6D
+    response:
+      body:
+        string: ""
+      headers:
+        Content-Length:
+          - "0"
+        Content-Type:
+          - text/html; charset=utf-8
+        Date:
+          - Mon, 09 Nov 2020 10:17:36 GMT
+        Location:
+          - /api/v1/test/acts/47/6D/
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        X-Content-Type-Options:
+          - nosniff
+      status:
+        code: 301
+        message: Moved Permanently
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/test/acts/47/6D/
+    response:
+      body:
+        string:
+          '{"heading":"Waiver of beard tax in special circumstances","start_date":"1935-04-01","node":"/test/acts/47/6D","text_version":null,"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/test/acts/47/6D/1","text_version":{"id":1376039,"url":"http://127.0.0.1:8000/api/v1/textversions/1376039/","content":"The
+          Department of Beards shall waive the collection of beard tax upon issuance
+          of beardcoin under Section 6C where the reason the maintainer wears a beard
+          is due to bona fide religious, cultural, or medical reasons."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/1/","end_date":null,"children":[],"citations":[{"target_uri":"/test/acts/47/6C","target_url":"http://127.0.0.1:8000/api/v1/test/acts/47/6C/","target_node":1660695,"reference_text":"Section
+          6C"}]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/6D/2","text_version":{"id":1376013,"url":"http://127.0.0.1:8000/api/v1/textversions/1376013/","content":"The
+          determination of the Department of Beards as to what constitutes bona fide
+          religious or cultural reasons shall be final and no right of appeal shall
+          exist."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/2/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47/"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "1346"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:37 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/test/acts/47/6D@1935-04-01
+    response:
+      body:
+        string:
+          '{"heading":"Waiver of beard tax in special circumstances","start_date":"1935-04-01","node":"/test/acts/47/6D","text_version":null,"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D@1935-04-01","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/6D/1","text_version":{"id":1376012,"url":"http://127.0.0.1:8000/api/v1/textversions/1376012/","content":"The
+          Department of Beards shall waive the collection of beard tax upon issuance
+          of beardcoin under Section 6C where the reason the maintainer wears a beard
+          is due to bona fide religious or cultural reasons."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@1935-04-01","end_date":"2013-07-18","children":[],"citations":[{"target_uri":"/test/acts/47/6C","target_url":"http://127.0.0.1:8000/api/v1/test/acts/47/6C@1935-04-01","target_node":1660695,"reference_text":"Section
+          6C"}]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/6D/2","text_version":{"id":1376013,"url":"http://127.0.0.1:8000/api/v1/textversions/1376013/","content":"The
+          determination of the Department of Beards as to what constitutes bona fide
+          religious or cultural reasons shall be final and no right of appeal shall
+          exist."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/6D/2@1935-04-01","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47@1935-04-01"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "1394"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:37 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
 version: 1

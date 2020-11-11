@@ -1,128 +1,130 @@
 interactions:
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/us/const/amendment/IV
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Location:
-      - /api/v1/us/const/amendment/IV/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/us/const/amendment/IV/
-  response:
-    body:
-      string: '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"http://127.0.0.1:8000/api/v1/textversions/735706/","content":"The
-        right of the people to be secure in their persons, houses, papers, and effects,
-        against unreasonable searches and seizures, shall not be violated, and no
-        Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
-        and particularly describing the place to be searched, and the persons or things
-        to be seized."},"url":"http://127.0.0.1:8000/api/v1/us/const/amendment/IV/","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/amendment/"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '682'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/us/const/amendment/IV@1791-12-15
-  response:
-    body:
-      string: '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"http://127.0.0.1:8000/api/v1/textversions/735706/","content":"The
-        right of the people to be secure in their persons, houses, papers, and effects,
-        against unreasonable searches and seizures, shall not be violated, and no
-        Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
-        and particularly describing the place to be searched, and the persons or things
-        to be seized."},"url":"http://127.0.0.1:8000/api/v1/us/const/amendment/IV@1791-12-15","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/amendment@1791-12-15"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '702'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/us/const/amendment/IV
+    response:
+      body:
+        string: ""
+      headers:
+        Content-Length:
+          - "0"
+        Content-Type:
+          - text/html; charset=utf-8
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Location:
+          - /api/v1/us/const/amendment/IV/
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        X-Content-Type-Options:
+          - nosniff
+      status:
+        code: 301
+        message: Moved Permanently
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/us/const/amendment/IV/
+    response:
+      body:
+        string:
+          '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"http://127.0.0.1:8000/api/v1/textversions/735706/","content":"The
+          right of the people to be secure in their persons, houses, papers, and effects,
+          against unreasonable searches and seizures, shall not be violated, and no
+          Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
+          and particularly describing the place to be searched, and the persons or things
+          to be seized."},"url":"http://127.0.0.1:8000/api/v1/us/const/amendment/IV/","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/amendment/"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "682"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/us/const/amendment/IV@1791-12-15
+    response:
+      body:
+        string:
+          '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"http://127.0.0.1:8000/api/v1/textversions/735706/","content":"The
+          right of the people to be secure in their persons, houses, papers, and effects,
+          against unreasonable searches and seizures, shall not be violated, and no
+          Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
+          and particularly describing the place to be searched, and the persons or things
+          to be seized."},"url":"http://127.0.0.1:8000/api/v1/us/const/amendment/IV@1791-12-15","end_date":null,"children":[],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/const/amendment@1791-12-15"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "702"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
 version: 1

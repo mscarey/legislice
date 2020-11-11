@@ -1,128 +1,130 @@
 interactions:
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/test/acts/47/4
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Location:
-      - /api/v1/test/acts/47/4/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/test/acts/47/4/
-  response:
-    body:
-      string: '{"heading":"Beard, defined","start_date":"1935-04-01","node":"/test/acts/47/4","text_version":{"id":1376005,"url":"http://127.0.0.1:8000/api/v1/textversions/1376005/","content":"In
-        this Act, beard means any facial hair no shorter than 5 millimetres in length
-        that:"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/a","text_version":{"id":1376003,"url":"http://127.0.0.1:8000/api/v1/textversions/1376003/","content":"occurs
-        on or below the chin, or"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/a/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/b","text_version":{"id":1376004,"url":"http://127.0.0.1:8000/api/v1/textversions/1376004/","content":"exists
-        in an uninterrupted line from the front of one ear to the front of the other
-        ear below the nose."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/b/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47/"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '1092'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: http://127.0.0.1:8000/api/v1/test/acts/47/4@1935-04-01
-  response:
-    body:
-      string: '{"heading":"Beard, defined","start_date":"1935-04-01","node":"/test/acts/47/4","text_version":{"id":1376005,"url":"http://127.0.0.1:8000/api/v1/textversions/1376005/","content":"In
-        this Act, beard means any facial hair no shorter than 5 millimetres in length
-        that:"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4@1935-04-01","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/a","text_version":{"id":1376003,"url":"http://127.0.0.1:8000/api/v1/textversions/1376003/","content":"occurs
-        on or below the chin, or"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/a@1935-04-01","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/b","text_version":{"id":1376004,"url":"http://127.0.0.1:8000/api/v1/textversions/1376004/","content":"exists
-        in an uninterrupted line from the front of one ear to the front of the other
-        ear below the nose."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/b@1935-04-01","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47@1935-04-01"}'
-    headers:
-      Allow:
-      - GET, POST, PUT, PATCH, HEAD, OPTIONS
-      Content-Length:
-      - '1132'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 09 Nov 2020 10:17:33 GMT
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - WSGIServer/0.2 CPython/3.8.4
-      Vary:
-      - Accept, Cookie
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/test/acts/47/4
+    response:
+      body:
+        string: ""
+      headers:
+        Content-Length:
+          - "0"
+        Content-Type:
+          - text/html; charset=utf-8
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Location:
+          - /api/v1/test/acts/47/4/
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        X-Content-Type-Options:
+          - nosniff
+      status:
+        code: 301
+        message: Moved Permanently
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/test/acts/47/4/
+    response:
+      body:
+        string:
+          '{"heading":"Beard, defined","start_date":"1935-04-01","node":"/test/acts/47/4","text_version":{"id":1376005,"url":"http://127.0.0.1:8000/api/v1/textversions/1376005/","content":"In
+          this Act, beard means any facial hair no shorter than 5 millimetres in length
+          that:"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/a","text_version":{"id":1376003,"url":"http://127.0.0.1:8000/api/v1/textversions/1376003/","content":"occurs
+          on or below the chin, or"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/a/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/b","text_version":{"id":1376004,"url":"http://127.0.0.1:8000/api/v1/textversions/1376004/","content":"exists
+          in an uninterrupted line from the front of one ear to the front of the other
+          ear below the nose."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/b/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47/"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "1092"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.23.0
+        authorization:
+          - DUMMY
+      method: GET
+      uri: https://authorityspoke.com/api/v1/test/acts/47/4@1935-04-01
+    response:
+      body:
+        string:
+          '{"heading":"Beard, defined","start_date":"1935-04-01","node":"/test/acts/47/4","text_version":{"id":1376005,"url":"http://127.0.0.1:8000/api/v1/textversions/1376005/","content":"In
+          this Act, beard means any facial hair no shorter than 5 millimetres in length
+          that:"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4@1935-04-01","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/a","text_version":{"id":1376003,"url":"http://127.0.0.1:8000/api/v1/textversions/1376003/","content":"occurs
+          on or below the chin, or"},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/a@1935-04-01","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/b","text_version":{"id":1376004,"url":"http://127.0.0.1:8000/api/v1/textversions/1376004/","content":"exists
+          in an uninterrupted line from the front of one ear to the front of the other
+          ear below the nose."},"url":"http://127.0.0.1:8000/api/v1/test/acts/47/4/b@1935-04-01","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/test/acts/47@1935-04-01"}'
+      headers:
+        Allow:
+          - GET, POST, PUT, PATCH, HEAD, OPTIONS
+        Content-Length:
+          - "1132"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 09 Nov 2020 10:17:33 GMT
+        Referrer-Policy:
+          - same-origin
+        Server:
+          - WSGIServer/0.2 CPython/3.8.4
+        Vary:
+          - Accept, Cookie
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - DENY
+      status:
+        code: 200
+        message: OK
 version: 1
