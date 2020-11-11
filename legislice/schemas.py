@@ -7,6 +7,7 @@ from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE, Validation
 
 from legislice.enactments import (
     Enactment,
+    InboundReference,
     LinkedEnactment,
     RawEnactment,
     CrossReference,
@@ -39,6 +40,35 @@ class CitingProvisionLocationSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs) -> CitingProvisionLocation:
+        return self.__model__(**data)
+
+
+class InboundReferenceSchema(Schema):
+    __model__ = InboundReference
+
+    content = fields.Str()
+    reference_text = fields.Str()
+    target_uri = fields.Str()
+    locations = fields.Nested(CitingProvisionLocationSchema, many=True)
+
+    class Meta:
+        unknown = EXCLUDE
+
+    @pre_load
+    def format_data_to_load(
+        self, data: Dict[str, Union[Dict[str, str], str]], **kwargs
+    ) -> Dict:
+
+        reference_text = ""
+        for citation in data["citations"]:
+            if citation["target_uri"] == data["target_uri"]:
+                reference_text = citation["reference_text"]
+        data["reference_text"] = reference_text
+
+        return data
+
+    @post_load
+    def make_object(self, data, **kwargs) -> InboundReference:
         return self.__model__(**data)
 
 

@@ -68,20 +68,6 @@ class InboundReference:
         self.target_uri = target_uri
         self.locations = locations
 
-    @classmethod
-    def from_response(
-        response: Dict[str, Union[Dict[str, str], str]], target_uri: str
-    ) -> InboundReference:
-
-        reference_text = ""
-        for citation in response["citations"]:
-            if citation["target_uri"] == target_uri:
-                reference_text = citation["reference_text"]
-
-        return InboundReference(
-            content=response["content"], reference_text=reference_text
-        )
-
 
 class TextVersion:
     def __init__(

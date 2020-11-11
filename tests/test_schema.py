@@ -13,8 +13,10 @@ from legislice.name_index import collect_enactments
 from legislice.schemas import (
     CrossReferenceSchema,
     EnactmentSchema,
+    InboundReferenceSchema,
     LinkedEnactmentSchema,
     SelectorSchema,
+    CitingProvisionLocationSchema,
     enactment_needs_api_update,
 )
 
@@ -251,3 +253,55 @@ class TestDumpEnactment:
         selection = dumped["selection"][0]
         quote = dumped["text_version"]["content"][selection["start"] : selection["end"]]
         assert quote == "Science and useful Arts"
+
+
+class TestLoadInboundReferences:
+    def test_load_citing_location_without_heading(self):
+        location = {
+            "heading": "",
+            "node": "/us/usc/t17/s109/b/4",
+            "start_date": "2013-07-18",
+        }
+        schema = CitingProvisionLocationSchema()
+        loaded = schema.load(location)
+        assert loaded.heading == ""
+        assert loaded.start_date.isoformat() == "2013-07-18"
+
+    def test_load_inbound_reference(self):
+        """
+        Test assuming the real target of the citation is given at the outer level of the dict.
+
+        Only the first citation should be used to get data for the loaded object. The other
+        one is irrelevant.
+        """
+        data = {
+            "target_uri": "/us/usc/t17/s501",
+            "citations": [
+                {
+                    "reference_text": "section 501 of this title",
+                    "target_node": 1252985,
+                    "target_uri": "/us/usc/t17/s501",
+                    "target_url": "http://127.0.0.1:8000/api/v1/us/usc/t17/s501/",
+                },
+                {
+                    "reference_text": "section 2319 of title 18",
+                    "target_node": 1151186,
+                    "target_uri": "/us/usc/t18/s2319",
+                    "target_url": "http://127.0.0.1:8000/api/v1/us/usc/t18/s2319/",
+                },
+            ],
+            "content": "Any person who distr... title 18.",
+            "locations": [
+                {
+                    "heading": "",
+                    "node": "/us/usc/t17/s109/b/4",
+                    "start_date": "2013-07-18",
+                }
+            ],
+            "url": "http://127.0.0.1:8000/api/v1/textversions/1031604/",
+        }
+        schema = InboundReferenceSchema()
+        loaded = schema.load(data)
+        assert loaded.target_uri == "/us/usc/t17/s501"
+        assert loaded.reference_text == "section 501 of this title"
+

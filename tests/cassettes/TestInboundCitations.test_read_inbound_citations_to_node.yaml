@@ -23,7 +23,7 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Tue, 10 Nov 2020 10:12:23 GMT
+      - Wed, 11 Nov 2020 08:58:25 GMT
       Location:
       - /api/v1/us/usc/t17/s501/
       Referrer-Policy:
@@ -113,7 +113,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Nov 2020 10:12:24 GMT
+      - Wed, 11 Nov 2020 08:58:26 GMT
       Referrer-Policy:
       - same-origin
       Server:
@@ -151,7 +151,7 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Tue, 10 Nov 2020 10:12:24 GMT
+      - Wed, 11 Nov 2020 08:58:26 GMT
       Location:
       - /api/v1/citations_to/us/usc/t17/s501/
       Referrer-Policy:
@@ -208,7 +208,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Nov 2020 10:12:24 GMT
+      - Wed, 11 Nov 2020 08:58:27 GMT
       Referrer-Policy:
       - same-origin
       Server:
