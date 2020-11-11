@@ -159,6 +159,32 @@ class TestReadJSON:
         cited = self.client.read(ref, date="1950-01-01")
         assert "bona fide religious or cultural reasons." in str(cited)
 
+    @pytest.mark.vcr()
+    def test_read_enactment_without_version_url(self):
+        data = {
+            "start_date": "1935-04-01",
+            "selection": [
+                {"start": 0, "include_end": False, "end": 250, "include_start": True}
+            ],
+            "text_version": {
+                "content": (
+                    "Where the Department provides an exemption from the prohibition "
+                    "in section 5, except as defined in section 6D, the person to whom "
+                    "such exemption is granted shall be liable to pay to the Department "
+                    "of Beards such fee as may be levied under section 6B."
+                ),
+                "id": None,
+                "url": None,
+            },
+            "heading": "Levy of beard tax",
+            "anchors": [],
+            "children": [],
+            "node": "/test/acts/47/6A",
+            "end_date": None,
+        }
+        result = self.client.read_from_json(data)
+        assert result.content.startswith("Where")
+
 
 class TestInboundCitations:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
