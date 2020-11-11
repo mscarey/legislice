@@ -48,8 +48,39 @@ class CrossReference:
         return f'CrossReference(target_uri="{self.target_uri}", reference_text="{self.reference_text}")'
 
 
+@dataclass
+class CitingProvisionLocation:
+    heading: str
+    node: str
+    start_date: date
+
+
 class InboundReference:
-    pass
+    def __init__(
+        self,
+        content: str,
+        reference_text: str,
+        target_uri: str,
+        locations: List[CitingProvisionLocation],
+    ) -> None:
+        self.content = content
+        self.reference_text = reference_text
+        self.target_uri = target_uri
+        self.locations = locations
+
+    @classmethod
+    def from_response(
+        response: Dict[str, Union[Dict[str, str], str]], target_uri: str
+    ) -> InboundReference:
+
+        reference_text = ""
+        for citation in response["citations"]:
+            if citation["target_uri"] == target_uri:
+                reference_text = citation["reference_text"]
+
+        return InboundReference(
+            content=response["content"], reference_text=reference_text
+        )
 
 
 class TextVersion:

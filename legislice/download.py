@@ -144,7 +144,10 @@ class Client:
     def citations_to(self, target) -> List[InboundReference]:
         response = self.fetch_citations_to(target)
         json_citations = response["results"]
-        citations = [InboundReference(**citation) for citation in json_citations]
+        citations = [
+            InboundReference.from_response(response=version, target_uri=target.node)
+            for version in json_citations
+        ]
         return citations
 
     def read_from_json(self, data: RawEnactment) -> Enactment:

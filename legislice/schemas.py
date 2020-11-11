@@ -11,6 +11,7 @@ from legislice.enactments import (
     RawEnactment,
     CrossReference,
     TextVersion,
+    CitingProvisionLocation,
 )
 from legislice.name_index import EnactmentIndex
 
@@ -27,6 +28,18 @@ def enactment_needs_api_update(data: RawEnactment) -> bool:
         return True
     if data.get("content") is None and data.get("text_version") is None:
         return False
+
+
+class CitingProvisionLocationSchema(Schema):
+    __model__ = CitingProvisionLocation
+
+    heading = fields.Str()
+    node = fields.Str()
+    start_date = fields.Date()
+
+    @post_load
+    def make_object(self, data, **kwargs) -> CitingProvisionLocation:
+        return self.__model__(**data)
 
 
 class CrossReferenceSchema(Schema):
