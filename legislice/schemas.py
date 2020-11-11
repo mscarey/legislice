@@ -109,8 +109,10 @@ class ExpandableSchema(Schema):
         return data
 
     @post_load
-    def make_object(self, data, **kwargs) -> Enactment:
-        """Make Legislice object out of whatever data has been loaded."""
+    def make_object(self, data, **kwargs):
+        if data.get("selection"):
+            data["selection"] = [item for item in data["selection"] if item is not None]
+
         return self.__model__(**data)
 
 
@@ -141,13 +143,6 @@ class LinkedEnactmentSchema(ExpandableSchema):
 
     class Meta:
         unknown = EXCLUDE
-
-    @post_load
-    def make_object(self, data, **kwargs):
-        if data.get("selection"):
-            data["selection"] = [item for item in data["selection"] if item is not None]
-
-        return self.__model__(**data)
 
     def move_selector_fields(self, data: RawEnactment, **kwargs):
         """
