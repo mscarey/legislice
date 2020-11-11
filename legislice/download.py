@@ -11,6 +11,7 @@ from legislice.enactments import Enactment, CrossReference, InboundReference
 from legislice.name_index import EnactmentIndex
 from legislice.schemas import (
     ExpandableSchema,
+    InboundReferenceSchema,
     get_schema_for_node,
     enactment_needs_api_update,
 )
@@ -141,13 +142,19 @@ class Client:
         query_with_root = self.api_root + "/citations_to" + uri
         return self._fetch_from_url(query_with_root)
 
-    def citations_to(self, target) -> List[InboundReference]:
-        response = self.fetch_citations_to(target)
+    def citations_to(self, target: str) -> List[InboundReference]:
+        r"""
+        Load an InboundReference object for each provision citing the target USLM provision URI.
+
+        TODO: handle more than one page of results from API.
+        """
+        target_uri = self.uri_from_query(target)
+        response = self.fetch_citations_to(target_uri)
         json_citations = response["results"]
-        citations = [
-            InboundReference.from_response(response=version, target_uri=target.node)
-            for version in json_citations
-        ]
+        for entry in json_citations:
+            entry["target_uri"] = target_uri
+        schema = InboundReferenceSchema(many=True)
+        citations = schema.load(json_citations)
         return citations
 
     def read_from_json(self, data: RawEnactment) -> Enactment:
