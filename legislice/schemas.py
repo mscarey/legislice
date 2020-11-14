@@ -38,6 +38,9 @@ class CitingProvisionLocationSchema(Schema):
     node = fields.Str()
     start_date = fields.Date()
 
+    class Meta:
+        unknown = EXCLUDE
+
     @post_load
     def make_object(self, data, **kwargs) -> CitingProvisionLocation:
         return self.__model__(**data)
@@ -79,6 +82,9 @@ class CrossReferenceSchema(Schema):
     target_url = fields.Url(relative=False, required=True)
     reference_text = fields.Str(required=True)
     target_node = fields.Int(required=False)
+
+    class Meta:
+        unknown = EXCLUDE
 
     @post_load
     def make_object(self, data, **kwargs) -> CrossReference:
