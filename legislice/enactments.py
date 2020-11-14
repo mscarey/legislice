@@ -68,6 +68,9 @@ class InboundReference:
         self.target_uri = target_uri
         self.locations = locations
 
+    def __repr__(self):
+        return f"InboundReference to {self.target_uri}"
+
 
 class TextVersion:
     def __init__(

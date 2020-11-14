@@ -1,4 +1,5 @@
 import datetime
+from typing import Type
 from legislice.enactments import CitingProvisionLocation, CrossReference
 import os
 
@@ -12,6 +13,7 @@ from legislice.download import (
     LegislicePathError,
     LegisliceTokenError,
 )
+from legislice.enactments import InboundReference
 from legislice.name_index import collect_enactments
 
 
@@ -215,3 +217,31 @@ class TestInboundCitations:
         assert inbound_refs[0].content.startswith(
             "Any person who distributes a phonorecord"
         )
+
+    @pytest.mark.vcr()
+    def test_download_enactment_from_inbound_citation(self):
+        reference = InboundReference(
+            content="Any person who distributes...",
+            reference_text="section 501 of this title",
+            target_uri="/us/usc/t17/s501",
+            locations=[
+                CitingProvisionLocation(
+                    heading="",
+                    node="/us/usc/t17/s109/b/4",
+                    start_date=datetime.date(2013, 7, 18),
+                )
+            ],
+        )
+        with pytest.raises(TypeError):
+            self.client.read(reference)
+
+    @pytest.mark.vcr()
+    def test_download_enactment_from_citing_location(self):
+
+        location = CitingProvisionLocation(
+            heading="",
+            node="/us/usc/t17/s109/b/4",
+            start_date=datetime.date(2013, 7, 18),
+        )
+        enactment = self.client.read(location)
+        assert enactment.content.startswith("Any person who distributes")

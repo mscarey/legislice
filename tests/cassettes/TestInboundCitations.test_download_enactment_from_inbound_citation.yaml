@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18
+  response:
+    body:
+      string: '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s109/b/4","url":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18","end_date":null,"content":"Any
+        person who distributes a phonorecord or a copy of a computer program (including
+        any tape, disk, or other medium embodying such program) in violation of paragraph
+        (1) is an infringer of copyright under section 501 of this title and is subject
+        to the remedies set forth in sections 502, 503, 504, and 505. Such violation
+        shall not be a criminal offense under section 506 or cause such person to
+        be subject to the criminal penalties set forth in section 2319 of title 18.","children":[],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501@2013-07-18","target_node":1252985,"reference_text":"section
+        501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"https://authorityspoke.com/api/v1/us/usc/t18/s2319@2013-07-18","target_node":1151186,"reference_text":"section
+        2319 of title 18"}],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b@2013-07-18"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1101'
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 14 Nov 2020 11:46:33 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -7,7 +7,12 @@ from marshmallow.fields import Raw
 import requests
 from requests import status_codes
 
-from legislice.enactments import Enactment, CrossReference, InboundReference
+from legislice.enactments import (
+    Enactment,
+    CrossReference,
+    CitingProvisionLocation,
+    InboundReference,
+)
 from legislice.name_index import EnactmentIndex
 from legislice.schemas import (
     ExpandableSchema,
@@ -47,7 +52,9 @@ class Client:
         self.api_token = api_token
 
     def fetch(
-        self, query: Union[str, CrossReference], date: Union[datetime.date, str] = ""
+        self,
+        query: Union[str, CrossReference, CitingProvisionLocation],
+        date: Union[datetime.date, str] = "",
     ) -> RawEnactment:
         """
         Download legislative provision from string identifier or cross-reference.
@@ -65,7 +72,17 @@ class Client:
         """
         if isinstance(query, CrossReference):
             return self.fetch_cross_reference(query=query, date=date)
+        elif isinstance(query, CitingProvisionLocation):
+            return self.fetch_citing_provision(query=query)
+        elif isinstance(query, InboundReference):
+            raise TypeError(
+                "Can't determine whether to build an Enactment from the `target_uri` of this InboundReference "
+                "or from one of the 'locations' where this InboundReference can be found."
+            )
         return self.fetch_uri(query=query, date=date)
+
+    def fetch_citing_provision(self, query: CitingProvisionLocation) -> RawEnactment:
+        return self.fetch_uri(query=query.node, date=query.start_date)
 
     def fetch_cross_reference(
         self, query: CrossReference, date: Union[datetime.date, str] = ""
