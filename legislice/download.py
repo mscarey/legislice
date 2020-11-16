@@ -75,10 +75,8 @@ class Client:
         elif isinstance(query, CitingProvisionLocation):
             return self.fetch_citing_provision(query=query)
         elif isinstance(query, InboundReference):
-            raise TypeError(
-                "Can't determine whether to build an Enactment from the `target_uri` of this InboundReference "
-                "or from one of the 'locations' where this InboundReference can be found."
-            )
+            most_recent = max(query.locations)
+            return self.fetch_citing_provision(query=most_recent)
         return self.fetch_uri(query=query, date=date)
 
     def fetch_citing_provision(self, query: CitingProvisionLocation) -> RawEnactment:

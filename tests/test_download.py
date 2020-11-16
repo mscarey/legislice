@@ -248,8 +248,9 @@ class TestInboundCitations:
                 )
             ],
         )
-        with pytest.raises(TypeError):
-            self.client.read(reference)
+        cited = self.client.read(reference)
+        assert cited.node == "/us/usc/t17/s109/b/4"
+        assert cited.start_date == datetime.date(2013, 7, 18)
 
     @pytest.mark.vcr()
     def test_download_enactment_from_citing_location(self):
