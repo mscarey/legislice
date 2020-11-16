@@ -197,6 +197,22 @@ class TestInboundCitations:
         assert period_ref.get("text_version", {}).get("content") is None
 
     @pytest.mark.vcr()
+    def test_fetch_inbound_citations_in_multiple_locations(self):
+        """
+        Test InboundReference with multiple "locations".
+
+        The string should be something like:
+        InboundReference to /us/usc/t2/s1301, from (/us/usc/t2/s60c-5/a/2/A 2013-07-18) and 2 other locations
+
+        But it's not clear which of the three locations will be chosen.
+        """
+
+        definitions = "/us/usc/t2/s1301"
+        inbound_refs = self.client.citations_to(definitions)
+        period_ref = inbound_refs[0]
+        assert str(period_ref).endswith("and 2 other locations")
+
+    @pytest.mark.vcr()
     def test_read_inbound_citations_to_node(self):
         infringement_statute = self.client.read(query="/us/usc/t17/s501",)
         inbound_refs = self.client.citations_to(infringement_statute)

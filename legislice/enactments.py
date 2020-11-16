@@ -54,6 +54,10 @@ class CitingProvisionLocation:
     node: str
     start_date: date
 
+    def __repr__(self):
+        result = f"({self.node} {self.start_date})"
+        return result
+
 
 class InboundReference:
     def __init__(
@@ -69,7 +73,10 @@ class InboundReference:
         self.locations = locations
 
     def __repr__(self):
-        return f"InboundReference to {self.target_uri}"
+        result = f"InboundReference to {self.target_uri}, from {self.locations[0]}"
+        if self.locations[1:]:
+            result = f"{result} and {len(self.locations[1:])} other locations"
+        return result
 
 
 class TextVersion:
