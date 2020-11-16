@@ -7,6 +7,8 @@ dev
 - add cross_references attr to Enactment model
 - add citations_to method to Client class
 - add TextVersionSchema
+- add ability to pass CitingProvisionLocation to Client.read
+- add ability to pass InboundReference to Client.read
 
 0.2.0 (2020-08-30)
 ------------------

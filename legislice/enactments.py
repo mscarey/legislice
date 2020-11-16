@@ -58,11 +58,6 @@ class CitingProvisionLocation:
         result = f"({self.node} {self.start_date})"
         return result
 
-    def __ge__(self, other: CitingProvisionLocation):
-        if self.start_date != other.start_date:
-            return self.start_date >= other.start_date
-        return self.node >= other.node
-
     def __gt__(self, other: CitingProvisionLocation):
         if self.start_date != other.start_date:
             return self.start_date > other.start_date
