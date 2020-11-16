@@ -53,7 +53,7 @@ class Client:
 
     def fetch(
         self,
-        query: Union[str, CrossReference, CitingProvisionLocation],
+        query: Union[str, CitingProvisionLocation, CrossReference, InboundReference],
         date: Union[datetime.date, str] = "",
     ) -> RawEnactment:
         """
@@ -75,11 +75,16 @@ class Client:
         elif isinstance(query, CitingProvisionLocation):
             return self.fetch_citing_provision(query=query)
         elif isinstance(query, InboundReference):
-            most_recent = max(query.locations)
-            return self.fetch_citing_provision(query=most_recent)
+            return self.fetch_inbound_reference(query=query)
         return self.fetch_uri(query=query, date=date)
 
     def fetch_citing_provision(self, query: CitingProvisionLocation) -> RawEnactment:
+        """
+        Download legislative provision as Enactment from CitingProvisionLocation.
+
+        CitingProvisionLocations are found in the `locations` attribute of the `InboundReference`
+        objects obtained when using the `citations_to` method.
+        """
         return self.fetch_uri(query=query.node, date=query.start_date)
 
     def fetch_cross_reference(
@@ -120,6 +125,21 @@ class Client:
             )
         return self._fetch_from_url(url=target)
 
+    def fetch_inbound_reference(self, query: InboundReference) -> RawEnactment:
+        """
+        Download legislative provision from InboundReference.
+
+        :param query:
+            An InboundReference identifying a provision containing a citation.
+
+        :returns:
+            An Enactment representing the provision containing the citation (not the cited provision).
+
+        If the InboundReference has been enacted more than once, the latest one will be chosen.
+        """
+        most_recent = max(query.locations)
+        return self.fetch_citing_provision(query=most_recent)
+
     def fetch_uri(
         self, query: str, date: Union[datetime.date, str] = ""
     ) -> RawEnactment:
@@ -152,7 +172,7 @@ class Client:
             return target.target_uri
         return target
 
-    def fetch_citations_to(self, target) -> List[Dict]:
+    def fetch_citations_to(self, target) -> Dict:
         uri = self.uri_from_query(target)
         query_with_root = self.api_root + "/citations_to" + uri
         return self._fetch_from_url(query_with_root)

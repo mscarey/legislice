@@ -83,9 +83,9 @@ class InboundReference:
         self.locations = locations
 
     def __repr__(self):
-        result = f"InboundReference to {self.target_uri}, from {self.locations[0]}"
-        if self.locations[1:]:
-            result = f"{result} and {len(self.locations[1:])} other locations"
+        result = f"InboundReference to {self.target_uri}, from {max(self.locations)}"
+        if len(self.locations) > 1:
+            result = f"{result} and {len(self.locations) - 1} other locations"
         return result
 
 
