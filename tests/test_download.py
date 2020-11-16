@@ -193,7 +193,7 @@ class TestInboundCitations:
     def test_fetch_inbound_citations_to_node(self):
         infringement_statute = self.client.read(query="/us/usc/t17/s501",)
         inbound_refs = self.client.fetch_citations_to(infringement_statute)
-        period_ref = inbound_refs["results"][0]["locations"][0]
+        period_ref = inbound_refs[0]["locations"][0]
         assert period_ref.get("text_version", {}).get("content") is None
 
     @pytest.mark.vcr()

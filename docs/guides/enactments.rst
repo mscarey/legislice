@@ -21,7 +21,9 @@ objects.
     TOKEN = os.getenv("LEGISLICE_API_TOKEN")
     client = Client(api_token=TOKEN)
 
-1. Features of an Enactment
+.. _features-of-an-enactment:
+
+Features of an Enactment
 ---------------------------
 
 Now let’s load the Fourteenth Amendment. You can get its effective date
@@ -113,9 +115,9 @@ You can also isolate parts of the ``node`` path, such as the
 
     'const'
 
+.. _selecting-text:
 
-
-2. Selecting text
+Selecting text
 -----------------
 
 When you use the ``selected_text`` method, you get all the enacted text
@@ -285,9 +287,9 @@ select it, instead of specifying the exact text.
 
     '…The validity of the public debt of the United States…shall not be questioned.…'
 
+.. _comparing-selected-text:
 
-
-3. Comparing selected text
+Comparing selected text
 --------------------------
 
 Legislice provides methods for comparing the selected text in
@@ -466,7 +468,9 @@ cause bugs that would be difficult to diagnose. However, you can use
 ``>`` as an alias that returns ``True`` only if ``implies`` would return
 ``True`` while ``means`` would return ``False``.
 
-4. Combining Enactments
+.. _combining-enactments:
+
+Combining Enactments
 -----------------------
 
 When you have two Enactments and either they are at the same node or one
@@ -524,9 +528,9 @@ text from subsection ``a`` and subsection ``b`` in the correct order.
 
     'The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully.…The copyright in such work is independent of…any copyright protection in the preexisting material.'
 
+.. _converting-enactments-to-json:
 
-
-5. Converting Enactments to JSON
+Converting Enactments to JSON
 --------------------------------
 
 When you want a representation of a legislative passage that’s precise,

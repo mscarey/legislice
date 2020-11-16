@@ -172,20 +172,39 @@ class Client:
             return target.target_uri
         return target
 
-    def fetch_citations_to(self, target) -> Dict:
+    def fetch_citations_to(
+        self, target: Union[str, Enactment, CrossReference]
+    ) -> List[Dict]:
+        """
+        Query API for citations to a given target node, withoout loading them as InboundCitations.
+
+        :param target:
+            a string URI for the cited node, an Enactment at the cited node, or
+            a CrossReference to the cited node
+
+        :returns:
+            a list of dicts representing citations to the cited node
+        """
         uri = self.uri_from_query(target)
         query_with_root = self.api_root + "/citations_to" + uri
-        return self._fetch_from_url(query_with_root)
+        api_response = self._fetch_from_url(query_with_root)
+        return api_response["results"]
 
-    def citations_to(self, target: str) -> List[InboundReference]:
+    def citations_to(
+        self, target: Union[str, Enactment, CrossReference]
+    ) -> List[InboundReference]:
         r"""
         Load an InboundReference object for each provision citing the target USLM provision URI.
 
-        TODO: handle more than one page of results from API.
+        :param target:
+            a string URI for the cited node, an Enactment at the cited node, or
+            a CrossReference to the cited node
+
+        :returns:
+            a list of InboundReferences to the cited node
         """
         target_uri = self.uri_from_query(target)
-        response = self.fetch_citations_to(target_uri)
-        json_citations = response["results"]
+        json_citations = self.fetch_citations_to(target_uri)
         for entry in json_citations:
             entry["target_uri"] = target_uri
         schema = InboundReferenceSchema(many=True)

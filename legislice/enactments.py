@@ -230,6 +230,7 @@ class BaseEnactment:
         return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
 
     def cross_references(self) -> List[CrossReference]:
+        """Return all cross-references from this node and subnodes."""
         result = self._cross_references[:]
         for child in self.children:
             result += child.cross_references()
