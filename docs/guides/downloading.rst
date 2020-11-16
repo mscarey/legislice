@@ -278,8 +278,9 @@ have to go back to the download client and make an API request to get
 them, using the :meth:`~legislice.download.Client.citations_to` method.
 
 In this example, we’ll get all the citations to the provision of the
-United States Code cited ``/us/usc/t17/s501`` (in other words, Title 17,
-Section 501). This gives us all known provisions that cite to that node
+United States Code cited ``/us/usc/t17/s501`` (in other
+words, `Title 17, Section 501 <https://authorityspoke.com/legislice/us/usc/t17/s501/>`__).
+This gives us all known provisions that cite to that node
 in the document tree, regardless of whether different text has been
 enacted at that node at different times.
 
@@ -290,136 +291,70 @@ enacted at that node at different times.
      InboundReference to /us/usc/t17/s501, from (/us/usc/t17/s503/a/3 2013-07-18)]
 
 
-We can examine one of these InboundReference objects to see the text
-creating the citation.
+We can examine one of these :class:`~legislice.enactments.InboundReference` objects to
+see the text creating the citation.
 
     >>> inbound_refs[0].content
     'Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18.'
 
 
-But an InboundReference doesn’t have all the same information as an
-Enactment object. Importantly, it doesn’t have the text of any
+But an :class:`~legislice.enactments.InboundReference` doesn’t have all the same information as an
+:class:`~legislice.enactments.Enactment` object. Importantly, it doesn’t have the text of any
 subsections nested inside the cited provision. We can use the download
-Client again to convert the InboundReference into an Enactment.
+:class:`~legislice.download.Client` again to convert the InboundReference into an Enactment.
 
     >>> citing_enactment = client.read(inbound_refs[0])
     >>> citing_enactment
     Enactment(source=/us/usc/t17/s109/b/4, start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 472)]))
 
-
 This Enactment happens not to have any child nodes nested within it, so
 its full text is the same as what we saw when we looked at the
 InboundReference’s content attribute.
 
-.. code:: ipython3
-
-    citing_enactment.children
-
-
-
-
-.. parsed-literal::
-
+    >>> citing_enactment.children
     []
 
-
-
-Sometimes, an InboundReference has more than one citation and start
+Sometimes, an :class:`~legislice.enactments.InboundReference` has more than one citation and start
 date. That means that the citing text has been enacted in different
 places at different times. This can happen because the provisions of a
-legislative code will sometimes be reorganized and renumbered. Here’s an
-example. We’ll look for citations to Section 1301 of USC Title 2, which
+legislative code have been reorganized and renumbered. Here’s an
+example. We’ll look for citations
+to `Section 1301 of USC Title 2 <https://authorityspoke.com/legislice/us/usc/t2/s1301/>`__, which
 is a section containing definitions of terms that will be used
 throughout the rest of Title 2.
 
-.. code:: ipython3
-
-    refs_to_definitions = client.citations_to("/us/usc/t2/s1301")
-
-The ``citations_to`` method returns a list, and two of the
-InboundReferences in this list have been enacted in three different
-locations.
-
-.. code:: ipython3
-
-    refs_to_definitions
-
-
-
-
-.. parsed-literal::
-
+    >>> refs_to_definitions = client.citations_to("/us/usc/t2/s1301")
     [InboundReference to /us/usc/t2/s1301, from (/us/usc/t2/s4579/a/4/A 2018-05-09) and 2 other locations,
      InboundReference to /us/usc/t2/s1301, from (/us/usc/t2/s4579/a/5/A 2018-05-09) and 2 other locations,
      InboundReference to /us/usc/t2/s1301, from (/us/usc/t42/s2000ff/2/A/iii 2013-07-18),
      InboundReference to /us/usc/t2/s1301, from (/us/usc/t42/s2000ff/2/B/iii 2013-07-18)]
 
+The :meth:`~legislice.download.Client.citations_to` method returns a list,
+and two of the InboundReferences in this list have been enacted in three different
+locations.
 
-
-.. code:: ipython3
-
-    refs_to_definitions[0].locations
-
-
-
-
-.. parsed-literal::
-
+    >>> refs_to_definitions[0].locations
     [(/us/usc/t2/s60c-5/a/2/A 2013-07-18),
      (/us/usc/t2/s4579/a/2/A 2014-01-16),
      (/us/usc/t2/s4579/a/4/A 2018-05-09)]
 
-
-
-When we pass an InboundReference to ``Client.read``, the download client
-makes an Enactment from the most recent location where the citing
+When we pass an InboundReference to :meth:`~legislice.download.Client.read`, the download client
+makes an :class:`~legislice.enactments.Enactment` from the most recent location where the citing
 provision has been enacted.
 
-.. code:: ipython3
-
-    citing_enactment = client.read(refs_to_definitions[0])
-    citing_enactment
-
-
-
-
-.. parsed-literal::
-
+    >>> client.read(refs_to_definitions[0])
     Enactment(source=/us/usc/t2/s4579/a/4/A, start_date=2018-05-09, selection=TextPositionSet([TextPositionSelector[0, 68)]))
 
 
-
-If we need the Enactment representing the statutory text before it was
-moved and renumbered, we can pass one of the CitingProvisionLocation
-objects to the download client instead. Note that the Enactment we get
+If we need the :class:`~legislice.enactments.Enactment` representing the statutory text before it was
+moved and renumbered, we can pass one of the :class:`~legislice.enactments.CitingProvisionLocation`
+objects to the :class:`~legislice.download.Client` instead. Note that the Enactment we get
 this way has the same content text, but a different citation node, an
 earlier start date, and an earlier end date.
 
-.. code:: ipython3
-
-    citing_enactment_before_renumbering = client.read(refs_to_definitions[0].locations[0])
-
-.. code:: ipython3
-
-    citing_enactment_before_renumbering
-
-
-
-
-.. parsed-literal::
-
+    >>> citing_enactment_before_renumbering = client.read(refs_to_definitions[0].locations[0])
+    >>> citing_enactment_before_renumbering
     Enactment(source=/us/usc/t2/s60c-5/a/2/A, start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 68)]))
 
-
-
-.. code:: ipython3
-
-    citing_enactment_before_renumbering.end_date
-
-
-
-
-.. parsed-literal::
-
+    >>> citing_enactment_before_renumbering.end_date
     datetime.date(2014, 1, 16)
-
