@@ -112,8 +112,8 @@ class BaseEnactment:
     :param end_date:
         date when the text was removed from the cited location
 
-    :param selector:
-        identifier for the part of the provision being cited
+    :param selection:
+        identifier for the parts of the provision being cited
 
     :param anchors:
         a list of selectors representing the part of some other document
@@ -237,6 +237,12 @@ class BaseEnactment:
         return result
 
     def selected_text(self) -> str:
+        """
+        Return this provision's text that is within the ranges described by self.selection.
+
+        Based on creating an :class:`anchorpoint.textsequences.TextSequence` from this Enactment's
+        text content and the ranges in its selection attribute.
+        """
         text_sequence = self.text_sequence()
         return str(text_sequence)
 

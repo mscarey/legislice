@@ -5,7 +5,7 @@ Downloading Legislation
 
 Legislice is a utility for downloading the text of statutes and
 constitutional provisions, and then creating computable objects
-representing passages from those provisions. This guide will show you
+representing passages from those provisions. This guide will show
 how to get started.
 
 Legislice depends on the `AuthoritySpoke
@@ -30,7 +30,7 @@ letters and numbers. You’ll be sending this token to AuthoritySpoke to
 validate each API request, and you should keep it secret as you would a
 password.
 
-There are several ways you can access your API token in Python. One way
+There are several ways for Python to access your API token. One way
 would be to simply define it as a Python string, like this:
 
 .. code:: ipython3
@@ -47,7 +47,7 @@ of your project directory. For instance, the contents of the file
    LEGISLICE_API_TOKEN=YOUR_API_TOKEN_GOES_HERE
 
 By doing this, you can avoid having a copy of your API token in your
-Python working file or notebook. That makes it easier for you to avoid
+Python working file or notebook. That makes it easier to avoid
 accidentally publishing the API token or sharing it with unauthorized
 people.
 
@@ -76,10 +76,10 @@ without re-entering your API token repeatedly.
 Fetching a provision from the API
 ------------------------------------
 
-To download legislation using the :class:`~legislice.download.Client`, you must specify a
-``path`` to the provision you want, and optionally you can specify the
-``date`` of the version of the provision you want. If you don’t specify
-a date, you’ll be given the most recent version of the provision.
+To download legislation using the :class:`~legislice.download.Client`, we must specify a
+``path`` to the provision we want, and optionally we can specify the
+``date`` of the version of the provision we want. If we don’t specify
+a date, we’ll be given the most recent version of the provision.
 
 The ``path`` citation format is based on the section identifiers in the
 `United States Legislative Markup
@@ -91,14 +91,14 @@ connected with forward slashes. The first part identifies the
 jurisdiction, the second part (if any) identifies the legislative code
 within that jurisdiction, and so on.
 
-If you don’t know the right citation for the provision you want, you can
-sign in to your AuthoritySpoke account and
+If we don’t know the right citation for the provision we want, we can
+sign in to an AuthoritySpoke account and
 browse the `directory of available
 provisions <https://authorityspoke.com/legislice/>`__, where the links
-to each provision show the correct ``path`` for that provision. Or you can browse an `HTML
+to each provision show the correct ``path`` for that provision. Or we can browse an `HTML
 version of the API itself <https://authorityspoke.com/api/v1/>`__. If
-you see the error message “Authentication credentials were not
-provided”, that means you aren’t signed in, and you might want to go
+the error message “Authentication credentials were not
+provided” appears, that means we aren’t signed in, and we might want to go
 back to the `login page <https://authorityspoke.com/account/login/>`__.
 
 The :meth:`~legislice.download.Client.fetch` method makes an API call to AuthoritySpoke, and
@@ -126,10 +126,10 @@ the :class:`~legislice.download.Client`.
 Loading an Enactment object
 ------------------------------
 
-If all you needed was to get a JSON response from the API, you could
+If all we needed was to get a JSON response from the API, we could
 have used a more general Python library like ``requests``. Legislice
-also lets you load the JSON response as a :class:`legislice.enactments.Enactment` object, which
-has methods that allow you to select some but not all of the provision’s
+also lets us load the JSON response as a :class:`legislice.enactments.Enactment` object, which
+has methods for selecting some but not all of the provision’s
 text. One way to load an :class:`~legislice.enactments.Enactment` is with the
 :class:`~legislice.download.Client`'s :meth:`~legislice.download.Client.read_from_json` method.
 
@@ -137,7 +137,7 @@ text. One way to load an :class:`~legislice.enactments.Enactment` is with the
     Enactment(source=/us/const/amendment/IV, start_date=1791-12-15, selection=TextPositionSet([TextPositionSelector[0, 332)]))
 
 Instead of always using :meth:`~legislice.download.Client.fetch` followed by
-:meth:`~legislice.download.Client.read_from_json`, you can combine the two functions together
+:meth:`~legislice.download.Client.read_from_json`, we can combine the two functions together
 with :meth:`~legislice.download.Client.read`. In this example, we’ll use
 :meth:`~legislice.download.Client.read` to load a
 constitutional amendment that contains subsections, to show that the
@@ -168,9 +168,9 @@ get a list of provisions contained within an ``Enactment``.
     [Enactment(source=/us/const/amendment/XIII/1, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 207)])),
     Enactment(source=/us/const/amendment/XIII/2, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 77)]))]
 
-Then you can access each child provision as its own ``Enactment`` object
+Then we can access each child provision as its own ``Enactment`` object
 from the ``children`` list. Remember that lists in Python start at index
-0, so if you want Section 2, you’ll find it at index 1 of the
+0, so if we want Section 2, we’ll find it at index 1 of the
 ``children`` list.
 
     >>> str(thirteenth_a.children[1])
@@ -213,12 +213,12 @@ because it’s still in effect.
 Exploring the structure of a legislative code
 ------------------------------------------------
 
-When you query the API for a provision at a path with less than four
-parts (e.g., when you query for an entire Title of the United States
+When we query the API for a provision at a path with less than four
+parts (e.g., when we query for an entire Title of the United States
 Code), the response doesn’t include the full text of the provision’s
 children. Instead, it only contains URLs that link to the child nodes.
-This might help you automate the process of navigating the API and
-discovering the provisions you want. Here’s an example that discovers
+This might help to automate the process of navigating the API and
+discovering the provisions we want. Here’s an example that discovers
 the URLs for the articles of the US Constitution.
 
     >>> articles = client.read(query="/us/const/article")
@@ -237,7 +237,7 @@ Downloading Enactments from cross-references
 -----------------------------------------------
 
 If an :class:`~legislice.enactments.Enactment` loaded from the API references other provisions, it may
-provide a list of :class:`~legislice.enactments.CrossReference` objects when you call its
+provide a list of :class:`~legislice.enactments.CrossReference` objects when we call its
 :meth:`~legislice.enactments.BaseEnactment.cross_references` method. You can pass one of these
 :class:`~legislice.enactments.CrossReference` objects to the
 :meth:`~legislice.download.Client.fetch` or
@@ -270,10 +270,10 @@ other legislation.
 Downloading Enactments from inbound citations
 ------------------------------------------------
 
-The method in the previous section lets you find and download Enactments
-cited by a known :class:`~legislice.enactments.Enactment`. But sometimes you want to discover
+The method in the previous section finds and downloads Enactments
+cited by a known :class:`~legislice.enactments.Enactment`. But sometimes we want to discover
 provisions that cite *to* a particular provision. These “inbound”
-citations are not stored on the Python Enactment object. Instead, you
+citations are not stored on the Python Enactment object. Instead, we
 have to go back to the download client and make an API request to get
 them, using the :meth:`~legislice.download.Client.citations_to` method.
 
