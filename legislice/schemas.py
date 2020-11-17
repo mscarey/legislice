@@ -125,8 +125,6 @@ class ExpandableSchema(Schema):
 class TextVersionSchema(Schema):
     __model__ = TextVersion
     content = fields.Str(required=True)
-    url = fields.Str(required=False, allow_none=True)
-    id = fields.Int(required=False, allow_none=True)
 
     class Meta:
         unknown = EXCLUDE

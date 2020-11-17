@@ -3,7 +3,7 @@ from datetime import datetime
 from legislice.mock_clients import JSONRepository, MOCK_USC_CLIENT
 import os
 
-from anchorpoint.textselectors import TextPositionSelector
+from anchorpoint.textselectors import TextPositionSelector, TextQuoteSelector
 from dotenv import load_dotenv
 from marshmallow import ValidationError
 import pytest
@@ -254,6 +254,27 @@ class TestDumpEnactment:
         selection = dumped["selection"][0]
         quote = dumped["text_version"]["content"][selection["start"] : selection["end"]]
         assert quote == "Science and useful Arts"
+
+    @pytest.mark.vcr()
+    def test_serialize_enactment_after_adding(self):
+        search = self.client.read("/us/const/amendment/IV")
+        warrant = deepcopy(search)
+
+        search.select(TextQuoteSelector(suffix=", and no Warrants"))
+        warrant.select(
+            TextQuoteSelector(
+                exact="shall not be violated, and no Warrants shall issue,"
+            )
+        )
+        combined_enactment = search + warrant
+
+        # search.select_more_text_at_current_node(warrant.selection)
+
+        schema = EnactmentSchema()
+        dumped = schema.dump(combined_enactment)
+
+        assert dumped["text_version"]["content"].startswith("The right")
+        assert dumped["text_version"].get("uri") is None
 
 
 class TestLoadInboundReferences:

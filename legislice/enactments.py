@@ -463,6 +463,7 @@ class Enactment(BaseEnactment):
         return new_selector_set, new_tree_length
 
     def tree_selection(self) -> TextPositionSet:
+        """Return set of selectors for selected text in this provision and its children."""
         new_selector_set, new_tree_length = self._tree_selection(
             selector_set=TextPositionSet(), tree_length=0
         )
@@ -471,12 +472,14 @@ class Enactment(BaseEnactment):
     def select_more_text_at_current_node(
         self, added_selection: TextPositionSet
     ) -> None:
+        """Select more text at this Enactment's node, not in child nodes."""
         new_selection = self.selection + added_selection
         self._selection = new_selection
 
     def select_more_text_in_current_branch(
         self, added_selection: TextPositionSet
     ) -> TextPositionSet:
+        """Select more text within this Enactment's tree_selection, including child nodes."""
         new_selection = self.tree_selection() + added_selection
         unused_selectors = self.select_from_text_positions(new_selection)
         return unused_selectors
