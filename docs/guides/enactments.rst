@@ -288,41 +288,11 @@ to JSON.
 As explained in the section above, this JSON represents a selection of three
 nonconsecutive passages from the most recent version of
 `section 103 of Title 17 of the United States Code <https://authorityspoke.com/legislice/us/usc/t17/s103@2020-11-17>`__.
+The schema's :meth:`~marshmallow.Schema.dumps` method returns a JSON string,
+while the :meth:`~marshmallow.Schema.dump` method returns a
+Python dictionary.
 
     >>> from legislice.schemas import EnactmentSchema
     >>> schema = EnactmentSchema()
-    >>> schema.dump(combined_enactment)
-
-.. parsed-literal::
-
-    {'start_date': '2013-07-18',
-    'children': [{'start_date': '2013-07-18',
-    'children': [],
-    'end_date': None,
-    'text_version': {'content': 'The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully.'},
-    'node': '/us/usc/t17/s103/a',
-    'anchors': [],
-    'selection': [{'include_start': True,
-        'end': 277,
-        'include_end': False,
-        'start': 0}],
-    'heading': ''},
-    {'start_date': '2013-07-18',
-    'children': [],
-    'end_date': None,
-    'text_version': {'content': 'The copyright in a compilation or derivative work extends only to the material contributed by the author of such work, as distinguished from the preexisting material employed in the work, and does not imply any exclusive right in the preexisting material. The copyright in such work is independent of, and does not affect or enlarge the scope, duration, ownership, or subsistence of, any copyright protection in the preexisting material.'},
-    'node': '/us/usc/t17/s103/b',
-    'anchors': [],
-    'selection': [{'include_start': True,
-        'end': 300,
-        'include_end': False,
-        'start': 256},
-        {'include_start': True, 'end': 437, 'include_end': False, 'start': 384}],
-    'heading': ''}],
-    'end_date': None,
-    'text_version': None,
-    'node': '/us/usc/t17/s103',
-    'anchors': [],
-    'selection': [],
-    'heading': 'Subject matter of copyright: Compilations and derivative works'}
-
+    >>> schema.dumps(combined_enactment)
+    '{"node": "/us/usc/t17/s103", "heading": "Subject matter of copyright: Compilations and derivative works", "text_version": null, "start_date": "2013-07-18", "end_date": null, "selection": [], "anchors": [], "children": [{"node": "/us/usc/t17/s103/a", "heading": "", "text_version": {"content": "The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 0, "end": 277}], "anchors": [], "children": []}, {"node": "/us/usc/t17/s103/b", "heading": "", "text_version": {"content": "The copyright in a compilation or derivative work extends only to the material contributed by the author of such work, as distinguished from the preexisting material employed in the work, and does not imply any exclusive right in the preexisting material. The copyright in such work is independent of, and does not affect or enlarge the scope, duration, ownership, or subsistence of, any copyright protection in the preexisting material."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 256, "end": 300}, {"start": 384, "end": 437}], "anchors": [], "children": []}]}'
