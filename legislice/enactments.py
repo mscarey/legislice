@@ -50,6 +50,8 @@ class CrossReference:
 
 @dataclass
 class CitingProvisionLocation:
+    """Memo indicating where an Enactment can be downloaded."""
+
     heading: str
     node: str
     start_date: date
@@ -552,7 +554,12 @@ class Enactment(BaseEnactment):
         return selections
 
     def select_all(self) -> None:
-        self._selection = TextPositionSet(TextPositionSelector(0, len(self.content)))
+        if self.content:
+            self._selection = TextPositionSet(
+                TextPositionSelector(0, len(self.content))
+            )
+        else:
+            self._selection = TextPositionSet()
         for child in self._children:
             child.select_all()
 

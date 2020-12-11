@@ -1,9 +1,8 @@
 from copy import deepcopy
-from datetime import date
-from typing import Dict, List, Union
+from typing import Dict, Union
 
 from anchorpoint.schemas import SelectorSchema
-from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE, ValidationError
+from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
     Enactment,
