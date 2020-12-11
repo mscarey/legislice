@@ -1,6 +1,6 @@
--e git://github.com/mscarey/anchorpoint.git@master#egg=anchorpoint
 apispec[validation]
 marshmallow>=3.2.2
+anchorpoint>=0.4.3
 python-dotenv
 requests
 roman

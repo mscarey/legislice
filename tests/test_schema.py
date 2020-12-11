@@ -278,13 +278,16 @@ class TestDumpEnactment:
         assert dumped["text_version"].get("uri") is None
 
     @pytest.mark.vcr()
-    def test_selector_field_gives_start_position_first(self):
+    def test_fields_ordered_with_children_last(self):
         s103 = self.client.read(query="/us/usc/t17/s103", date="2020-01-01")
         schema = EnactmentSchema()
         dumped = schema.dump(s103)
         assert list(dumped["children"][0]["selection"][0].keys()) == ["start", "end"]
         as_json = json.dumps(dumped)
+        # Start field comes before end field in selector
         assert '"selection": [{"start":' in as_json
+        # "Children" field is last, since it's hard to read otherwise
+        assert list(dumped.keys())[-1] == "children"
 
 
 class TestLoadInboundReferences:

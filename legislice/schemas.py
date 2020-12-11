@@ -142,13 +142,14 @@ class LinkedEnactmentSchema(ExpandableSchema):
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
-    children = fields.List(fields.Url(relative=False))
     selection = fields.Nested(SelectorSchema, many=True, missing=list)
     anchors = fields.Nested(SelectorSchema, many=True, missing=list)
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
+    children = fields.List(fields.Url(relative=False))
 
     class Meta:
         unknown = EXCLUDE
+        ordered = True
 
     def move_selector_fields(self, data: RawEnactment, **kwargs):
         """
