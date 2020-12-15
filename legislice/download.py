@@ -1,11 +1,7 @@
 import datetime
-from os import name
 from typing import Any, Dict, List, Optional, Union
 
-from marshmallow import ValidationError
-from marshmallow.fields import Raw
 import requests
-from requests import status_codes
 
 from legislice.enactments import (
     Enactment,
@@ -15,7 +11,6 @@ from legislice.enactments import (
 )
 from legislice.name_index import EnactmentIndex
 from legislice.schemas import (
-    ExpandableSchema,
     InboundReferenceSchema,
     get_schema_for_node,
     enactment_needs_api_update,

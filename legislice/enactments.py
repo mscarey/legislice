@@ -4,19 +4,15 @@ from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import date
-from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.utils.ranges import RangeSet
-from anchorpoint.schemas import SelectorSchema, TextPositionSetFactory
+from anchorpoint.schemas import TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet
-from anchorpoint.textsequences import TextPassage, TextSequence
+from anchorpoint.textsequences import TextSequence
 
-# Path parts known to indicate the level of law they refer to.
-KNOWN_CONSTITUTIONS = ["const"]
-KNOWN_STATUTE_CODES = ["acts", "usc"]
-KNOWN_REGULATIONS = ["cfr"]
-
+from legislice import citations
 
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
@@ -32,7 +28,7 @@ class CrossReference:
         the URL to fetch the target provision from an API.
 
     :param reference_text:
-        The text in the cititng provision that represents the cross-reference.
+        The text in the citing provision that represents the cross-reference.
         Generally, this text identifies the target provision.
 
     :param target_node:
@@ -191,10 +187,15 @@ class BaseEnactment:
     def text(self):
         return self.content
 
+    def get_identifier_part(self, index: int) -> Optional[str]:
+        identifier_parts = self.node.split("/")
+        if len(identifier_parts) < (index + 1):
+            return None
+        return identifier_parts[index]
+
     @property
     def sovereign(self):
-        identifier_parts = self.node.split("/")
-        return identifier_parts[1]
+        return self.get_identifier_part(1)
 
     @property
     def jurisdiction(self):
@@ -202,20 +203,20 @@ class BaseEnactment:
 
     @property
     def code(self):
-        identifier_parts = self.node.split("/")
-        if len(identifier_parts) < 3:
-            return None
-        return identifier_parts[2]
+        return self.get_identifier_part(2)
 
     @property
-    def level(self):
-        codename = self.code
-        if codename in KNOWN_STATUTE_CODES:
-            return "statute"
-        if codename in KNOWN_CONSTITUTIONS:
-            return "constitution"
-        if codename in KNOWN_REGULATIONS:
-            return "regulation"
+    def title(self):
+        return self.get_identifier_part(3)
+
+    @property
+    def section(self):
+        return self.get_identifier_part(4)
+
+    @property
+    def level(self) -> str:
+        code_name, code_level_name = citations.identify_code(self.sovereign, self.code)
+        return code_level_name
 
     @property
     def padded_length(self):
@@ -230,6 +231,16 @@ class BaseEnactment:
 
     def __repr__(self):
         return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
+
+    def as_citation(self) -> citations.Citation:
+        citation = citations.Citation(
+            jurisdiction=self.jurisdiction,
+            code=self.code,
+            volume=self.title,
+            section=self.section,
+            last_amended=self.start_date,
+        )
+        return citation
 
     def cross_references(self) -> List[CrossReference]:
         """Return all cross-references from this node and subnodes."""
@@ -321,8 +332,8 @@ class BaseEnactment:
                     selections.appendleft(
                         TextPositionSelector(start=self.padded_length, end=current.end)
                     )
-        self._selection = TextPositionSet(self._selection)
-        self._selection = self._selection.add_margin(text=self.content, margin_width=4)
+        selection_as_set = TextPositionSet(self._selection)
+        self._selection = selection_as_set.add_margin(text=self.content, margin_width=4)
         return TextPositionSet(selections)
 
     def select_without_children(
