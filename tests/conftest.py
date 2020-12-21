@@ -6,9 +6,12 @@ from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
 import pytest
 
+from legislice.download import Client
+
 load_dotenv()
 
 API_ROOT = os.getenv("API_ROOT")
+TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 
 @pytest.fixture(scope="module")
@@ -17,6 +20,24 @@ def vcr_config():
         # Replace the Authorization request header with "DUMMY" in cassettes
         "filter_headers": [("authorization", "DUMMY")],
     }
+
+
+@pytest.fixture(scope="class")
+def test_client() -> Client:
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
+    client.coverage["/us/usc"] = {
+        "latest_heading": "United States Code (USC)",
+        "first_published": "1926-06-30",
+        "earliest_in_db": "2013-07-18",
+        "latest_in_db": "2020-08-08",
+    }
+    client.coverage["/test/acts"] = {
+        "latest_heading": "Test Acts",
+        "first_published": "1935-04-01",
+        "earliest_in_db": "1935-04-01",
+        "latest_in_db": "2013-07-18",
+    }
+    return client
 
 
 @pytest.fixture(scope="class")

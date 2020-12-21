@@ -82,6 +82,7 @@ class TestMakeEnactment:
 class TestLinkedEnactment:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
 
+    @pytest.mark.vcr
     def test_text_sequence_for_linked_enactment(self):
         enactment = self.client.read(query="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
@@ -142,23 +143,22 @@ class TestEnactmentDetails:
         assert amendment_14.start_date == date(1868, 7, 28)
         assert amendment_5.start_date < amendment_14.start_date
 
+    @pytest.mark.skip(reason="No regulations available via API.")
     def test_regulation_level(self):
         enactment = self.client.read("/us/cfr/t37/s202.1")
         assert enactment.level == "regulation"
 
 
 class TestCrossReferences:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
-
     @pytest.mark.vcr()
-    def test_no_local_cross_references(self):
-        enactment = self.client.read("/test/acts/47/6D")
+    def test_no_local_cross_references(self, test_client):
+        enactment = test_client.read("/test/acts/47/6D")
         citations = enactment._cross_references
         assert len(citations) == 0
 
     @pytest.mark.vcr()
-    def test_collect_nested_cross_references(self):
-        enactment = self.client.read("/test/acts/47/6D")
+    def test_collect_nested_cross_references(self, test_client):
+        enactment = test_client.read("/test/acts/47/6D")
         citations = enactment.cross_references()
         assert len(citations) == 1
         assert citations[0].target_uri == "/test/acts/47/6C"

@@ -1,6 +1,7 @@
 from copy import deepcopy
 from datetime import datetime
 import json
+
 from legislice.mock_clients import JSONRepository, MOCK_USC_CLIENT
 import os
 
@@ -119,9 +120,11 @@ class TestLoadEnactment:
         assert result.selected_text() == "…Department of Beards…"
 
     @pytest.mark.vcr()
-    def test_load_enactment_with_text_anchor(self, provision_with_text_anchor):
+    def test_load_enactment_with_text_anchor(
+        self, provision_with_text_anchor, test_client
+    ):
         schema = EnactmentSchema()
-        record = self.client.update_enactment_from_api(provision_with_text_anchor)
+        record = test_client.update_enactment_from_api(provision_with_text_anchor)
         result = schema.load(record)
         assert result.anchors[0].exact == "17 U.S.C. § 102(a)"
 
@@ -242,12 +245,9 @@ class TestLoadLinkedEnactment:
 
 
 class TestDumpEnactment:
-
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
-
     @pytest.mark.vcr()
-    def test_dump_enactment_with_selector_to_dict(self):
-        copyright_clause = self.client.read("/us/const/article/I/8/8")
+    def test_dump_enactment_with_selector_to_dict(self, test_client):
+        copyright_clause = test_client.read("/us/const/article/I/8/8")
         copyright_clause.select("Science and useful Arts")
 
         schema = EnactmentSchema()
@@ -257,8 +257,8 @@ class TestDumpEnactment:
         assert quote == "Science and useful Arts"
 
     @pytest.mark.vcr()
-    def test_serialize_enactment_after_adding(self):
-        search = self.client.read("/us/const/amendment/IV")
+    def test_serialize_enactment_after_adding(self, test_client):
+        search = test_client.read("/us/const/amendment/IV")
         warrant = deepcopy(search)
 
         search.select(TextQuoteSelector(suffix=", and no Warrants"))
@@ -278,8 +278,8 @@ class TestDumpEnactment:
         assert dumped["text_version"].get("uri") is None
 
     @pytest.mark.vcr()
-    def test_fields_ordered_with_children_last(self):
-        s103 = self.client.read(query="/us/usc/t17/s103", date="2020-01-01")
+    def test_fields_ordered_with_children_last(self, test_client):
+        s103 = test_client.read(query="/us/usc/t17/s103", date="2020-01-01")
         schema = EnactmentSchema()
         dumped = schema.dump(s103)
         assert list(dumped["children"][0]["selection"][0].keys()) == ["start", "end"]

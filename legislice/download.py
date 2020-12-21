@@ -37,7 +37,10 @@ def normalize_path(path: str) -> str:
 
 class Client:
     def __init__(
-        self, api_token: str = "", api_root: str = "https://authorityspoke.com/api/v1"
+        self,
+        api_token: str = "",
+        api_root: str = "https://authorityspoke.com/api/v1",
+        update_coverage_from_api: bool = True,
     ):
         """Create download client with an API token and an API address."""
         self.api_root = api_root
@@ -45,6 +48,13 @@ class Client:
         if api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token
+        self.coverage = {
+            "/us/const": {
+                "first_published": datetime.date(1788, 6, 21),
+                "earliest_in_db": datetime.date(1788, 6, 21),
+            }
+        }
+        self.update_coverage_from_api = update_coverage_from_api
 
     def fetch(
         self,
@@ -120,6 +130,10 @@ class Client:
             )
         return self._fetch_from_url(url=target)
 
+    def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
+        target = self.api_root + "/coverage" + code_uri
+        return self._fetch_from_url(url=target)
+
     def fetch_inbound_reference(self, query: InboundReference) -> RawEnactment:
         """
         Download legislative provision from InboundReference.
@@ -134,6 +148,17 @@ class Client:
         """
         most_recent = max(query.locations)
         return self.fetch_citing_provision(query=most_recent)
+
+    def get_db_coverage(self, uri: str) -> Optional[Dict[str, datetime.date]]:
+        """Add data about the API's coverage date range to the Enactment to be loaded."""
+        uri_parts = uri.split("/")
+        if len(uri_parts) < 3:
+            return None
+        code_uri = f"/{uri_parts[1]}/{uri_parts[2]}"
+        if self.update_coverage_from_api and not self.coverage.get(code_uri):
+            self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
+        db_coverage = self.coverage[code_uri]
+        return db_coverage
 
     def fetch_uri(
         self, query: str, date: Union[datetime.date, str] = ""
@@ -158,7 +183,11 @@ class Client:
         if date:
             query_with_root = f"{query_with_root}@{date}"
 
-        return self._fetch_from_url(url=query_with_root)
+        raw_enactment = self._fetch_from_url(url=query_with_root)
+        coverage = self.get_db_coverage(raw_enactment["node"])
+        if coverage:
+            raw_enactment["coverage"] = coverage
+        return raw_enactment
 
     def uri_from_query(self, target: Union[str, Enactment, CrossReference]) -> str:
         if isinstance(target, Enactment):
