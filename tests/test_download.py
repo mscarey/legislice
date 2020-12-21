@@ -86,8 +86,16 @@ class TestDownloadAndLoad:
 
     @pytest.mark.vcr()
     def test_make_enactment_from_citation(self):
+        """
+        Test fields for loaded Enactment.
+
+        known_revision_date should indicate whether the start_date is known to be
+        the date that the provision was revised in the USC.
+        """
+
         fourth_a = self.client.read(query="/us/const/amendment/IV")
         assert fourth_a.selected_text().endswith("persons or things to be seized.")
+        assert fourth_a.known_revision_date is True
 
     @pytest.mark.vcr()
     def test_make_enactment_from_selector_without_code(self):
@@ -115,10 +123,29 @@ class TestDownloadAndLoad:
 
     @pytest.mark.vcr()
     def test_chapeau_and_subsections_from_uslm_code(self):
-        """Test that the selected_text includes the text of subsections."""
+        """
+        Test that the selected_text includes the text of subsections.
+
+        known_revision_date should be available on the subsection as well as
+        the section.
+        """
         definition = self.client.read(query="/test/acts/47/4")
         sequence = definition.text_sequence()
         assert str(sequence.strip()).endswith("below the nose.")
+        assert definition.known_revision_date is True
+        assert definition.children[0].known_revision_date is True
+
+    @pytest.mark.vcr()
+    def test_unknown_revision_date(self):
+        """
+        Test notation that enactment went into effect before start of the available data range.
+
+        This test may begin to fail if earlier statute versions are
+        loaded to the API's database.
+        """
+        enactment = self.client.read(query="/us/usc/t17/s103")
+        assert enactment.known_revision_date is False
+        assert enactment.children[0].known_revision_date is False
 
     @pytest.mark.vcr()
     def test_update_linked_enactment(self):

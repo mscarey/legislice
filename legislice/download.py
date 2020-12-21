@@ -149,16 +149,14 @@ class Client:
         most_recent = max(query.locations)
         return self.fetch_citing_provision(query=most_recent)
 
-    def get_db_coverage(self, uri: str) -> Optional[Dict[str, datetime.date]]:
+    def get_db_coverage(self, uri: str) -> None:
         """Add data about the API's coverage date range to the Enactment to be loaded."""
         uri_parts = uri.split("/")
-        if len(uri_parts) < 3:
-            return None
-        code_uri = f"/{uri_parts[1]}/{uri_parts[2]}"
-        if self.update_coverage_from_api and not self.coverage.get(code_uri):
-            self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
-        db_coverage = self.coverage[code_uri]
-        return db_coverage
+        if len(uri_parts) > 2:
+            code_uri = f"/{uri_parts[1]}/{uri_parts[2]}"
+            if self.update_coverage_from_api and not self.coverage.get(code_uri):
+                self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
+        return None
 
     def fetch_uri(
         self, query: str, date: Union[datetime.date, str] = ""
@@ -184,9 +182,6 @@ class Client:
             query_with_root = f"{query_with_root}@{date}"
 
         raw_enactment = self._fetch_from_url(url=query_with_root)
-        coverage = self.get_db_coverage(raw_enactment["node"])
-        if coverage:
-            raw_enactment["coverage"] = coverage
         return raw_enactment
 
     def uri_from_query(self, target: Union[str, Enactment, CrossReference]) -> str:
@@ -245,8 +240,16 @@ class Client:
 
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
+
+        # update client's data about the database's coverage
+        self.get_db_coverage(data["node"])
+
         schema_class = get_schema_for_node(data["node"])
         schema = schema_class()
+
+        if self.coverage.get(data["node"]):
+            schema.context["coverage"] = self.coverage
+
         enactment = schema.load(data)
 
         if not enactment.selected_text() and not data_has_selection_field:

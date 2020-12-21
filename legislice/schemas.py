@@ -142,6 +142,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
+    known_enactment_date = fields.Method("is_enactment_date_known", missing=False)
     selection = fields.Nested(SelectorSchema, many=True, missing=list)
     anchors = fields.Nested(SelectorSchema, many=True, missing=list)
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
@@ -150,6 +151,24 @@ class LinkedEnactmentSchema(ExpandableSchema):
     class Meta:
         unknown = EXCLUDE
         ordered = True
+
+    def is_enactment_date_known(self, obj) -> bool:
+        if not self.context.get("coverage"):
+            return False
+        if self.context["coverage"]["earliest_in_db"] and (
+            self.context["coverage"]["earliest_in_db"] < obj.start_date
+        ):
+            return True
+        if (
+            self.context["coverage"]["earliest_in_db"]
+            and self.context["coverage"]["first_published"]
+            and (
+                self.context["coverage"]["earliest_in_db"]
+                <= self.context["coverage"]["first_published"]
+            )
+        ):
+            return True
+        return False
 
     def move_selector_fields(self, data: RawEnactment, **kwargs):
         """
