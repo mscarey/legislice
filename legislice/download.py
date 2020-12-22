@@ -187,7 +187,7 @@ class Client:
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        url = self.url_from_enactment_uri(uri=query)
+        url = self.url_from_enactment_uri(uri=query, date=date)
         response = self._fetch_from_url(url=url)
         return response.json()
 

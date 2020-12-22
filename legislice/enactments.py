@@ -107,6 +107,14 @@ class BaseEnactment:
     :param start_date:
         date when the text was enacted at the cited location
 
+    :param known_revision_date:
+        whether the "start_date" field is known to be a date
+        when the provision was revised in the code where it was publised.
+        If False, then the Enactment refers to a time range when the text was
+        codified, without asserting that the Enactment was not codified at
+        earlier dates. This field is useful when working from incomplete
+        legislative records.
+
     :param end_date:
         date when the text was removed from the cited location
 
@@ -129,6 +137,7 @@ class BaseEnactment:
         node: str,
         heading: str,
         start_date: date,
+        known_revision_date: bool = True,
         text_version: Optional[TextVersion] = None,
         content: Optional[str] = None,
         end_date: Optional[date] = None,
@@ -148,6 +157,7 @@ class BaseEnactment:
 
         self._heading = heading
         self._start_date = start_date
+        self.known_revision_date = known_revision_date
         self._end_date = end_date
         self.anchors = anchors or []
         self._cross_references = citations or []
