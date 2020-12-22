@@ -128,11 +128,11 @@ class Client:
             raise ValueError(
                 f'target_url of cross-reference, "{target}", does not start with Client\'s api_root, "{self.api_root}"'
             )
-        return self._fetch_from_url(url=target)
+        return self._fetch_from_url(url=target).json()
 
     def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
         target = self.api_root + "/coverage" + code_uri
-        return self._fetch_from_url(url=target)
+        return self._fetch_from_url(url=target).json()
 
     def fetch_inbound_reference(self, query: InboundReference) -> RawEnactment:
         """
@@ -158,6 +158,19 @@ class Client:
                 self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
         return None
 
+    def url_from_enactment_uri(
+        self, uri: str, date: Union[datetime.date, str] = ""
+    ) -> str:
+        query_with_root = self.api_root + normalize_path(uri)
+
+        if isinstance(date, datetime.date):
+            date = date.isoformat()
+        if date:
+            query_with_root = f"{query_with_root}@{date}"
+        elif not query_with_root.endswith("/"):
+            query_with_root += "/"
+        return query_with_root
+
     def fetch_uri(
         self, query: str, date: Union[datetime.date, str] = ""
     ) -> RawEnactment:
@@ -174,15 +187,9 @@ class Client:
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        query_with_root = self.api_root + normalize_path(query)
-
-        if isinstance(date, datetime.date):
-            date = date.isoformat()
-        if date:
-            query_with_root = f"{query_with_root}@{date}"
-
-        raw_enactment = self._fetch_from_url(url=query_with_root)
-        return raw_enactment
+        url = self.url_from_enactment_uri(uri=query)
+        response = self._fetch_from_url(url=url)
+        return response.json()
 
     def uri_from_query(self, target: Union[str, Enactment, CrossReference]) -> str:
         if isinstance(target, Enactment):
@@ -207,7 +214,7 @@ class Client:
         uri = self.uri_from_query(target)
         query_with_root = self.api_root + "/citations_to" + uri
         api_response = self._fetch_from_url(query_with_root)
-        return api_response["results"]
+        return api_response.json()["results"]
 
     def citations_to(
         self, target: Union[str, Enactment, CrossReference]
@@ -299,7 +306,7 @@ class Client:
                 enactment_index[key] = self.update_enactment_from_api(value)
         return enactment_index
 
-    def _fetch_from_url(self, url: str) -> RawEnactment:
+    def _fetch_from_url(self, url: str) -> requests.Response:
         headers = {}
         if self.api_token:
             headers["Authorization"] = f"Token {self.api_token}"
@@ -310,4 +317,4 @@ class Client:
         if response.status_code == 403:
             raise LegisliceTokenError(f"{response.json().get('detail')}")
 
-        return response.json()
+        return response

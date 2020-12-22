@@ -28,10 +28,30 @@ class TestDownloadJSON:
 
     @pytest.mark.vcr()
     def test_fetch_section(self):
-        s102 = self.client.fetch(query="/test/acts/47/1")
-        assert s102["start_date"] == "1935-04-01"
-        assert s102["end_date"] is None
-        assert s102["heading"] == "Short title"
+        url = self.client.url_from_enactment_uri("/test/acts/47/1")
+        response = self.client._fetch_from_url(url=url)
+
+        # Test that there was no redirect from the API
+        assert not response.history
+
+        section = response.json()
+        assert section["start_date"] == "1935-04-01"
+        assert section["end_date"] is None
+        assert section["heading"] == "Short title"
+
+    @pytest.mark.vcr()
+    def test_fetch_current_section_with_date(self):
+        url = self.client.url_from_enactment_uri(
+            "/test/acts/47/6D", date=datetime.date(2020, 1, 1)
+        )
+        response = self.client._fetch_from_url(url=url)
+
+        # Test that there was no redirect from the API
+        assert not response.history
+
+        waiver = response.json()
+        assert waiver["url"].endswith("acts/47/6D@2020-01-01")
+        assert waiver["children"][0]["start_date"] == "2013-07-18"
 
     @pytest.mark.vcr()
     def test_wrong_api_token(self):
@@ -53,14 +73,6 @@ class TestDownloadJSON:
         assert s102["start_date"] == "1935-04-01"
         assert s102["end_date"] is None
         assert s102["heading"] == "Short title"
-
-    @pytest.mark.vcr()
-    def test_fetch_current_section_with_date(self):
-        waiver = self.client.fetch(
-            query="/test/acts/47/6D", date=datetime.date(2020, 1, 1)
-        )
-        assert waiver["url"].endswith("acts/47/6D@2020-01-01")
-        assert waiver["children"][0]["start_date"] == "2013-07-18"
 
     @pytest.mark.vcr()
     def test_fetch_past_section_with_date(self):
