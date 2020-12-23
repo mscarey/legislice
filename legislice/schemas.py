@@ -1,4 +1,5 @@
 from copy import deepcopy
+import datetime
 from typing import Dict, Union
 
 from anchorpoint.schemas import SelectorSchema
@@ -142,11 +143,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
-    known_revision_date = fields.Method(
-        serialize="get_known_revision_date",
-        deserialize="is_revision_date_known",
-        missing=False,
-    )
+    known_revision_date = fields.Boolean()
     selection = fields.Nested(SelectorSchema, many=True, missing=list)
     anchors = fields.Nested(SelectorSchema, many=True, missing=list)
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
@@ -155,27 +152,6 @@ class LinkedEnactmentSchema(ExpandableSchema):
     class Meta:
         unknown = EXCLUDE
         ordered = True
-
-    def get_known_revision_date(self, obj) -> bool:
-        return obj.known_revision_date
-
-    def is_revision_date_known(self, value) -> bool:
-        if not self.context.get("coverage"):
-            return False
-        if self.context["coverage"]["earliest_in_db"] and (
-            self.context["coverage"]["earliest_in_db"] < value["start_date"]
-        ):
-            return True
-        if (
-            self.context["coverage"]["earliest_in_db"]
-            and self.context["coverage"]["first_published"]
-            and (
-                self.context["coverage"]["earliest_in_db"]
-                <= self.context["coverage"]["first_published"]
-            )
-        ):
-            return True
-        return False
 
     def move_selector_fields(self, data: RawEnactment, **kwargs):
         """
@@ -205,6 +181,27 @@ class LinkedEnactmentSchema(ExpandableSchema):
         data.pop("content", None)
         return data
 
+    def is_revision_date_known(self, data):
+        if not self.context.get("coverage"):
+            data["known_revision_date"] = False
+        elif self.context["coverage"]["earliest_in_db"] and (
+            self.context["coverage"]["earliest_in_db"]
+            < datetime.date.fromisoformat(data["start_date"])
+        ):
+            data["known_revision_date"] = True
+        elif (
+            self.context["coverage"]["earliest_in_db"]
+            and self.context["coverage"]["first_published"]
+            and (
+                self.context["coverage"]["earliest_in_db"]
+                <= self.context["coverage"]["first_published"]
+            )
+        ):
+            data["known_revision_date"] = True
+        else:
+            data["known_revision_date"] = False
+        return data
+
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
@@ -213,6 +210,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
         data = self.wrap_single_element_in_list(data, "selection")
         data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "anchors")
+        data = self.is_revision_date_known(data)
         return data
 
 
