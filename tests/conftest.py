@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 from typing import Dict
@@ -27,15 +28,15 @@ def test_client() -> Client:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
     client.coverage["/us/usc"] = {
         "latest_heading": "United States Code (USC)",
-        "first_published": "1926-06-30",
-        "earliest_in_db": "2013-07-18",
-        "latest_in_db": "2020-08-08",
+        "first_published": datetime.date(1926, 6, 30),
+        "earliest_in_db": datetime.date(2013, 7, 18),
+        "latest_in_db": datetime.date(2020, 8, 8),
     }
     client.coverage["/test/acts"] = {
         "latest_heading": "Test Acts",
-        "first_published": "1935-04-01",
-        "earliest_in_db": "1935-04-01",
-        "latest_in_db": "2013-07-18",
+        "first_published": datetime.date(1935, 4, 1),
+        "earliest_in_db": datetime.date(1935, 4, 1),
+        "latest_in_db": datetime.date(2013, 7, 18),
     }
     return client
 
@@ -221,7 +222,7 @@ def make_selector() -> Dict[str, TextQuoteSelector]:
 
 @pytest.fixture(scope="module")
 def fourth_a():
-    {
+    return {
         "heading": "AMENDMENT IV.",
         "start_date": "1791-12-15",
         "node": "/us/const/amendment/IV",

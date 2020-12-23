@@ -48,7 +48,7 @@ class Client:
         if api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token
-        self.coverage = {
+        self.coverage: Dict[str, Dict[str, Union[datetime.date, str]]] = {
             "/us/const": {
                 "first_published": datetime.date(1788, 6, 21),
                 "earliest_in_db": datetime.date(1788, 6, 21),
@@ -149,14 +149,25 @@ class Client:
         most_recent = max(query.locations)
         return self.fetch_citing_provision(query=most_recent)
 
-    def get_db_coverage(self, uri: str) -> None:
-        """Add data about the API's coverage date range to the Enactment to be loaded."""
+    def get_db_coverage(self, uri: str) -> str:
+        """
+        Add data about the API's coverage date range to the Enactment to be loaded.
+
+        As a side effect, changes the Client's "coverage" attribute.
+
+        :param uri:
+            identifier for the Enactment to be created
+
+        :returns:
+            identifier for the Code of the Enactment to be created
+        """
         uri_parts = uri.split("/")
+        code_uri = ""
         if len(uri_parts) > 2:
             code_uri = f"/{uri_parts[1]}/{uri_parts[2]}"
             if self.update_coverage_from_api and not self.coverage.get(code_uri):
                 self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
-        return None
+        return code_uri
 
     def url_from_enactment_uri(
         self, uri: str, date: Union[datetime.date, str] = ""
@@ -248,14 +259,13 @@ class Client:
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
 
-        # update client's data about the database's coverage
-        self.get_db_coverage(data["node"])
-
         schema_class = get_schema_for_node(data["node"])
         schema = schema_class()
 
-        if self.coverage.get(data["node"]):
-            schema.context["coverage"] = self.coverage
+        # update client's data about the database's coverage
+        code_uri = self.get_db_coverage(data["node"])
+        if self.coverage.get(code_uri):
+            schema.context["coverage"] = self.coverage[code_uri]
 
         enactment = schema.load(data)
 

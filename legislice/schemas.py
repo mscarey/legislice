@@ -142,7 +142,11 @@ class LinkedEnactmentSchema(ExpandableSchema):
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
-    known_enactment_date = fields.Method("is_enactment_date_known", missing=False)
+    known_revision_date = fields.Method(
+        serialize="get_known_revision_date",
+        deserialize="is_revision_date_known",
+        missing=False,
+    )
     selection = fields.Nested(SelectorSchema, many=True, missing=list)
     anchors = fields.Nested(SelectorSchema, many=True, missing=list)
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
@@ -152,11 +156,14 @@ class LinkedEnactmentSchema(ExpandableSchema):
         unknown = EXCLUDE
         ordered = True
 
-    def is_enactment_date_known(self, obj) -> bool:
+    def get_known_revision_date(self, obj) -> bool:
+        return obj.known_revision_date
+
+    def is_revision_date_known(self, value) -> bool:
         if not self.context.get("coverage"):
             return False
         if self.context["coverage"]["earliest_in_db"] and (
-            self.context["coverage"]["earliest_in_db"] < obj.start_date
+            self.context["coverage"]["earliest_in_db"] < value["start_date"]
         ):
             return True
         if (

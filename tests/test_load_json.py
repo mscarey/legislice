@@ -2,6 +2,7 @@ import datetime
 import pytest
 
 from legislice.download import LegisliceDateError, LegislicePathError
+from legislice.enactments import TextQuoteSelector
 from legislice.name_index import EnactmentIndex
 
 
@@ -54,6 +55,14 @@ class TestLoadJson:
         client = test_client
         enactment = client.read_from_json(data={"node": "/us/const/amendment/IV"})
         assert enactment.selected_text().startswith("The right")
+
+    def test_make_enactment_with_text_split(self, test_client, fourth_a):
+        result = test_client.read_from_json(fourth_a)
+        selector = TextQuoteSelector(
+            prefix="and", exact="the persons or things", suffix="to be seized."
+        )
+        result.select(selector)
+        assert result.selected_text().endswith("or things…")
 
 
 class TestUpdateEnactments:

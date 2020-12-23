@@ -27,7 +27,7 @@ class TestDownloadJSON:
     client = Client(api_token=TOKEN, api_root=API_ROOT)
 
     @pytest.mark.vcr()
-    def test_fetch_section(self):
+    def test_fetch_section(self, test_client):
         url = self.client.url_from_enactment_uri("/test/acts/47/1")
         response = self.client._fetch_from_url(url=url)
 
@@ -40,7 +40,7 @@ class TestDownloadJSON:
         assert section["heading"] == "Short title"
 
     @pytest.mark.vcr()
-    def test_fetch_current_section_with_date(self):
+    def test_fetch_current_section_with_date(self, test_client):
         url = self.client.url_from_enactment_uri(
             "/test/acts/47/6D", date=datetime.date(2020, 1, 1)
         )
@@ -75,29 +75,26 @@ class TestDownloadJSON:
         assert s102["heading"] == "Short title"
 
     @pytest.mark.vcr()
-    def test_fetch_past_section_with_date(self):
-        waiver = self.client.fetch(
+    def test_fetch_past_section_with_date(self, test_client):
+        waiver = test_client.fetch(
             query="/test/acts/47/6D", date=datetime.date(1940, 1, 1)
         )
         assert waiver["url"].endswith("acts/47/6D@1940-01-01")
         assert waiver["children"][0]["start_date"] == "1935-04-01"
 
     @pytest.mark.vcr()
-    def test_omit_terminal_slash(self):
-        statute = self.client.fetch(query="us/usc/t17/s102/b/")
+    def test_omit_terminal_slash(self, test_client):
+        statute = test_client.fetch(query="us/usc/t17/s102/b/")
         assert not statute["node"].endswith("/")
 
     @pytest.mark.vcr()
-    def test_add_omitted_initial_slash(self):
-        statute = self.client.fetch(query="us/usc/t17/s102/b/")
+    def test_add_omitted_initial_slash(self, test_client):
+        statute = test_client.fetch(query="us/usc/t17/s102/b/")
         assert statute["node"].startswith("/")
 
 
 class TestDownloadAndLoad:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
-
-    @pytest.mark.vcr()
-    def test_make_enactment_from_citation(self):
+    def test_make_enactment_from_citation(self, test_client, fourth_a):
         """
         Test fields for loaded Enactment.
 
@@ -105,14 +102,14 @@ class TestDownloadAndLoad:
         the date that the provision was revised in the USC.
         """
 
-        fourth_a = self.client.read(query="/us/const/amendment/IV")
-        assert fourth_a.selected_text().endswith("persons or things to be seized.")
-        assert fourth_a.known_revision_date is True
+        result = test_client.read_from_json(fourth_a)
+        assert result.selected_text().endswith("persons or things to be seized.")
+        assert result.known_revision_date is True
 
     @pytest.mark.vcr()
-    def test_make_enactment_from_selector_without_code(self):
+    def test_make_enactment_from_selector_without_code(self, test_client):
         selection = TextQuoteSelector(suffix=", shall be vested")
-        art_3 = self.client.read(query="/us/const/article/III/1")
+        art_3 = test_client.read(query="/us/const/article/III/1")
         art_3.select(selection)
         text = art_3.selected_text()
 
@@ -120,86 +117,75 @@ class TestDownloadAndLoad:
         assert text.endswith("the United States…")
 
     @pytest.mark.vcr()
-    def test_bad_uri_for_enactment(self):
+    def test_bad_uri_for_enactment(self, test_client):
         with pytest.raises(LegislicePathError):
-            _ = self.client.read(query="/us/const/article-III/1")
+            _ = test_client.read(query="/us/const/article-III/1")
 
     @pytest.mark.vcr()
-    def test_download_and_make_enactment_with_text_split(self):
-        fourth_a = self.client.read(query="/us/const/amendment/IV",)
-        selector = TextQuoteSelector(
-            prefix="and", exact="the persons or things", suffix="to be seized."
-        )
-        fourth_a.select(selector)
-        assert fourth_a.selected_text().endswith("or things…")
-
-    @pytest.mark.vcr()
-    def test_chapeau_and_subsections_from_uslm_code(self):
+    def test_chapeau_and_subsections_from_uslm_code(self, test_client):
         """
         Test that the selected_text includes the text of subsections.
 
         known_revision_date should be available on the subsection as well as
         the section.
         """
-        definition = self.client.read(query="/test/acts/47/4")
+        definition = test_client.read(query="/test/acts/47/4")
         sequence = definition.text_sequence()
         assert str(sequence.strip()).endswith("below the nose.")
         assert definition.known_revision_date is True
         assert definition.children[0].known_revision_date is True
 
     @pytest.mark.vcr()
-    def test_unknown_revision_date(self):
+    def test_unknown_revision_date(self, test_client):
         """
         Test notation that enactment went into effect before start of the available data range.
 
         This test may begin to fail if earlier statute versions are
         loaded to the API's database.
         """
-        enactment = self.client.read(query="/us/usc/t17/s103")
+        enactment = test_client.read(query="/us/usc/t17/s103")
         assert enactment.known_revision_date is False
         assert enactment.children[0].known_revision_date is False
 
     @pytest.mark.vcr()
-    def test_update_linked_enactment(self):
+    def test_update_linked_enactment(self, test_client):
         data = {"node": "/us/const"}
-        new = self.client.update_enactment_from_api(data)
+        new = test_client.update_enactment_from_api(data)
         assert new["node"] == "/us/const"
         assert new["start_date"] == "1788-09-13"
         assert isinstance(new["children"][0], str)
 
     @pytest.mark.vcr()
-    def test_download_from_cross_reference(self):
+    def test_update_enactment_when_reading_from_json(self, test_client):
+        enactment = test_client.read_from_json(data={"node": "/us/const/amendment/IV"})
+        assert enactment.start_date.isoformat() == "1791-12-15"
+
+    @pytest.mark.vcr()
+    def test_download_from_cross_reference(self, test_client):
         ref = CrossReference(
             target_uri="/test/acts/47/6C",
             target_url=f"{API_ROOT}/test/acts/47/6C@2020-01-01",
             target_node=1660695,
             reference_text="Section 6C",
         )
-        cited = self.client.fetch(ref)
+        cited = test_client.fetch(ref)
         assert cited["content"].startswith("Where an exemption is granted")
 
 
 class TestReadJSON:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
-
     @pytest.mark.vcr()
-    def test_read_from_json(self):
-        enactment = self.client.read_from_json(data={"node": "/us/const/amendment/IV"})
-        assert enactment.start_date.isoformat() == "1791-12-15"
-
-    @pytest.mark.vcr()
-    def test_read_from_cross_reference(self):
+    def test_read_from_cross_reference(self, test_client):
         """Test reading old version of statute by passing date param."""
         ref = CrossReference(
             target_uri="/test/acts/47/6D",
             target_url=f"{API_ROOT}/test/acts/47/6D",
             reference_text="Section 6D",
         )
-        cited = self.client.read(ref, date="1950-01-01")
+        cited = test_client.read(ref, date="1950-01-01")
         assert "bona fide religious or cultural reasons." in str(cited)
 
     @pytest.mark.vcr()
-    def test_read_enactment_without_version_url(self):
+    def test_read_enactment_without_version_url(self, test_client):
         data = {
             "start_date": "1935-04-01",
             "selection": [
@@ -221,22 +207,20 @@ class TestReadJSON:
             "node": "/test/acts/47/6A",
             "end_date": None,
         }
-        result = self.client.read_from_json(data)
+        result = test_client.read_from_json(data)
         assert result.content.startswith("Where")
 
 
 class TestInboundCitations:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
-
     @pytest.mark.vcr()
-    def test_fetch_inbound_citations_to_node(self):
-        infringement_statute = self.client.read(query="/us/usc/t17/s501",)
-        inbound_refs = self.client.fetch_citations_to(infringement_statute)
+    def test_fetch_inbound_citations_to_node(self, test_client):
+        infringement_statute = test_client.read(query="/us/usc/t17/s501",)
+        inbound_refs = test_client.fetch_citations_to(infringement_statute)
         period_ref = inbound_refs[0]["locations"][0]
         assert period_ref.get("text_version", {}).get("content") is None
 
     @pytest.mark.vcr()
-    def test_fetch_inbound_citations_in_multiple_locations(self):
+    def test_fetch_inbound_citations_in_multiple_locations(self, test_client):
         """
         Test InboundReference with multiple "locations".
 
@@ -247,14 +231,14 @@ class TestInboundCitations:
         """
 
         definitions = "/us/usc/t2/s1301"
-        inbound_refs = self.client.citations_to(definitions)
+        inbound_refs = test_client.citations_to(definitions)
         period_ref = inbound_refs[0]
         assert str(period_ref).endswith("and 2 other locations")
 
     @pytest.mark.vcr()
-    def test_read_inbound_citations_to_node(self):
-        infringement_statute = self.client.read(query="/us/usc/t17/s501",)
-        inbound_refs = self.client.citations_to(infringement_statute)
+    def test_read_inbound_citations_to_node(self, test_client):
+        infringement_statute = test_client.read(query="/us/usc/t17/s501",)
+        inbound_refs = test_client.citations_to(infringement_statute)
         assert inbound_refs[0].content.startswith(
             "Any person who distributes a phonorecord"
         )
@@ -267,14 +251,14 @@ class TestInboundCitations:
         assert period_ref.start_date.isoformat() == "2013-07-18"
 
     @pytest.mark.vcr()
-    def test_download_inbound_citations_from_uri(self):
-        inbound_refs = self.client.citations_to("/us/usc/t17/s501")
+    def test_download_inbound_citations_from_uri(self, test_client):
+        inbound_refs = test_client.citations_to("/us/usc/t17/s501")
         assert inbound_refs[0].content.startswith(
             "Any person who distributes a phonorecord"
         )
 
     @pytest.mark.vcr()
-    def test_download_enactment_from_inbound_citation(self):
+    def test_download_enactment_from_inbound_citation(self, test_client):
         reference = InboundReference(
             content="Any person who distributes...",
             reference_text="section 501 of this title",
@@ -287,17 +271,17 @@ class TestInboundCitations:
                 )
             ],
         )
-        cited = self.client.read(reference)
+        cited = test_client.read(reference)
         assert cited.node == "/us/usc/t17/s109/b/4"
         assert cited.start_date == datetime.date(2013, 7, 18)
 
     @pytest.mark.vcr()
-    def test_download_enactment_from_citing_location(self):
+    def test_download_enactment_from_citing_location(self, test_client):
 
         location = CitingProvisionLocation(
             heading="",
             node="/us/usc/t17/s109/b/4",
             start_date=datetime.date(2013, 7, 18),
         )
-        enactment = self.client.read(location)
+        enactment = test_client.read(location)
         assert enactment.content.startswith("Any person who distributes")
