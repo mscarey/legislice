@@ -10,11 +10,6 @@ from requests import api
 
 from legislice.download import Client
 from legislice.enactments import Enactment, consolidate_enactments
-from legislice.mock_clients import (
-    JSONRepository,
-    MOCK_BEARD_ACT_CLIENT,
-    MOCK_USC_CLIENT,
-)
 from legislice.schemas import EnactmentSchema
 
 load_dotenv()
@@ -167,8 +162,6 @@ class TestCrossReferences:
 
 
 class TestSelectText:
-    client = MOCK_BEARD_ACT_CLIENT
-
     def test_get_all_text(self, test_client):
         section = test_client.read(query="/test/acts/47/11")
         assert "barbers, hairdressers, or other" in section.text

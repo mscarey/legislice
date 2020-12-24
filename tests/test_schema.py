@@ -2,7 +2,6 @@ from copy import deepcopy
 from datetime import datetime
 import json
 
-from legislice.mock_clients import JSONRepository, MOCK_USC_CLIENT
 import os
 
 from anchorpoint.textselectors import TextPositionSelector, TextQuoteSelector
@@ -156,13 +155,11 @@ class TestLoadEnactment:
         with pytest.raises(ValueError):
             _ = enactment_needs_api_update(barbers_without_node)
 
-    def test_nest_selector_fields_before_loading(self):
-        client = MOCK_USC_CLIENT
-        raw_enactment = client.fetch(query="/us/const/amendment/IV", date="1791-12-15")
-        raw_enactment["selection"] = [{"start": 10, "end": 20}]
-        raw_enactment["suffix"] = ", and no Warrants shall issue"
+    def test_nest_selector_fields_before_loading(self, test_client, fourth_a):
+        fourth_a["selection"] = [{"start": 10, "end": 20}]
+        fourth_a["suffix"] = ", and no Warrants shall issue"
         schema = EnactmentSchema()
-        updated = schema.move_selector_fields(raw_enactment)
+        updated = schema.move_selector_fields(fourth_a)
         assert updated["selection"][1]["suffix"] == ", and no Warrants shall issue"
 
     def test_load_enactment_with_cross_reference(self):
