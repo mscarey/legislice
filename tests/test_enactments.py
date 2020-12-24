@@ -86,13 +86,14 @@ class TestLinkedEnactment:
 
 
 class TestEnactmentDetails:
+    @pytest.mark.vcr
     def test_usc_enactment_is_statute(self, test_client):
         enactment = test_client.read(query="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
         assert enactment.level == "statute"
 
-    def test_str_representation(self, test_client):
-        enactment = test_client.read(query="/us/const/amendment/IV")
+    def test_str_representation(self, fourth_a, test_client):
+        enactment = test_client.read_from_json(fourth_a)
         selection = TextQuoteSelector(
             exact="The right of the people to be secure in their persons"
         )
@@ -116,6 +117,7 @@ class TestEnactmentDetails:
         ex_post_facto_provision = test_client.read(query="/us/const/article/I/8/8")
         assert ex_post_facto_provision.start_date == date(1788, 9, 13)
 
+    @pytest.mark.vcr
     def test_date_and_text_from_path_and_regime(self, test_client):
         """
         This tests different parsing code because the date is
@@ -130,9 +132,9 @@ class TestEnactmentDetails:
         assert amendment_5.start_date == date(1791, 12, 15)
         assert "otherwise infamous crime" in amendment_5.text
 
-    def test_compare_effective_dates(self, test_client):
-        amendment_5 = test_client.read(query="/us/const/amendment/V")
-        amendment_14 = test_client.read(query="/us/const/amendment/XIV")
+    def test_compare_effective_dates(self, fifth_a, fourteenth_dp, test_client):
+        amendment_5 = test_client.read_from_json(fifth_a)
+        amendment_14 = test_client.read_from_json(fourteenth_dp)
         assert amendment_14.start_date == date(1868, 7, 28)
         assert amendment_5.start_date < amendment_14.start_date
 
@@ -162,18 +164,16 @@ class TestCrossReferences:
 
 
 class TestSelectText:
-    def test_get_all_text(self, test_client):
-        section = test_client.read(query="/test/acts/47/11")
-        assert "barbers, hairdressers, or other" in section.text
-
-    def test_same_quotation_from_enactments_of_differing_depths(self, test_client):
-        section = test_client.read(query="/test/acts/47/6C")
+    def test_same_quotation_from_enactments_of_differing_depths(
+        self, test_client, section_11_subdivided
+    ):
+        section = test_client.read_from_json(section_11_subdivided)
         section.select(
-            TextQuoteSelector(exact="The beardcoin shall be a cryptocurrency")
+            TextQuoteSelector(exact="as they see fit to purchase a beardcoin")
         )
-        subsection = test_client.read(query="/test/acts/47/6C/1")
+        subsection = test_client.read_from_json(section_11_subdivided["children"][3])
         subsection.select(
-            TextQuoteSelector(exact="The beardcoin shall be a cryptocurrency")
+            TextQuoteSelector(exact="as they see fit to purchase a beardcoin")
         )
         assert subsection.means(section)
         assert section >= subsection
@@ -211,8 +211,8 @@ class TestSelectText:
         )
         assert section.text_sequence()[0].text == "Where an exemption is granted…"
 
-    def test_select_with_list_of_strings(self, test_client):
-        section = test_client.read(query="/test/acts/47/8")
+    def test_select_with_list_of_strings(self, test_client, section_8):
+        section = test_client.read_from_json(section_8)
         section.select(
             [
                 "Where an officer of the",
@@ -226,8 +226,8 @@ class TestSelectText:
             "Where an officer of the…state or territorial police…finds"
         )
 
-    def test_str_for_text_sequence(self, test_client):
-        section = test_client.read(query="/test/acts/47/11")
+    def test_str_for_text_sequence(self, test_client, section_11_subdivided):
+        section = test_client.read_from_json(section_11_subdivided)
         quotes = [
             TextQuoteSelector(
                 exact="The Department of Beards may issue licenses to such"
@@ -242,13 +242,14 @@ class TestSelectText:
             "licenses to such…hairdressers…as they see fit…"
         )
 
-    def test_no_double_spaces_around_repealed_section(self, test_client):
-        section = test_client.read(query="/test/acts/47/8/2")
+    def test_no_double_spaces_around_repealed_section(self, test_client, section_8):
+        section = test_client.read_from_json(section_8["children"][1])
+        assert "or remove the beard with" in section.text
         assert "or  remove the beard with" not in section.text
 
-    def test_select_space_between_selected_passages(self, test_client):
+    def test_select_space_between_selected_passages(self, fourteenth_dp, test_client):
         """Test that the space between "property," and "without" is selected."""
-        section_1 = test_client.read(query="/us/const/amendment/XIV/1")
+        section_1 = test_client.read_from_json(fourteenth_dp)
         section_1.select("without due process of law")
         section_1.select_more("life, liberty, or property,")
         now_selected = section_1.selected_text()
@@ -397,9 +398,8 @@ class TestSelectFromEnactment:
         fourth_a.select("The right of the people")
         assert fourth_a.selected_text() == "The right of the people…"
 
-    @pytest.mark.vcr
-    def test_select_method_clears_previous_selection(self, test_client):
-        old_version = test_client.read("/test/acts/47/8/2", date="2015-01-01")
+    def test_select_method_clears_previous_selection(self, test_client, section_8):
+        old_version = test_client.read_from_json(section_8["children"][1])
         old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
         old_version.select(old_selector)
         assert old_version.selected_text() == (
@@ -462,9 +462,14 @@ class TestCompareEnactment:
         assert not search_clause > search_clause
 
     @pytest.mark.vcr
-    def test_different_section_same_text(self, test_client):
-        old_version = test_client.read("/test/acts/47/8/2/b", date=date(1999, 1, 1))
-        new_version = test_client.read("/test/acts/47/8/2/d", date=date(2020, 1, 1))
+    def test_different_section_same_text(self, test_client, old_section_8, section_8):
+
+        old_version = test_client.read_from_json(
+            old_section_8["children"][1]["children"][1]
+        )
+        new_version = test_client.read_from_json(
+            section_8["children"][1]["children"][4]
+        )
         assert old_version.means(new_version)
 
     @pytest.mark.vcr
@@ -481,24 +486,13 @@ class TestCompareEnactment:
         assert combined.text_sequence() > subdivided.text_sequence()
 
     @pytest.mark.vcr
-    def test_more_provisions_implies_fewer(self, test_client):
-        more_provisions = test_client.read(
-            query="/test/acts/47/8/2", date=date(2020, 1, 1)
-        )
+    def test_more_provisions_implies_fewer(self, test_client, section_8):
         fewer_provisions = test_client.read(
             query="/test/acts/47/8/2", date=date(1999, 1, 1)
         )
+        more_provisions = test_client.read_from_json(section_8["children"][1])
         assert more_provisions >= fewer_provisions
         assert more_provisions > fewer_provisions
-
-    @pytest.mark.vcr
-    def test_fewer_provisions_does_not_imply_more(self, test_client):
-        more_provisions = test_client.read(
-            query="/test/acts/47/8/2", date=date(2020, 1, 1)
-        )
-        fewer_provisions = test_client.read(
-            query="/test/acts/47/8/2", date=date(1999, 1, 1)
-        )
         assert not fewer_provisions >= more_provisions
         assert not fewer_provisions > more_provisions
 
@@ -587,19 +581,18 @@ class TestCompareEnactment:
 
 
 class TestAddEnactments:
-    @pytest.mark.vcr
-    def test_add_subset_nested_enactment(self, test_client):
+    def test_add_subset_nested_enactment(self, section_8, test_client):
         """Test that adding an included Enactment returns the same Enactment."""
-        greater = test_client.read(query="/test/acts/47/8/2")
-        lesser = test_client.read(query="/test/acts/47/8/2/a")
+        greater = test_client.read_from_json(section_8["children"][1])
+        lesser = test_client.read_from_json(section_8["children"][1]["children"][0])
         combined = greater + lesser
         assert combined.means(greater)
 
     @pytest.mark.vcr
-    def test_add_superset_nested_enactment(self, test_client):
+    def test_add_superset_nested_enactment(self, section_8, test_client):
         """Test that adding an included Enactment returns the same Enactment."""
-        greater = test_client.read(query="/test/acts/47/8/2")
-        lesser = test_client.read(query="/test/acts/47/8/2/a")
+        greater = test_client.read_from_json(section_8["children"][1])
+        lesser = test_client.read_from_json(section_8["children"][1]["children"][0])
         combined = lesser + greater
         assert combined.means(greater)
 
@@ -658,6 +651,7 @@ class TestAddEnactments:
         with pytest.raises(TextSelectionError):
             fourth.select("right to privacy")
 
+    @pytest.mark.vcr
     def test_add_selection_from_changed_section(self, test_client):
         old_version = test_client.read("/test/acts/47/6D/1", date="1935-04-01")
         new_version = test_client.read("/test/acts/47/6D/1", date="2013-07-18")
@@ -666,10 +660,12 @@ class TestAddEnactments:
         new_version.select_more_text_from_changed_version(old_version)
         assert new_version.selected_text() == "…bona fide religious…reasons."
 
-    def test_add_selection_from_changed_node_and_subnode(self, test_client):
+    def test_add_selection_from_changed_node_and_subnode(
+        self, old_section_8, section_8, test_client
+    ):
         """Test that text that has changed subsections can still be added."""
-        old_version = test_client.read("/test/acts/47/8/2", date="1935-04-01")
-        new_version = test_client.read("/test/acts/47/8/2", date="2013-07-18")
+        old_version = test_client.read_from_json(old_section_8)
+        new_version = test_client.read_from_json(section_8)
         new_version.select(
             "Any such person issued a notice to remedy under subsection 1 must"
         )
@@ -700,14 +696,12 @@ class TestAddEnactments:
         # Test that original Enactments unchanged
         assert "and no Warrants" not in search.selected_text()
 
-    def test_get_recursive_selection(self, test_client):
-        old_version = test_client.read("/test/acts/47/8/2", date="2015-01-01")
-        old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
-        old_version.select(old_selector)
-        old_version.children[4].select(
-            "obtain a beardcoin from the Department of Beards"
-        )
-        selector_set = old_version.tree_selection()
+    def test_get_recursive_selection(self, section_8, test_client):
+        version = test_client.read_from_json(section_8["children"][1])
+        selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        version.select(selector)
+        version.children[4].select("obtain a beardcoin from the Department of Beards")
+        selector_set = version.tree_selection()
         ranges = selector_set.ranges()
         assert ranges[0].start == 0
         assert ranges[0].end == 65
@@ -715,25 +709,27 @@ class TestAddEnactments:
         assert ranges[1].start == 218
         assert ranges[1].end == 266
 
-        as_quotes = selector_set.as_quotes(old_version.text)
+        as_quotes = selector_set.as_quotes(version.text)
         assert as_quotes[1].exact == "obtain a beardcoin from the Department of Beards"
 
-    def test_add_selection_from_child_node(self, test_client):
-        old_version = test_client.read("/test/acts/47/8/2", date="2015-01-01")
-        old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
-        old_version.select(old_selector)
-        old_version.children[4].select(
+    def test_add_selection_from_child_node(self, section_8, test_client):
+        parent_version = test_client.read_from_json(section_8["children"][1])
+        parent_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        parent_version.select(parent_selector)
+        parent_version.children[4].select(
             "obtain a beardcoin from the Department of Beards"
         )
-        assert old_version.selected_text() == (
+        assert parent_version.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
             "obtain a beardcoin from the Department of Beards…"
         )
 
-        new_version = test_client.read("/test/acts/47/8/2/c", date="2015-01-01")
-        new_version.select()
+        child_version = test_client.read_from_json(
+            section_8["children"][1]["children"][3]
+        )
+        child_version.select()
 
-        combined = old_version + new_version
+        combined = parent_version + child_version
 
         assert combined.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
@@ -741,9 +737,11 @@ class TestAddEnactments:
             "obtain a beardcoin from the Department of Beards…"
         )
 
-    def test_add_selection_from_parent_node(self, test_client):
-        parent_version = test_client.read("/test/acts/47/8/2", date="2015-01-01")
-        child_version = test_client.read("/test/acts/47/8/2/c", date="2015-01-01")
+    def test_add_selection_from_parent_node(self, section_8, test_client):
+        parent_version = test_client.read_from_json(section_8["children"][1])
+        child_version = test_client.read_from_json(
+            section_8["children"][1]["children"][3]
+        )
 
         parent_version.select(
             "Any such person issued a notice to remedy under subsection 1 must"
@@ -762,16 +760,18 @@ class TestAddEnactments:
         )
         assert child_version.selected_text() == "remove the beard with a laser…"
 
-    def test_fail_to_add_repeated_text_from_changed_version(self, test_client):
+    def test_fail_to_add_repeated_text_from_changed_version(
+        self, section_8, old_section_8, test_client
+    ):
         """Fail to place selection because "Department of Beards" occurs twice in this scope."""
-        new_version = test_client.read("/test/acts/47/8")
+        new_version = test_client.read_from_json(section_8)
         new_version.select(
             TextQuoteSelector(
                 prefix="Department of Beards, ", exact="Australian Federal Police"
             )
         )
 
-        old_version = test_client.read("/test/acts/47/8", date="1935-04-01")
+        old_version = test_client.read_from_json(old_section_8)
         old_version.select(
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
@@ -779,16 +779,19 @@ class TestAddEnactments:
         with pytest.raises(ValueError):
             _ = new_version + old_version
 
+    @pytest.mark.vcr
     def test_fail_to_add_non_parent_or_child_enactment(self, test_client):
         left = test_client.read("/test/acts/47/1")
         right = test_client.read("/test/acts/47/2")
         with pytest.raises(ValueError):
             _ = left + right
 
-    def test_fail_to_add_text_not_in_this_version(self, test_client):
+    def test_fail_to_add_text_not_in_this_version(
+        self, old_section_8, section_8, test_client
+    ):
         """Fail to add selection from new version because it isn't in the old version."""
-        old_version = test_client.read("/test/acts/47/8", date="1935-04-01")
-        new_version = test_client.read("/test/acts/47/8")
+        old_version = test_client.read_from_json(old_section_8)
+        new_version = test_client.read_from_json(section_8)
 
         new_version.select(
             TextQuoteSelector(
@@ -802,29 +805,35 @@ class TestAddEnactments:
         with pytest.raises(TextSelectionError):
             _ = old_version + new_version
 
-    def test_fail_to_add_node_not_in_this_version(self, test_client):
+    def test_fail_to_add_node_not_in_this_version(
+        self, old_section_8, section_8, test_client
+    ):
         """Fail to add new selection because its node isn't in the old version."""
-        old_version = test_client.read("/test/acts/47/8/2", date="1935-04-01")
-        new_version = test_client.read("/test/acts/47/8/2/c")
+        old_version = test_client.read_from_json(old_section_8["children"][1])
+        new_version = test_client.read_from_json(
+            section_8["children"][1]["children"][3]
+        )
         with pytest.raises(ValueError):
             _ = old_version + new_version
 
     @pytest.mark.xfail()
-    def test_locate_anchor_by_remembering_prefix(self, test_client):
+    def test_locate_anchor_by_remembering_prefix(
+        self, old_section_8, section_8, test_client
+    ):
         """
         Place position selector by remembering prefix from TextQuoteSelector.
 
         Xfails because the prefix information is lost when the selector
         becomes a position selector.
         """
-        new_version = test_client.read("/test/acts/47/8")
+        old_version = test_client.read_from_json(old_section_8)
+        new_version = test_client.read_from_json(section_8)
         new_version.select(
             TextQuoteSelector(
                 prefix="Department of Beards, ", exact="Australian Federal Police"
             )
         )
 
-        old_version = test_client.read("/test/acts/47/8", date="1935-04-01")
         old_version.select(
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
@@ -832,20 +841,22 @@ class TestAddEnactments:
         combined = new_version + old_version
         assert combined.text == "…Department of Beards…Australian Federal Police…"
 
-    def test_error_for_using_wrong_type_to_select_text(self, test_client):
-        new_version = test_client.read("/test/acts/47/8")
+    def test_error_for_using_wrong_type_to_select_text(self, section_8, test_client):
+        new_version = test_client.read_from_json(section_8)
         with pytest.raises(TypeError):
             new_version.select_more(date(2000, 1, 1))
 
-    def test_able_to_add_subsection_with_text_repeated_elsewhere(self, test_client):
-        new_version = test_client.read("/test/acts/47/8")
+    def test_able_to_add_subsection_with_text_repeated_elsewhere(
+        self, old_section_8, section_8, test_client
+    ):
+        old_version = test_client.read_from_json(old_section_8)
+        new_version = test_client.read_from_json(section_8)
         new_version.select(
             TextQuoteSelector(
                 prefix="Department of Beards, ", exact="Australian Federal Police"
             )
         )
 
-        old_version = test_client.read("/test/acts/47/8", date="1935-04-01")
         old_version.select(
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )

@@ -74,6 +74,260 @@ def section6d():
     }
 
 
+@pytest.fixture()
+def section_8():
+    return {
+        "heading": "Notice to remedy",
+        "start_date": "1935-04-01",
+        "node": "/test/acts/47/8",
+        "text_version": None,
+        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/",
+        "end_date": None,
+        "children": [
+            {
+                "heading": "",
+                "start_date": "1935-04-01",
+                "node": "/test/acts/47/8/1",
+                "text_version": {
+                    "id": 1142679,
+                    "url": "https://authorityspoke.com/api/v1/textversions/1142679/",
+                    "content": "Where an officer of the Department of Beards, Australian Federal Police, state or territorial police, or military police of the Australian Defence Force finds a person to be wearing a beard within the territory of the Commonwealth of Australia, and that person fails or is unable to produce a beardcoin as proof of holding an exemption under section 6, that officer shall in the first instance issue such person a notice to remedy.",
+                },
+                "url": "https://authorityspoke.com/api/v1/test/acts/47/8/1/",
+                "end_date": None,
+                "children": [],
+                "citations": [
+                    {
+                        "target_uri": "/test/acts/47/6",
+                        "target_url": "https://authorityspoke.com/api/v1/test/acts/47/6/",
+                        "target_node": 1386965,
+                        "reference_text": "section 6",
+                    }
+                ],
+            },
+            {
+                "heading": "",
+                "start_date": "1935-04-01",
+                "node": "/test/acts/47/8/2",
+                "text_version": {
+                    "id": 1142683,
+                    "url": "https://authorityspoke.com/api/v1/textversions/1142683/",
+                    "content": "Any such person issued a notice to remedy under subsection 1 must either:",
+                },
+                "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/",
+                "end_date": None,
+                "children": [
+                    {
+                        "heading": "",
+                        "start_date": "1935-04-01",
+                        "node": "/test/acts/47/8/2/a",
+                        "text_version": {
+                            "id": 1142680,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142680/",
+                            "content": "shave in such a way that they are no longer in breach of section 5, or",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/a/",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [
+                            {
+                                "target_uri": "/test/acts/47/5",
+                                "target_url": "https://authorityspoke.com/api/v1/test/acts/47/5/",
+                                "target_node": 1386964,
+                                "reference_text": "section 5",
+                            }
+                        ],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "2013-07-18",
+                        "node": "/test/acts/47/8/2/b",
+                        "text_version": {
+                            "id": 1142702,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142702/",
+                            "content": "remove the beard with electrolysis, or",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/b/",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "2013-07-18",
+                        "node": "/test/acts/47/8/2/b-con",
+                        "text_version": None,
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/b-con/",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "2013-07-18",
+                        "node": "/test/acts/47/8/2/c",
+                        "text_version": {
+                            "id": 1142703,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142703/",
+                            "content": "remove the beard with a laser, or",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/c/",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "2013-07-18",
+                        "node": "/test/acts/47/8/2/d",
+                        "text_version": {
+                            "id": 1142681,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142681/",
+                            "content": "obtain a beardcoin from the Department of Beards",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/d/",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "2013-07-18",
+                        "node": "/test/acts/47/8/2/d-con",
+                        "text_version": {
+                            "id": 1142682,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142682/",
+                            "content": "within 14 days of such notice being issued to them.",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/d-con/",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [],
+                    },
+                ],
+                "citations": [
+                    {
+                        "target_uri": "/test/acts/47/8/1",
+                        "target_url": "https://authorityspoke.com/api/v1/test/acts/47/8/1/",
+                        "target_node": 1386980,
+                        "reference_text": "subsection 1",
+                    }
+                ],
+            },
+        ],
+        "citations": [],
+        "parent": "https://authorityspoke.com/api/v1/test/acts/47/",
+    }
+
+
+@pytest.fixture()
+def old_section_8():
+    return {
+        "heading": "Notice to remedy",
+        "start_date": "1935-04-01",
+        "node": "/test/acts/47/8",
+        "text_version": None,
+        "url": "https://authorityspoke.com/api/v1/test/acts/47/8@1935-04-01",
+        "end_date": None,
+        "children": [
+            {
+                "heading": "",
+                "start_date": "1935-04-01",
+                "node": "/test/acts/47/8/1",
+                "text_version": {
+                    "id": 1142679,
+                    "url": "https://authorityspoke.com/api/v1/textversions/1142679/",
+                    "content": "Where an officer of the Department of Beards, Australian Federal Police, state or territorial police, or military police of the Australian Defence Force finds a person to be wearing a beard within the territory of the Commonwealth of Australia, and that person fails or is unable to produce a beardcoin as proof of holding an exemption under section 6, that officer shall in the first instance issue such person a notice to remedy.",
+                },
+                "url": "https://authorityspoke.com/api/v1/test/acts/47/8/1@1935-04-01",
+                "end_date": None,
+                "children": [],
+                "citations": [
+                    {
+                        "target_uri": "/test/acts/47/6",
+                        "target_url": "https://authorityspoke.com/api/v1/test/acts/47/6@1935-04-01",
+                        "target_node": 1386965,
+                        "reference_text": "section 6",
+                    }
+                ],
+            },
+            {
+                "heading": "",
+                "start_date": "1935-04-01",
+                "node": "/test/acts/47/8/2",
+                "text_version": {
+                    "id": 1142683,
+                    "url": "https://authorityspoke.com/api/v1/textversions/1142683/",
+                    "content": "Any such person issued a notice to remedy under subsection 1 must either:",
+                },
+                "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2@1935-04-01",
+                "end_date": None,
+                "children": [
+                    {
+                        "heading": "",
+                        "start_date": "1935-04-01",
+                        "node": "/test/acts/47/8/2/a",
+                        "text_version": {
+                            "id": 1142680,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142680/",
+                            "content": "shave in such a way that they are no longer in breach of section 5, or",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/a@1935-04-01",
+                        "end_date": None,
+                        "children": [],
+                        "citations": [
+                            {
+                                "target_uri": "/test/acts/47/5",
+                                "target_url": "https://authorityspoke.com/api/v1/test/acts/47/5@1935-04-01",
+                                "target_node": 1386964,
+                                "reference_text": "section 5",
+                            }
+                        ],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "1935-04-01",
+                        "node": "/test/acts/47/8/2/b",
+                        "text_version": {
+                            "id": 1142681,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142681/",
+                            "content": "obtain a beardcoin from the Department of Beards",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/b@1935-04-01",
+                        "end_date": "2013-07-18",
+                        "children": [],
+                        "citations": [],
+                    },
+                    {
+                        "heading": "",
+                        "start_date": "1935-04-01",
+                        "node": "/test/acts/47/8/2/b-con",
+                        "text_version": {
+                            "id": 1142682,
+                            "url": "https://authorityspoke.com/api/v1/textversions/1142682/",
+                            "content": "within 14 days of such notice being issued to them.",
+                        },
+                        "url": "https://authorityspoke.com/api/v1/test/acts/47/8/2/b-con@1935-04-01",
+                        "end_date": "2013-07-18",
+                        "children": [],
+                        "citations": [],
+                    },
+                ],
+                "citations": [
+                    {
+                        "target_uri": "/test/acts/47/8/1",
+                        "target_url": "https://authorityspoke.com/api/v1/test/acts/47/8/1@1935-04-01",
+                        "target_node": 1386980,
+                        "reference_text": "subsection 1",
+                    }
+                ],
+            },
+        ],
+        "citations": [],
+        "parent": "https://authorityspoke.com/api/v1/test/acts/47@1935-04-01",
+    }
+
+
 @pytest.fixture(scope="class")
 def section_11_together():
     return {
@@ -259,14 +513,18 @@ def fifth_a():
 def fourteenth_dp():
     return {
         "heading": "Citizenship: security and equal protection of citizens.",
-        "content": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside. No State shall make or enforce any law which shall abridge the privileges or immunities of citizens of the United States; nor shall any State deprive any person of life, liberty, or property, without due process of law; nor deny to any person within its jurisdiction the equal protection of the laws.",
-        "children": [],
-        "end_date": None,
-        "node": "/us/const/amendment/IV",
         "start_date": "1868-07-28",
+        "node": "/us/const/amendment/XIV/1",
+        "text_version": {
+            "id": 735717,
+            "url": "https://authorityspoke.com/api/v1/textversions/735717/",
+            "content": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside. No State shall make or enforce any law which shall abridge the privileges or immunities of citizens of the United States; nor shall any State deprive any person of life, liberty, or property, without due process of law; nor deny to any person within its jurisdiction the equal protection of the laws.",
+        },
         "url": "https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/",
+        "end_date": None,
+        "children": [],
+        "citations": [],
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/XIV/",
-        "selection": True,
     }
 
 
