@@ -13,7 +13,7 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/4
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/V
   response:
     body:
       string: ''
@@ -25,9 +25,9 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Mon, 21 Dec 2020 09:22:34 GMT
+      - Mon, 21 Dec 2020 12:06:24 GMT
       Location:
-      - /api/v1/test/acts/47/4/
+      - /api/v1/us/const/amendment/V/
       Referrer-Policy:
       - same-origin
       Server:
@@ -53,26 +53,29 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/4/
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/V/
   response:
     body:
-      string: '{"heading":"Beard, defined","start_date":"1935-04-01","node":"/test/acts/47/4","text_version":{"id":1142666,"url":"https://authorityspoke.com/api/v1/textversions/1142666/","content":"In
-        this Act, beard means any facial hair no shorter than 5 millimetres in length
-        that:"},"url":"https://authorityspoke.com/api/v1/test/acts/47/4/","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/a","text_version":{"id":1142664,"url":"https://authorityspoke.com/api/v1/textversions/1142664/","content":"occurs
-        on or below the chin, or"},"url":"https://authorityspoke.com/api/v1/test/acts/47/4/a/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/4/b","text_version":{"id":1142665,"url":"https://authorityspoke.com/api/v1/textversions/1142665/","content":"exists
-        in an uninterrupted line from the front of one ear to the front of the other
-        ear below the nose."},"url":"https://authorityspoke.com/api/v1/test/acts/47/4/b/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"https://authorityspoke.com/api/v1/test/acts/47/"}'
+      string: '{"heading":"AMENDMENT V.","start_date":"1791-12-15","node":"/us/const/amendment/V","text_version":{"id":735707,"url":"https://authorityspoke.com/api/v1/textversions/735707/","content":"No
+        person shall be held to answer for a capital, or otherwise infamous crime,
+        unless on a presentment or indictment of a Grand Jury, except in cases arising
+        in the land or naval forces, or in the Militia, when in actual service in
+        time of War or public danger; nor shall any person be subject for the same
+        offence to be twice put in jeopardy of life or limb; nor shall be compelled
+        in any Criminal Case to be a witness against himself; nor be deprived of life,
+        liberty, or property, without due process of law; nor shall private property
+        be taken for public use, without just compensation."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/V/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
     headers:
       Allow:
       - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '1127'
+      - '951'
       Content-Type:
       - application/json
       Date:
-      - Mon, 21 Dec 2020 09:22:34 GMT
+      - Mon, 21 Dec 2020 12:06:24 GMT
       Referrer-Policy:
       - same-origin
       Server:
@@ -102,7 +105,7 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/coverage/test/acts
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/1
   response:
     body:
       string: ''
@@ -114,9 +117,9 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Mon, 21 Dec 2020 09:22:34 GMT
+      - Mon, 21 Dec 2020 12:06:24 GMT
       Location:
-      - /api/v1/coverage/test/acts/
+      - /api/v1/us/const/amendment/XIV/1/
       Referrer-Policy:
       - same-origin
       Server:
@@ -142,21 +145,27 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/coverage/test/acts/
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/
   response:
     body:
-      string: '{"uri":"/test/acts","latest_heading":null,"first_published":"1935-04-01","earliest_in_db":"1935-04-01","latest_in_db":"2013-07-18"}'
+      string: '{"heading":"Citizenship: security and equal protection of citizens.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/1","text_version":{"id":735717,"url":"https://authorityspoke.com/api/v1/textversions/735717/","content":"All
+        persons born or naturalized in the United States, and subject to the jurisdiction
+        thereof, are citizens of the United States and of the State wherein they reside.
+        No State shall make or enforce any law which shall abridge the privileges
+        or immunities of citizens of the United States; nor shall any State deprive
+        any person of life, liberty, or property, without due process of law; nor
+        deny to any person within its jurisdiction the equal protection of the laws."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/"}'
     headers:
       Allow:
-      - GET, HEAD, OPTIONS
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '131'
+      - '884'
       Content-Type:
       - application/json
       Date:
-      - Mon, 21 Dec 2020 09:22:34 GMT
+      - Mon, 21 Dec 2020 12:06:25 GMT
       Referrer-Policy:
       - same-origin
       Server:

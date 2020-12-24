@@ -236,6 +236,7 @@ def fourth_a():
         "children": [],
         "citations": [],
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+        "selection": True,
     }
 
 

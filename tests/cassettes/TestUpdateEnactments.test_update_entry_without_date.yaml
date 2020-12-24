@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/3/
+  response:
+    body:
+      string: '{"heading":"Loyalty as a qualification of Senators and Representatives.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/3","text_version":{"id":735719,"url":"https://authorityspoke.com/api/v1/textversions/735719/","content":"No
+        person shall be a Senator or Representative in Congress, or elector of President
+        and Vice President, or hold any office, civil or military, under the United
+        States, or under any State, who, having previously taken an oath, as a member
+        of Congress, or as an officer of the United States, or as a member of any
+        State legislature, or as an executive or judicial officer of any State, to
+        support the Constitution of the United States, shall have engaged in insurrection
+        or rebellion against the same, or given aid or comfort to the enemies thereof.
+        But Congress may by a vote of two-thirds of each House, remove such disability."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/3/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1048'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 24 Dec 2020 09:44:03 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

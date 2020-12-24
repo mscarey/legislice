@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV/
+  response:
+    body:
+      string: '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"https://authorityspoke.com/api/v1/textversions/735706/","content":"The
+        right of the people to be secure in their persons, houses, papers, and effects,
+        against unreasonable searches and seizures, shall not be violated, and no
+        Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
+        and particularly describing the place to be searched, and the persons or things
+        to be seized."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/IV/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '697'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 24 Dec 2020 09:44:03 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

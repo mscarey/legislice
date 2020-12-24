@@ -1,227 +1,325 @@
 interactions:
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
-      uri: https://authorityspoke.com/api/v1/us/usc/t17/s501
-    response:
-      body:
-        string: ""
-      headers:
-        Content-Length:
-          - "0"
-        Content-Type:
-          - text/html; charset=utf-8
-        Date:
-          - Tue, 10 Nov 2020 10:12:23 GMT
-        Location:
-          - /api/v1/us/usc/t17/s501/
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        X-Content-Type-Options:
-          - nosniff
-      status:
-        code: 301
-        message: Moved Permanently
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
-      uri: https://authorityspoke.com/api/v1/us/usc/t17/s501/
-    response:
-      body:
-        string:
-          "{\"heading\":\"Infringement of copyright\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501\",\"text_version\":null,\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/\",\"end_date\":null,\"children\":[{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/a\",\"text_version\":{\"id\":1031590,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1031590/\",\"content\":\"Anyone
-          who violates any of the exclusive rights of the copyright owner as provided
-          by sections 106 through 122 or of the author as provided in section 106A(a),
-          or who imports copies or phonorecords into the United States in violation
-          of section 602, is an infringer of the copyright or right of the author, as
-          the case may be. For purposes of this chapter (other than section 506), any
-          reference to copyright shall be deemed to include the rights conferred by
-          section 106A(a). As used in this subsection, the term \u201Canyone\u201D includes
-          any State, any instrumentality of a State, and any officer or employee of
-          a State or instrumentality of a State acting in his or her official capacity.
-          Any State, and any such instrumentality, officer, or employee, shall be subject
-          to the provisions of this title in the same manner and to the same extent
-          as any nongovernmental entity.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/a/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/b\",\"text_version\":{\"id\":1031591,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1031591/\",\"content\":\"The
-          legal or beneficial owner of an exclusive right under a copyright is entitled,
-          subject to the requirements of section 411, to institute an action for any
-          infringement of that particular right committed while he or she is the owner
-          of it. The court may require such owner to serve written notice of the action
-          with a copy of the complaint upon any person shown, by the records of the
-          Copyright Office or otherwise, to have or claim an interest in the copyright,
-          and shall require that such notice be served upon any person whose interest
-          is likely to be affected by a decision in the case. The court may require
-          the joinder, and shall permit the intervention, of any person having or claiming
-          an interest in the copyright.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/b/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/c\",\"text_version\":{\"id\":1031592,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1031592/\",\"content\":\"For
-          any secondary transmission by a cable system that embodies a performance or
-          a display of a work which is actionable as an act of infringement under subsection
-          (c) of section 111, a television broadcast station holding a copyright or
-          other license to transmit or perform the same version of that work shall,
-          for purposes of subsection (b) of this section, be treated as a legal or beneficial
-          owner if such secondary transmission occurs within the local service area
-          of that television station.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/c/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/d\",\"text_version\":{\"id\":1031593,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1031593/\",\"content\":\"For
-          any secondary transmission by a cable system that is actionable as an act
-          of infringement pursuant to section 111(c)(3), the following shall also have
-          standing to sue: (i) the primary transmitter whose transmission has been altered
-          by the cable system; and (ii) any broadcast station within whose local service
-          area the secondary transmission occurs.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/d/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2020-04-10\",\"node\":\"/us/usc/t17/s501/e\",\"text_version\":{\"id\":1033084,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1033084/\",\"content\":\"With
-          respect to any secondary transmission that is made by a satellite carrier
-          of a performance or display of a work embodied in a primary transmission and
-          is actionable as an act of infringement under section 119(a)(3), a network
-          station holding a copyright or other license to transmit or perform the same
-          version of that work shall, for purposes of subsection (b) of this section,
-          be treated as a legal or beneficial owner if such secondary transmission occurs
-          within the local service area of that station.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/e/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/f\",\"text_version\":null,\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/f/\",\"end_date\":null,\"children\":[{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/f/1\",\"text_version\":{\"id\":1031595,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1031595/\",\"content\":\"With
-          respect to any secondary transmission that is made by a satellite carrier
-          of a performance or display of a work embodied in a primary transmission and
-          is actionable as an act of infringement under section 122, a television broadcast
-          station holding a copyright or other license to transmit or perform the same
-          version of that work shall, for purposes of subsection (b) of this section,
-          be treated as a legal or beneficial owner if such secondary transmission occurs
-          within the local market of that station.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/f/1/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/f/2\",\"text_version\":{\"id\":1031596,\"url\":\"http://127.0.0.1:8000/api/v1/textversions/1031596/\",\"content\":\"A
-          television broadcast station may file a civil action against any satellite
-          carrier that has refused to carry television broadcast signals, as required
-          under section 122(a)(2), to enforce that television broadcast station\u2019s
-          rights under section 338(a) of the Communications Act of 1934.\"},\"url\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/f/2/\",\"end_date\":null,\"children\":[],\"citations\":[]}],\"citations\":[]}],\"citations\":[],\"parent\":\"http://127.0.0.1:8000/api/v1/us/usc/t17/\"}"
-      headers:
-        Allow:
-          - GET, POST, PUT, PATCH, HEAD, OPTIONS
-        Content-Length:
-          - "6119"
-        Content-Type:
-          - application/json
-        Date:
-          - Tue, 10 Nov 2020 10:12:24 GMT
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        Vary:
-          - Accept, Cookie
-        X-Content-Type-Options:
-          - nosniff
-        X-Frame-Options:
-          - DENY
-      status:
-        code: 200
-        message: OK
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
-      uri: https://authorityspoke.com/api/v1/citations_to/us/usc/t17/s501
-    response:
-      body:
-        string: ""
-      headers:
-        Content-Length:
-          - "0"
-        Content-Type:
-          - text/html; charset=utf-8
-        Date:
-          - Tue, 10 Nov 2020 10:12:24 GMT
-        Location:
-          - /api/v1/citations_to/us/usc/t17/s501/
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        X-Content-Type-Options:
-          - nosniff
-      status:
-        code: 301
-        message: Moved Permanently
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
-      uri: https://authorityspoke.com/api/v1/citations_to/us/usc/t17/s501/
-    response:
-      body:
-        string:
-          '{"count":2,"next":null,"previous":null,"results":[{"content":"Any person
-          who distributes a phonorecord or a copy of a computer program (including any
-          tape, disk, or other medium embodying such program) in violation of paragraph
-          (1) is an infringer of copyright under section 501 of this title and is subject
-          to the remedies set forth in sections 502, 503, 504, and 505. Such violation
-          shall not be a criminal offense under section 506 or cause such person to
-          be subject to the criminal penalties set forth in section 2319 of title 18.","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s109/b/4"}],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/","target_node":1252985,"reference_text":"section
-          501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"http://127.0.0.1:8000/api/v1/us/usc/t18/s2319/","target_node":1151186,"reference_text":"section
-          2319 of title 18"}],"url":"http://127.0.0.1:8000/api/v1/textversions/1030745/"},{"content":"The
-          relevant provisions of paragraphs (2) through (11) of section 34(d) of the
-          Trademark Act (15 U.S.C. 1116(d)(2) through (11)) shall extend to any impoundment
-          of records ordered under paragraph (1)(C) that is based upon an ex parte application,
-          notwithstanding the provisions of rule 65 of the Federal Rules of Civil Procedure.
-          Any references in paragraphs (2) through (11) of section 34(d) of the Trademark
-          Act to section 32 of such Act shall be read as references to section 501 of
-          this title, and references to use of a counterfeit mark in connection with
-          the sale, offering for sale, or distribution of goods or services shall be
-          read as references to infringement of a copyright.","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s503/a/3"}],"citations":[{"target_uri":"/us/usc/t15/s1116/d/2","target_url":"http://127.0.0.1:8000/api/v1/us/usc/t15/s1116/d/2/","target_node":1080054,"reference_text":"15
-          U.S.C. 1116(d)(2)"},{"target_uri":"/us/usc/t17/s501","target_url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s501/","target_node":1252985,"reference_text":"section
-          501 of this title"}],"url":"http://127.0.0.1:8000/api/v1/textversions/1031604/"}]}'
-      headers:
-        Allow:
-          - GET, HEAD, OPTIONS
-        Content-Length:
-          - "2209"
-        Content-Type:
-          - application/json
-        Date:
-          - Tue, 10 Nov 2020 10:12:24 GMT
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        Vary:
-          - Accept, Cookie
-        X-Content-Type-Options:
-          - nosniff
-        X-Frame-Options:
-          - DENY
-      status:
-        code: 200
-        message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s501
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Mon, 21 Dec 2020 09:17:03 GMT
+      Location:
+      - /api/v1/us/usc/t17/s501/
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s501/
+  response:
+    body:
+      string: "{\"heading\":\"Infringement of copyright\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501\",\"text_version\":null,\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/\",\"end_date\":null,\"children\":[{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/a\",\"text_version\":{\"id\":1031590,\"url\":\"https://authorityspoke.com/api/v1/textversions/1031590/\",\"content\":\"Anyone
+        who violates any of the exclusive rights of the copyright owner as provided
+        by sections 106 through 122 or of the author as provided in section 106A(a),
+        or who imports copies or phonorecords into the United States in violation
+        of section 602, is an infringer of the copyright or right of the author, as
+        the case may be. For purposes of this chapter (other than section 506), any
+        reference to copyright shall be deemed to include the rights conferred by
+        section 106A(a). As used in this subsection, the term \u201Canyone\u201D includes
+        any State, any instrumentality of a State, and any officer or employee of
+        a State or instrumentality of a State acting in his or her official capacity.
+        Any State, and any such instrumentality, officer, or employee, shall be subject
+        to the provisions of this title in the same manner and to the same extent
+        as any nongovernmental entity.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/a/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/b\",\"text_version\":{\"id\":1031591,\"url\":\"https://authorityspoke.com/api/v1/textversions/1031591/\",\"content\":\"The
+        legal or beneficial owner of an exclusive right under a copyright is entitled,
+        subject to the requirements of section 411, to institute an action for any
+        infringement of that particular right committed while he or she is the owner
+        of it. The court may require such owner to serve written notice of the action
+        with a copy of the complaint upon any person shown, by the records of the
+        Copyright Office or otherwise, to have or claim an interest in the copyright,
+        and shall require that such notice be served upon any person whose interest
+        is likely to be affected by a decision in the case. The court may require
+        the joinder, and shall permit the intervention, of any person having or claiming
+        an interest in the copyright.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/b/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/c\",\"text_version\":{\"id\":1031592,\"url\":\"https://authorityspoke.com/api/v1/textversions/1031592/\",\"content\":\"For
+        any secondary transmission by a cable system that embodies a performance or
+        a display of a work which is actionable as an act of infringement under subsection
+        (c) of section 111, a television broadcast station holding a copyright or
+        other license to transmit or perform the same version of that work shall,
+        for purposes of subsection (b) of this section, be treated as a legal or beneficial
+        owner if such secondary transmission occurs within the local service area
+        of that television station.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/c/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/d\",\"text_version\":{\"id\":1031593,\"url\":\"https://authorityspoke.com/api/v1/textversions/1031593/\",\"content\":\"For
+        any secondary transmission by a cable system that is actionable as an act
+        of infringement pursuant to section 111(c)(3), the following shall also have
+        standing to sue: (i) the primary transmitter whose transmission has been altered
+        by the cable system; and (ii) any broadcast station within whose local service
+        area the secondary transmission occurs.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/d/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2020-04-10\",\"node\":\"/us/usc/t17/s501/e\",\"text_version\":{\"id\":1033084,\"url\":\"https://authorityspoke.com/api/v1/textversions/1033084/\",\"content\":\"With
+        respect to any secondary transmission that is made by a satellite carrier
+        of a performance or display of a work embodied in a primary transmission and
+        is actionable as an act of infringement under section 119(a)(3), a network
+        station holding a copyright or other license to transmit or perform the same
+        version of that work shall, for purposes of subsection (b) of this section,
+        be treated as a legal or beneficial owner if such secondary transmission occurs
+        within the local service area of that station.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/e/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"1926-06-30\",\"node\":\"/us/usc/t17/s501/f\",\"text_version\":null,\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/f/\",\"end_date\":null,\"children\":[{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/f/1\",\"text_version\":{\"id\":1031595,\"url\":\"https://authorityspoke.com/api/v1/textversions/1031595/\",\"content\":\"With
+        respect to any secondary transmission that is made by a satellite carrier
+        of a performance or display of a work embodied in a primary transmission and
+        is actionable as an act of infringement under section 122, a television broadcast
+        station holding a copyright or other license to transmit or perform the same
+        version of that work shall, for purposes of subsection (b) of this section,
+        be treated as a legal or beneficial owner if such secondary transmission occurs
+        within the local market of that station.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/f/1/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/us/usc/t17/s501/f/2\",\"text_version\":{\"id\":1031596,\"url\":\"https://authorityspoke.com/api/v1/textversions/1031596/\",\"content\":\"A
+        television broadcast station may file a civil action against any satellite
+        carrier that has refused to carry television broadcast signals, as required
+        under section 122(a)(2), to enforce that television broadcast station\u2019s
+        rights under section 338(a) of the Communications Act of 1934.\"},\"url\":\"https://authorityspoke.com/api/v1/us/usc/t17/s501/f/2/\",\"end_date\":null,\"children\":[],\"citations\":[]}],\"citations\":[]}],\"citations\":[],\"parent\":\"https://authorityspoke.com/api/v1/us/usc/t17/\"}"
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '6204'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 09:17:03 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/coverage/us/usc
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Mon, 21 Dec 2020 09:17:04 GMT
+      Location:
+      - /api/v1/coverage/us/usc/
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/coverage/us/usc/
+  response:
+    body:
+      string: '{"uri":"/us/usc","latest_heading":"United States Code (USC)","first_published":"1926-06-30","earliest_in_db":"2013-07-18","latest_in_db":"2020-08-08"}'
+    headers:
+      Allow:
+      - GET, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 09:17:04 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/citations_to/us/usc/t17/s501
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Mon, 21 Dec 2020 09:17:04 GMT
+      Location:
+      - /api/v1/citations_to/us/usc/t17/s501/
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/citations_to/us/usc/t17/s501/
+  response:
+    body:
+      string: '{"count":2,"next":null,"previous":null,"results":[{"content":"Any person
+        who distributes a phonorecord or a copy of a computer program (including any
+        tape, disk, or other medium embodying such program) in violation of paragraph
+        (1) is an infringer of copyright under section 501 of this title and is subject
+        to the remedies set forth in sections 502, 503, 504, and 505. Such violation
+        shall not be a criminal offense under section 506 or cause such person to
+        be subject to the criminal penalties set forth in section 2319 of title 18.","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s109/b/4"}],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501/","target_node":1252985,"reference_text":"section
+        501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"https://authorityspoke.com/api/v1/us/usc/t18/s2319/","target_node":1151186,"reference_text":"section
+        2319 of title 18"}],"url":"https://authorityspoke.com/api/v1/textversions/1030745/"},{"content":"The
+        relevant provisions of paragraphs (2) through (11) of section 34(d) of the
+        Trademark Act (15 U.S.C. 1116(d)(2) through (11)) shall extend to any impoundment
+        of records ordered under paragraph (1)(C) that is based upon an ex parte application,
+        notwithstanding the provisions of rule 65 of the Federal Rules of Civil Procedure.
+        Any references in paragraphs (2) through (11) of section 34(d) of the Trademark
+        Act to section 32 of such Act shall be read as references to section 501 of
+        this title, and references to use of a counterfeit mark in connection with
+        the sale, offering for sale, or distribution of goods or services shall be
+        read as references to infringement of a copyright.","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s503/a/3"}],"citations":[{"target_uri":"/us/usc/t15/s1116/d/2","target_url":"https://authorityspoke.com/api/v1/us/usc/t15/s1116/d/2/","target_node":1080054,"reference_text":"15
+        U.S.C. 1116(d)(2)"},{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501/","target_node":1252985,"reference_text":"section
+        501 of this title"}],"url":"https://authorityspoke.com/api/v1/textversions/1031604/"}]}'
+    headers:
+      Allow:
+      - GET, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2239'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 09:17:04 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
 version: 1

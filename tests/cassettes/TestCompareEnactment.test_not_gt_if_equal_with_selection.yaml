@@ -13,7 +13,7 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/1
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV
   response:
     body:
       string: ''
@@ -25,9 +25,9 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Tue, 22 Dec 2020 07:06:48 GMT
+      - Mon, 21 Dec 2020 12:06:17 GMT
       Location:
-      - /api/v1/test/acts/47/1/
+      - /api/v1/us/const/amendment/IV/
       Referrer-Policy:
       - same-origin
       Server:
@@ -53,23 +53,26 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/1/
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV/
   response:
     body:
-      string: '{"heading":"Short title","start_date":"1935-04-01","node":"/test/acts/47/1","text_version":{"id":1142661,"url":"https://authorityspoke.com/api/v1/textversions/1142661/","content":"This
-        Act may be cited as the Australian Beard Tax (Promotion of Enlightenment Values)
-        Act 1934."},"url":"https://authorityspoke.com/api/v1/test/acts/47/1/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/test/acts/47/"}'
+      string: '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"https://authorityspoke.com/api/v1/textversions/735706/","content":"The
+        right of the people to be secure in their persons, houses, papers, and effects,
+        against unreasonable searches and seizures, shall not be violated, and no
+        Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
+        and particularly describing the place to be searched, and the persons or things
+        to be seized."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/IV/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
     headers:
       Allow:
       - GET, POST, PUT, PATCH, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '440'
+      - '697'
       Content-Type:
       - application/json
       Date:
-      - Tue, 22 Dec 2020 07:06:48 GMT
+      - Mon, 21 Dec 2020 12:06:18 GMT
       Referrer-Policy:
       - same-origin
       Server:

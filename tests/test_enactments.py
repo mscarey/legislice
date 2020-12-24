@@ -255,7 +255,7 @@ class TestSelectText:
 
     def test_select_space_between_selected_passages(self, test_client):
         """Test that the space between "property," and "without" is selected."""
-        section_1 = MOCK_USC_CLIENT.read(query="/us/const/amendment/XIV/1")
+        section_1 = test_client.read(query="/us/const/amendment/XIV/1")
         section_1.select("without due process of law")
         section_1.select_more("life, liberty, or property,")
         now_selected = section_1.selected_text()
@@ -301,6 +301,14 @@ class TestSelectFromEnactment:
             "The Department of Beards may issue licenses to "
             "such…hairdressers…as they see fit…"
         )
+
+    def test_selection_in_middle_of_enactment(self, test_client, fourth_a):
+        result = test_client.read_from_json(fourth_a)
+        selector = TextQuoteSelector(
+            prefix="and", exact="the persons or things", suffix="to be seized."
+        )
+        result.select(selector)
+        assert result.selected_text().endswith("or things…")
 
     def test_select_none(self, section_11_subdivided):
         schema = EnactmentSchema()

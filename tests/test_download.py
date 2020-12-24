@@ -122,6 +122,25 @@ class TestDownloadAndLoad:
             _ = test_client.read(query="/us/const/article-III/1")
 
     @pytest.mark.vcr()
+    def test_unavailable_path_within_partial_match(self, test_client):
+        """
+        Test when a key appears to be an ancestor of the desired path, but isn't.
+
+        This jargon may be a leftover from testing the mocks.
+        """
+        client = test_client
+        with pytest.raises(LegislicePathError):
+            client.read(
+                query="/us/const/amendment/XIV/2/b", date=datetime.date(2010, 12, 15)
+            )
+
+    @pytest.mark.vcr
+    def test_date_is_too_early(self, test_client):
+        client = test_client
+        with pytest.raises(LegislicePathError):
+            client.read(query="/us/usc/t17/s102/a", date=datetime.date(2010, 12, 15))
+
+    @pytest.mark.vcr()
     def test_chapeau_and_subsections_from_uslm_code(self, test_client):
         """
         Test that the selected_text includes the text of subsections.
@@ -146,19 +165,6 @@ class TestDownloadAndLoad:
         enactment = test_client.read(query="/us/usc/t17/s103")
         assert enactment.known_revision_date is False
         assert enactment.children[0].known_revision_date is False
-
-    @pytest.mark.vcr()
-    def test_update_linked_enactment(self, test_client):
-        data = {"node": "/us/const"}
-        new = test_client.update_enactment_from_api(data)
-        assert new["node"] == "/us/const"
-        assert new["start_date"] == "1788-09-13"
-        assert isinstance(new["children"][0], str)
-
-    @pytest.mark.vcr()
-    def test_update_enactment_when_reading_from_json(self, test_client):
-        enactment = test_client.read_from_json(data={"node": "/us/const/amendment/IV"})
-        assert enactment.start_date.isoformat() == "1791-12-15"
 
     @pytest.mark.vcr()
     def test_download_from_cross_reference(self, test_client):

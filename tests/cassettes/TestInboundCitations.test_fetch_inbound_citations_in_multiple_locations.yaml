@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.23.0
+      - python-requests/2.24.0
       authorization:
       - DUMMY
     method: GET
@@ -25,7 +25,7 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Mon, 16 Nov 2020 09:06:27 GMT
+      - Mon, 21 Dec 2020 09:17:04 GMT
       Location:
       - /api/v1/citations_to/us/usc/t2/s1301/
       Referrer-Policy:
@@ -49,7 +49,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.23.0
+      - python-requests/2.24.0
       authorization:
       - DUMMY
     method: GET
@@ -57,25 +57,27 @@ interactions:
   response:
     body:
       string: '{"count":4,"next":null,"previous":null,"results":[{"content":"has the
-        meaning given the term under section 1301 of this title; and","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t2/s60c-5/a/2/A","url":"https://authorityspoke.com/api/v1/us/usc/t2/s60c-5/a/2/A/","end_date":"2014-01-16"},{"heading":"","start_date":"2014-01-16","node":"/us/usc/t2/s4579/a/2/A","url":"https://authorityspoke.com/api/v1/us/usc/t2/s4579/a/2/A/","end_date":"2018-05-09"},{"heading":"","start_date":"2018-05-09","node":"/us/usc/t2/s4579/a/4/A","url":"https://authorityspoke.com/api/v1/us/usc/t2/s4579/a/4/A/","end_date":null}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
-        1301 of this title"}]},{"content":"means the employing office, as defined
-        under section 1301 of this title, of an employee of the Senate; and","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t2/s60c-5/a/3/A","url":"https://authorityspoke.com/api/v1/us/usc/t2/s60c-5/a/3/A/","end_date":"2014-01-16"},{"heading":"","start_date":"2014-01-16","node":"/us/usc/t2/s4579/a/3/A","url":"https://authorityspoke.com/api/v1/us/usc/t2/s4579/a/3/A/","end_date":"2018-05-09"},{"heading":"","start_date":"2018-05-09","node":"/us/usc/t2/s4579/a/5/A","url":"https://authorityspoke.com/api/v1/us/usc/t2/s4579/a/5/A/","end_date":null}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
-        1301 of this title"}]},{"content":"a covered employee (including an applicant),
-        as defined in section 1301 of title 2;","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t42/s2000ff/2/A/iii","url":"https://authorityspoke.com/api/v1/us/usc/t42/s2000ff/2/A/iii/","end_date":null}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
-        1301 of title 2"}]},{"content":"an employing office, as defined in section
-        1301 of title 2;","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t42/s2000ff/2/B/iii","url":"https://authorityspoke.com/api/v1/us/usc/t42/s2000ff/2/B/iii/","end_date":null}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
-        1301 of title 2"}]}]}'
+        meaning given the term under section 1301 of this title; and","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t2/s60c-5/a/2/A"},{"heading":"","start_date":"2014-01-16","node":"/us/usc/t2/s4579/a/2/A"},{"heading":"","start_date":"2018-05-09","node":"/us/usc/t2/s4579/a/4/A"}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
+        1301 of this title"}],"url":"https://authorityspoke.com/api/v1/textversions/736234/"},{"content":"means
+        the employing office, as defined under section 1301 of this title, of an employee
+        of the Senate; and","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t2/s60c-5/a/3/A"},{"heading":"","start_date":"2014-01-16","node":"/us/usc/t2/s4579/a/3/A"},{"heading":"","start_date":"2018-05-09","node":"/us/usc/t2/s4579/a/5/A"}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
+        1301 of this title"}],"url":"https://authorityspoke.com/api/v1/textversions/736237/"},{"content":"a
+        covered employee (including an applicant), as defined in section 1301 of title
+        2;","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t42/s2000ff/2/A/iii"}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
+        1301 of title 2"}],"url":"https://authorityspoke.com/api/v1/textversions/1085713/"},{"content":"an
+        employing office, as defined in section 1301 of title 2;","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t42/s2000ff/2/B/iii"}],"citations":[{"target_uri":"/us/usc/t2/s1301","target_url":"https://authorityspoke.com/api/v1/us/usc/t2/s1301/","target_node":903770,"reference_text":"section
+        1301 of title 2"}],"url":"https://authorityspoke.com/api/v1/textversions/1085718/"}]}'
     headers:
       Allow:
       - GET, HEAD, OPTIONS
       Connection:
       - keep-alive
       Content-Length:
-      - '2489'
+      - '2051'
       Content-Type:
       - application/json
       Date:
-      - Mon, 16 Nov 2020 09:06:27 GMT
+      - Mon, 21 Dec 2020 09:17:04 GMT
       Referrer-Policy:
       - same-origin
       Server:

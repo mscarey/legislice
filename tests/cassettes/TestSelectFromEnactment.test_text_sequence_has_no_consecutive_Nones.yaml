@@ -1,0 +1,125 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Mon, 21 Dec 2020 12:06:15 GMT
+      Location:
+      - /api/v1/us/const/amendment/XIV/
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/
+  response:
+    body:
+      string: '{"heading":"AMENDMENT XIV.","start_date":"1868-07-28","node":"/us/const/amendment/XIV","text_version":null,"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/","end_date":null,"children":[{"heading":"Citizenship:
+        security and equal protection of citizens.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/1","text_version":{"id":735717,"url":"https://authorityspoke.com/api/v1/textversions/735717/","content":"All
+        persons born or naturalized in the United States, and subject to the jurisdiction
+        thereof, are citizens of the United States and of the State wherein they reside.
+        No State shall make or enforce any law which shall abridge the privileges
+        or immunities of citizens of the United States; nor shall any State deprive
+        any person of life, liberty, or property, without due process of law; nor
+        deny to any person within its jurisdiction the equal protection of the laws."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/","end_date":null,"children":[],"citations":[]},{"heading":"Apportionment
+        of representation.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/2","text_version":{"id":735718,"url":"https://authorityspoke.com/api/v1/textversions/735718/","content":"Representatives
+        shall be apportioned among the several States according to their respective
+        numbers, counting the whole number of persons in each State, excluding Indians
+        not taxed. But when the right to vote at any election for the choice of electors
+        for President and Vice President of the United States, Representatives in
+        Congress, the Executive and Judicial officers of a State, or the members of
+        the Legislature thereof, is denied to any of the male inhabitants of such
+        State, being twenty-one years of age, and citizens of the United States, or
+        in any way abridged, except for participation in rebellion, or other crime,
+        the basis of representation therein shall be reduced in the proportion which
+        the number of such male citizens shall bear to the whole number of male citizens
+        twenty-one years of age in such State."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/2/","end_date":null,"children":[],"citations":[]},{"heading":"Loyalty
+        as a qualification of Senators and Representatives.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/3","text_version":{"id":735719,"url":"https://authorityspoke.com/api/v1/textversions/735719/","content":"No
+        person shall be a Senator or Representative in Congress, or elector of President
+        and Vice President, or hold any office, civil or military, under the United
+        States, or under any State, who, having previously taken an oath, as a member
+        of Congress, or as an officer of the United States, or as a member of any
+        State legislature, or as an executive or judicial officer of any State, to
+        support the Constitution of the United States, shall have engaged in insurrection
+        or rebellion against the same, or given aid or comfort to the enemies thereof.
+        But Congress may by a vote of two-thirds of each House, remove such disability."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/3/","end_date":null,"children":[],"citations":[]},{"heading":"Validity
+        of the national debt, etc.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/4","text_version":{"id":735720,"url":"https://authorityspoke.com/api/v1/textversions/735720/","content":"The
+        validity of the public debt of the United States, authorized by law, including
+        debts incurred for payment of pensions and bounties for services in suppressing
+        insurrection or rebellion, shall not be questioned. But neither the United
+        States nor any State shall assume or pay any debt or obligation incurred in
+        aid of insurrection or rebellion against the United States, or any claim for
+        the loss or emancipation of any slave; but all such debts, obligations and
+        claims shall be held illegal and void."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/4/","end_date":null,"children":[],"citations":[]},{"heading":"Enforcement
+        of the 14th amendment.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/5","text_version":{"id":735721,"url":"https://authorityspoke.com/api/v1/textversions/735721/","content":"The
+        Congress shall have power to enforce, by appropriate legislation, the provisions
+        of this article."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/5/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4490'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 12:06:15 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

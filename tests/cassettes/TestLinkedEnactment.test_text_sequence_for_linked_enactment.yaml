@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test@2020-01-01
+  response:
+    body:
+      string: '{"heading":"Test Legislation","start_date":"1935-04-01","node":"/test","text_version":{"id":735568,"url":"https://authorityspoke.com/api/v1/textversions/735568/","content":"See
+        https://github.com/mscarey/example-rules-as-code for documentation."},"url":"https://authorityspoke.com/api/v1/test@2020-01-01","end_date":null,"children":["https://authorityspoke.com/api/v1/test/acts@2020-01-01"],"citations":[],"parent":null}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '420'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 00:54:11 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

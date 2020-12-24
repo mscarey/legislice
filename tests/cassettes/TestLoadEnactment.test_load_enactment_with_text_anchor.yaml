@@ -1,92 +1,183 @@
 interactions:
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
-      uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a
-    response:
-      body:
-        string: ""
-      headers:
-        Content-Length:
-          - "0"
-        Content-Type:
-          - text/html; charset=utf-8
-        Date:
-          - Mon, 09 Nov 2020 10:17:37 GMT
-        Location:
-          - /api/v1/us/usc/t17/s102/a/
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        X-Content-Type-Options:
-          - nosniff
-      status:
-        code: 301
-        message: Moved Permanently
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
-      uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a/
-    response:
-      body:
-        string:
-          '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a","text_version":{"id":1030579,"url":"http://127.0.0.1:8000/api/v1/textversions/1030579/","content":"Copyright
-          protection subsists, in accordance with this title, in original works of authorship
-          fixed in any tangible medium of expression, now known or later developed,
-          from which they can be perceived, reproduced, or otherwise communicated, either
-          directly or with the aid of a machine or device. Works of authorship include
-          the following categories:"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/1","text_version":{"id":1030571,"url":"http://127.0.0.1:8000/api/v1/textversions/1030571/","content":"literary
-          works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/1/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/2","text_version":{"id":1030572,"url":"http://127.0.0.1:8000/api/v1/textversions/1030572/","content":"musical
-          works, including any accompanying words;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/2/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/3","text_version":{"id":1030573,"url":"http://127.0.0.1:8000/api/v1/textversions/1030573/","content":"dramatic
-          works, including any accompanying music;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/3/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/4","text_version":{"id":1030574,"url":"http://127.0.0.1:8000/api/v1/textversions/1030574/","content":"pantomimes
-          and choreographic works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/4/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/5","text_version":{"id":1030575,"url":"http://127.0.0.1:8000/api/v1/textversions/1030575/","content":"pictorial,
-          graphic, and sculptural works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/5/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/6","text_version":{"id":1030576,"url":"http://127.0.0.1:8000/api/v1/textversions/1030576/","content":"motion
-          pictures and other audiovisual works;"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/6/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/7","text_version":{"id":1030577,"url":"http://127.0.0.1:8000/api/v1/textversions/1030577/","content":"sound
-          recordings; and"},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/7/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/8","text_version":{"id":1030578,"url":"http://127.0.0.1:8000/api/v1/textversions/1030578/","content":"architectural
-          works."},"url":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/a/8/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"http://127.0.0.1:8000/api/v1/us/usc/t17/s102/"}'
-      headers:
-        Allow:
-          - GET, POST, PUT, PATCH, HEAD, OPTIONS
-        Content-Length:
-          - "3158"
-        Content-Type:
-          - application/json
-        Date:
-          - Mon, 09 Nov 2020 10:17:38 GMT
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        Vary:
-          - Accept, Cookie
-        X-Content-Type-Options:
-          - nosniff
-        X-Frame-Options:
-          - DENY
-      status:
-        code: 200
-        message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Mon, 21 Dec 2020 02:07:24 GMT
+      Location:
+      - /api/v1/us/usc/t17/s102/a/
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/a/
+  response:
+    body:
+      string: '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a","text_version":{"id":1030579,"url":"https://authorityspoke.com/api/v1/textversions/1030579/","content":"Copyright
+        protection subsists, in accordance with this title, in original works of authorship
+        fixed in any tangible medium of expression, now known or later developed,
+        from which they can be perceived, reproduced, or otherwise communicated, either
+        directly or with the aid of a machine or device. Works of authorship include
+        the following categories:"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/1","text_version":{"id":1030571,"url":"https://authorityspoke.com/api/v1/textversions/1030571/","content":"literary
+        works;"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/1/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/2","text_version":{"id":1030572,"url":"https://authorityspoke.com/api/v1/textversions/1030572/","content":"musical
+        works, including any accompanying words;"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/2/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/3","text_version":{"id":1030573,"url":"https://authorityspoke.com/api/v1/textversions/1030573/","content":"dramatic
+        works, including any accompanying music;"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/3/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/4","text_version":{"id":1030574,"url":"https://authorityspoke.com/api/v1/textversions/1030574/","content":"pantomimes
+        and choreographic works;"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/4/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/5","text_version":{"id":1030575,"url":"https://authorityspoke.com/api/v1/textversions/1030575/","content":"pictorial,
+        graphic, and sculptural works;"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/5/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/6","text_version":{"id":1030576,"url":"https://authorityspoke.com/api/v1/textversions/1030576/","content":"motion
+        pictures and other audiovisual works;"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/6/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/7","text_version":{"id":1030577,"url":"https://authorityspoke.com/api/v1/textversions/1030577/","content":"sound
+        recordings; and"},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/7/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s102/a/8","text_version":{"id":1030578,"url":"https://authorityspoke.com/api/v1/textversions/1030578/","content":"architectural
+        works."},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s102/a/8/","end_date":null,"children":[],"citations":[]}],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s102/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3253'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 02:07:25 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/coverage/us/usc
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Mon, 21 Dec 2020 02:07:26 GMT
+      Location:
+      - /api/v1/coverage/us/usc/
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/coverage/us/usc/
+  response:
+    body:
+      string: '{"uri":"/us/usc","latest_heading":"United States Code (USC)","first_published":"1926-06-30","earliest_in_db":"2013-07-18","latest_in_db":"2020-08-08"}'
+    headers:
+      Allow:
+      - GET, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 21 Dec 2020 02:07:26 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
 version: 1
