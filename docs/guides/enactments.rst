@@ -296,3 +296,28 @@ Python dictionary.
     >>> schema = EnactmentSchema()
     >>> schema.dumps(combined_enactment)
     '{"node": "/us/usc/t17/s103", "heading": "Subject matter of copyright: Compilations and derivative works", "text_version": null, "start_date": "2013-07-18", "end_date": null, "selection": [], "anchors": [], "children": [{"node": "/us/usc/t17/s103/a", "heading": "", "text_version": {"content": "The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 0, "end": 277}], "anchors": [], "children": []}, {"node": "/us/usc/t17/s103/b", "heading": "", "text_version": {"content": "The copyright in a compilation or derivative work extends only to the material contributed by the author of such work, as distinguished from the preexisting material employed in the work, and does not imply any exclusive right in the preexisting material. The copyright in such work is independent of, and does not affect or enlarge the scope, duration, ownership, or subsistence of, any copyright protection in the preexisting material."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 256, "end": 300}, {"start": 384, "end": 437}], "anchors": [], "children": []}]}'
+
+Formatting Citations (Experimental)
+--------------------------------------
+
+Legislice has preliminary support for serializing citations for
+Enactment objects based on `Citation Style Language
+JSON <https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html>`__.
+The goal of this feature is to support compatibility with
+`Jurism <https://juris-m.github.io/>`__. Please `open an issue in the
+Legislice repo <https://github.com/mscarey/legislice/issues>`__ if you
+have suggestions for how this feature should develop to support your use
+case.
+
+    >>> cares_act_benefits = client.read("/us/usc/t15/s9021/")
+    >>> cares_act_benefits.heading
+    'Pandemic unemployment assistance'
+    >>> citation = cares_act_benefits.as_citation()
+    >>> str(citation)
+    '15 U.S. Code § 9021 (2020)'
+    >>> cares_act_benefits.csl_json()
+    '{"container-title": "U.S. Code", "jurisdiction": "us", "volume": "15", "event-date": {"date-parts": [["2020", 4, 10]]}, "type": "legislation", "section": "sec. 9021"}'
+
+This CSL-JSON format currently only identifies the cited provision down
+to the section level. A citation to a subsection or deeper nested
+provision will be the same as a citation to its parent section.
