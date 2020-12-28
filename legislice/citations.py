@@ -85,6 +85,12 @@ class Citation:
 
         self.revision_date = revision_date
 
+    def __str__(self):
+        name = f"{self.volume} {self.code} {self.section}"
+        if self.revision_date:
+            name += f" ({self.revision_date.isoformat()})"
+        return name
+
     def as_dict(self) -> str:
         schema = CitationSchema()
         return schema.dump(self)
