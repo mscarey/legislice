@@ -248,12 +248,13 @@ class BaseEnactment:
             raise NotImplementedError(
                 f"Citation serialization not implemented for '{level}' provisions."
             )
+        revision_date = self.start_date if self.known_revision_date else None
         citation = citations.Citation(
             jurisdiction=self.jurisdiction,
             code=self.code,
             volume=self.title,
             section=self.section,
-            revision_date=self.start_date,
+            revision_date=revision_date,
         )
         return citation
 

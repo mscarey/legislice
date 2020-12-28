@@ -25,3 +25,21 @@ class TestSerializeCitation:
         cite = section.as_citation()
         serialized = cite.as_dict()
         assert serialized["container-title"] == "Test Acts"
+
+    @pytest.mark.vcr
+    def test_csl_format_no_revision_date(self, test_client):
+        """Citation for provision with no known revision date in the database."""
+        section = test_client.read("/us/usc/t17/s103/b")
+        cite = section.as_citation()
+        serialized = cite.as_dict()
+        assert serialized.get("event-date") is None
+        assert serialized.get("revision_date") is None
+
+    @pytest.mark.vcr
+    def test_csl_format_with_revision_date(self, section_11_subdivided, test_client):
+        """Citation for provision with no known revision date in the database."""
+        section = test_client.read_from_json(section_11_subdivided)
+        cite = section.as_citation()
+        serialized = cite.as_dict()
+        assert serialized.get("event-date") == {"date-parts": [["2013", 7, 18]]}
+        assert serialized.get("revision_date") is None

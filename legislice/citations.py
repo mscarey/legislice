@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema, fields, post_dump
 
@@ -39,7 +39,24 @@ class CitationSchema(Schema):
     code = fields.Str(data_key="container-title", required=False)
     volume = fields.Str(required=False)
     section = fields.Str(required=False)
-    revision_date = fields.Date(required=False)
+    revision_date = fields.Date(default=None, load_only=True)
+    event_date = fields.Method(
+        data_key="event-date", serialize="dump_event_date", dump_only=True
+    )
+
+    def dump_event_date(self, obj) -> Optional[Dict[str, List[List[Union[str, int]]]]]:
+        if not obj.revision_date:
+            return None
+
+        return {
+            "date-parts": [
+                [
+                    str(obj.revision_date.year),
+                    obj.revision_date.month,
+                    obj.revision_date.day,
+                ]
+            ]
+        }
 
 
 @dataclass
