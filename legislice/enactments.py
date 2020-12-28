@@ -576,6 +576,10 @@ class Enactment(BaseEnactment):
         Serializes a citation to this provision in Citation Style Language JSON.
 
         Experimental feature.
+        This CSL-JSON format currently only identifies the cited provision down to
+        the section level. A citation to a subsection or deeper nested provision will
+        be the same as a citation to its parent section.
+
         See https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html for a
         guide to this CSL-JSON format.
         """

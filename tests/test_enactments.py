@@ -446,7 +446,13 @@ class TestCompareEnactment:
 
     @pytest.mark.vcr
     def test_not_gt_if_equal(self, test_client):
-        enactment = test_client.read(query="/test/acts/47/1", date=date(1999, 1, 1))
+        """
+        Test that __gt__ "implies" operator does not return True for equal Enactments.
+
+        The ISO 8601 format should be valid for the date, even though a datetime
+        would have been accepted.
+        """
+        enactment = test_client.read(query="/test/acts/47/1", date="1999-01-01")
         assert enactment == enactment
         assert not enactment > enactment
         assert enactment >= enactment

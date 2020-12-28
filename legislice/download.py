@@ -132,7 +132,11 @@ class Client:
 
     def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
         target = self.api_root + "/coverage" + code_uri
-        return self._fetch_from_url(url=target).json()
+        coverage = self._fetch_from_url(url=target).json()
+        for k, v in coverage.items():
+            if k not in ("uri", "latest_heading"):
+                coverage[k] = datetime.date.fromisoformat(v)
+        return coverage
 
     def fetch_inbound_reference(self, query: InboundReference) -> RawEnactment:
         """

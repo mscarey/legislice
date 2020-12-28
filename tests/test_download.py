@@ -1,5 +1,6 @@
 import datetime
 from typing import Type
+from legislice import download
 from legislice.enactments import CitingProvisionLocation, CrossReference
 import os
 
@@ -215,6 +216,35 @@ class TestReadJSON:
         }
         result = test_client.read_from_json(data)
         assert result.content.startswith("Where")
+
+    @pytest.mark.vcr
+    def test_check_db_coverage_when_reading(self):
+        """
+        Test whether default client can check DB coverage.
+
+        This test would not work if pre-2013 sections were added to the DB.
+        This test would not work with the test client because it doesn't
+        check for USC coverage.
+        """
+
+        serialized = {
+            "heading": "No retroactive effect",
+            "start_date": "2013-07-18",
+            "node": "/us/usc/t17/s1332",
+            "text_version": {
+                "id": 1032460,
+                "url": "https://authorityspoke.com/api/v1/textversions/1032460/",
+                "content": "Protection under this chapter shall not be available for any design that has been made public under section 1310(b) before the effective date of this chapter.",
+            },
+            "url": "https://authorityspoke.com/api/v1/us/usc/t17/s1332/",
+            "end_date": None,
+            "children": [],
+            "citations": [],
+            "parent": "https://authorityspoke.com/api/v1/us/usc/t17/",
+        }
+        client = download.Client(api_token=TOKEN, api_root=API_ROOT)
+        enactment = client.read_from_json(serialized)
+        assert enactment.known_revision_date is False
 
 
 class TestInboundCitations:
