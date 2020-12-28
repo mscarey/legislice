@@ -243,12 +243,17 @@ class BaseEnactment:
         return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
 
     def as_citation(self) -> citations.Citation:
+        level = self.level
+        if level != "statute":
+            raise NotImplementedError(
+                f"Citation serialization not implemented for '{level}' provisions."
+            )
         citation = citations.Citation(
             jurisdiction=self.jurisdiction,
             code=self.code,
             volume=self.title,
             section=self.section,
-            last_amended=self.start_date,
+            revision_date=self.start_date,
         )
         return citation
 

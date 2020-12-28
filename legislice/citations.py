@@ -6,7 +6,7 @@ from marshmallow import Schema, fields, post_dump
 
 # Path parts known to indicate the level of law they refer to.
 KNOWN_CODES = {
-    "test": {"acts": ["Acts", "S"]},
+    "test": {"acts": ["Test Acts", "S"]},
     "us": {
         "const": ["U.S. Const.", "C"],
         "usc": ["U.S. Code", "S"],
@@ -34,11 +34,12 @@ def identify_code(jurisdiction: str, code: str) -> Tuple[str, str]:
 
 
 class CitationSchema(Schema):
+    document_type = fields.Str(data_key="type", default="legislation", dump_only=True)
     jurisdiction = fields.Str(required=True)
-    code = fields.Str(required=False)
+    code = fields.Str(data_key="container-title", required=False)
     volume = fields.Str(required=False)
     section = fields.Str(required=False)
-    last_amended = fields.Date(required=False)
+    revision_date = fields.Date(required=False)
 
 
 @dataclass
@@ -49,7 +50,7 @@ class Citation:
         code: Optional[str] = None,
         volume: Optional[str] = None,
         section: Optional[str] = None,
-        last_amended: Optional[date] = None,
+        revision_date: Optional[date] = None,
     ) -> None:
         self.jurisdiction = jurisdiction
 
@@ -65,8 +66,12 @@ class Citation:
             section = "sec. " + section.lstrip("s")
         self.section = section
 
-        self.last_amended = last_amended
+        self.revision_date = revision_date
 
-    def json(self) -> str:
+    def as_dict(self) -> str:
+        schema = CitationSchema()
+        return schema.dump(self)
+
+    def as_json(self) -> str:
         schema = CitationSchema()
         return schema.dumps(self)
