@@ -88,8 +88,8 @@ class Citation:
     def __str__(self):
         name = f"{self.volume} {self.code} {self.section}"
         if self.revision_date:
-            name += f" ({self.revision_date.isoformat()})"
-        return name
+            name += f" ({self.revision_date.year})"
+        return name.replace("sec.", "§")
 
     def as_dict(self) -> str:
         schema = CitationSchema()

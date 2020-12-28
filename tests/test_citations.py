@@ -31,7 +31,7 @@ class TestSerializeCitation:
         section = test_client.read_from_json(section_11_subdivided)
         cite = section.as_citation()
         serialized = cite.as_dict()
-        assert str(cite) == "47 Test Acts sec. 11 (2013-07-18)"
+        assert str(cite) == "47 Test Acts § 11 (2013)"
         assert serialized.get("event-date") == {"date-parts": [["2013", 7, 18]]}
         assert serialized.get("revision_date") is None
 
@@ -45,7 +45,7 @@ class TestSerializeCitation:
         section = test_client.read("/us/usc/t17/s103/b")
         cite = section.as_citation()
         serialized = cite.as_dict()
-        assert str(cite) == "17 U.S. Code sec. 103"
+        assert str(cite) == "17 U.S. Code § 103"
         assert serialized.get("event-date") is None
         assert serialized.get("revision_date") is None
 
@@ -54,7 +54,7 @@ class TestSerializeCitation:
         cares_act = test_client.read("/us/usc/t15/s9021/a/3/B/")
         cite = cares_act.as_citation()
         serialized = cite.as_dict()
-        assert str(cite) == "15 U.S. Code sec. 9021 (2020-04-10)"
+        assert str(cite) == "15 U.S. Code § 9021 (2020)"
         assert serialized["event-date"]["date-parts"][0] == ["2020", 4, 10]
 
     def test_citation_for_nested_provision(self, test_client, section_11_subdivided):
