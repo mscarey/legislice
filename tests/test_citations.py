@@ -26,16 +26,6 @@ class TestSerializeCitation:
         serialized = cite.as_dict()
         assert serialized["container-title"] == "Test Acts"
 
-    @pytest.mark.vcr
-    def test_csl_format_no_revision_date(self, test_client):
-        """Citation for provision with no known revision date in the database."""
-        section = test_client.read("/us/usc/t17/s103/b")
-        cite = section.as_citation()
-        serialized = cite.as_dict()
-        assert str(cite) == "17 U.S. Code sec. 103"
-        assert serialized.get("event-date") is None
-        assert serialized.get("revision_date") is None
-
     def test_csl_format_with_revision_date(self, section_11_subdivided, test_client):
         """Citation for provision with a revision date in the database."""
         section = test_client.read_from_json(section_11_subdivided)
@@ -44,3 +34,35 @@ class TestSerializeCitation:
         assert str(cite) == "47 Test Acts sec. 11 (2013-07-18)"
         assert serialized.get("event-date") == {"date-parts": [["2013", 7, 18]]}
         assert serialized.get("revision_date") is None
+
+    @pytest.mark.vcr
+    def test_csl_format_no_revision_date(self, test_client):
+        """
+        Citation for provision with no known revision date in the database.
+
+        The citation depth is limited to the section level.
+        """
+        section = test_client.read("/us/usc/t17/s103/b")
+        cite = section.as_citation()
+        serialized = cite.as_dict()
+        assert str(cite) == "17 U.S. Code sec. 103"
+        assert serialized.get("event-date") is None
+        assert serialized.get("revision_date") is None
+
+    @pytest.mark.vcr
+    def test_usc_provision_with_revision_date(self, test_client):
+        cares_act = test_client.read("/us/usc/t15/s9021/a/3/B/")
+        cite = cares_act.as_citation()
+        serialized = cite.as_dict()
+        assert str(cite) == "15 U.S. Code sec. 9021 (2020-04-10)"
+        assert serialized["event-date"]["date-parts"][0] == ["2020", 4, 10]
+
+    def test_citation_for_nested_provision(self, test_client, section_11_subdivided):
+        """
+        Both citations should be the same because of the CSL JSON format
+        doesn't distinguish between citations below the section level.
+        """
+        section = test_client.read_from_json(section_11_subdivided)
+        cite_json = section.csl_json()
+        subsection_cite_json = section.children[0].csl_json()
+        assert cite_json == subsection_cite_json

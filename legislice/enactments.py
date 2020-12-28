@@ -571,6 +571,17 @@ class Enactment(BaseEnactment):
             "when neither is a descendant of the other."
         )
 
+    def csl_json(self) -> str:
+        """
+        Serializes a citation to this provision in Citation Style Language JSON.
+
+        Experimental feature.
+        See https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html for a
+        guide to this CSL-JSON format.
+        """
+        citation = self.as_citation()
+        return citation.as_json()
+
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""
         selections = self.select_from_text_positions_without_nesting(selection)
