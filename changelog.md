@@ -1,10 +1,12 @@
 Changelog
 =========
-dev
------------------
+
+0.4.0 (2020-12-29)
+------------------
+
 - add Citation class
-- remove mock Clients and replace them with pytest-vcr cached requests
 - add Citation Style Language JSON serializer methods
+- remove mock Clients by migrating tests to pytest-vcr
 
 0.3.1 (2020-12-12)
 ------------------
