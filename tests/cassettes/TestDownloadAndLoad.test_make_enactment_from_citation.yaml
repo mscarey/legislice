@@ -13,42 +13,6 @@ interactions:
         authorization:
           - DUMMY
       method: GET
-      uri: https://authorityspoke.com/api/v1/us/const/amendment/IV
-    response:
-      body:
-        string: ""
-      headers:
-        Content-Length:
-          - "0"
-        Content-Type:
-          - text/html; charset=utf-8
-        Date:
-          - Mon, 09 Nov 2020 10:17:32 GMT
-        Location:
-          - /api/v1/us/const/amendment/IV/
-        Referrer-Policy:
-          - same-origin
-        Server:
-          - WSGIServer/0.2 CPython/3.8.4
-        X-Content-Type-Options:
-          - nosniff
-      status:
-        code: 301
-        message: Moved Permanently
-  - request:
-      body: null
-      headers:
-        Accept:
-          - "*/*"
-        Accept-Encoding:
-          - gzip, deflate
-        Connection:
-          - keep-alive
-        User-Agent:
-          - python-requests/2.23.0
-        authorization:
-          - DUMMY
-      method: GET
       uri: https://authorityspoke.com/api/v1/us/const/amendment/IV/
     response:
       body:

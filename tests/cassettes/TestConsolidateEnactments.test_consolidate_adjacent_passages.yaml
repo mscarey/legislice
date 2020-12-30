@@ -13,46 +13,6 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/const/article/I/8/8
-  response:
-    body:
-      string: ''
-    headers:
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 21 Dec 2020 12:06:38 GMT
-      Location:
-      - /api/v1/us/const/article/I/8/8/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - gunicorn/20.0.4
-      Via:
-      - 1.1 vegur
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.24.0
-      authorization:
-      - DUMMY
-    method: GET
     uri: https://authorityspoke.com/api/v1/us/const/article/I/8/8/
   response:
     body:
@@ -86,46 +46,6 @@ interactions:
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.24.0
-      authorization:
-      - DUMMY
-    method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s102/b
-  response:
-    body:
-      string: ''
-    headers:
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 21 Dec 2020 12:06:38 GMT
-      Location:
-      - /api/v1/us/usc/t17/s102/b/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - gunicorn/20.0.4
-      Via:
-      - 1.1 vegur
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
 - request:
     body: null
     headers:

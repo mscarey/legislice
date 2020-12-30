@@ -11,44 +11,6 @@ interactions:
       User-Agent:
       - python-requests/2.23.0
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/1
-  response:
-    body:
-      string: ''
-    headers:
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Mon, 09 Nov 2020 10:17:31 GMT
-      Location:
-      - /api/v1/test/acts/47/1/
-      Referrer-Policy:
-      - same-origin
-      Server:
-      - gunicorn/20.0.4
-      Via:
-      - 1.1 vegur
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-    method: GET
     uri: https://authorityspoke.com/api/v1/test/acts/47/1/
   response:
     body:
