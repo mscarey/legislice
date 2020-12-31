@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.4.1 (2020-12-31)
+------------------
+
+- fix bug: Client made API request requiring 301 redirect
+
 0.4.0 (2020-12-29)
 ------------------
 
