@@ -131,7 +131,7 @@ class Client:
         return self._fetch_from_url(url=target).json()
 
     def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
-        target = self.api_root + "/coverage" + code_uri + "/"
+        target = self.api_root + "/coverage" + code_uri
         coverage = self._fetch_from_url(url=target).json()
         for k, v in coverage.items():
             if k not in ("uri", "latest_heading"):
@@ -227,7 +227,7 @@ class Client:
             a list of dicts representing citations to the cited node
         """
         uri = self.uri_from_query(target)
-        query_with_root = self.api_root + "/citations_to" + uri + "/"
+        query_with_root = self.api_root + "/citations_to" + uri
         api_response = self._fetch_from_url(query_with_root)
         return api_response.json()["results"]
 
@@ -324,6 +324,8 @@ class Client:
         headers = {}
         if self.api_token:
             headers["Authorization"] = f"Token {self.api_token}"
+
+        url = url.rstrip("/") + "/"
 
         response = requests.get(url, headers=headers)
         if response.status_code == 404:

@@ -287,7 +287,7 @@ to JSON.
 
 As explained in the section above, this JSON represents a selection of three
 nonconsecutive passages from the most recent version of
-`section 103 of Title 17 of the United States Code <https://authorityspoke.com/legislice/us/usc/t17/s103@2020-11-17>`__.
+`section 103 of Title 17 of the United States Code <https://authorityspoke.com/legislice/us/usc/t17/s103@2020-11-17/>`__.
 The schema's :meth:`~marshmallow.Schema.dumps` method returns a JSON string,
 while the :meth:`~marshmallow.Schema.dump` method returns a
 Python dictionary.
