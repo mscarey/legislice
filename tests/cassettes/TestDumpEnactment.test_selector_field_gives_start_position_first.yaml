@@ -13,15 +13,15 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s103@2020-01-01
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s103@2020-01-01/
   response:
     body:
       string: '{"heading":"Subject matter of copyright: Compilations and derivative
-        works","start_date":"2013-07-18","node":"/us/usc/t17/s103","text_version":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s103@2020-01-01","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s103/a","text_version":{"id":1030581,"url":"https://authorityspoke.com/api/v1/textversions/1030581/","content":"The
+        works","start_date":"2013-07-18","node":"/us/usc/t17/s103","text_version":null,"url":"https://authorityspoke.com/api/v1/us/usc/t17/s103@2020-01-01/","end_date":null,"children":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s103/a","text_version":{"id":1030581,"url":"https://authorityspoke.com/api/v1/textversions/1030581/","content":"The
         subject matter of copyright as specified by section 102 includes compilations
         and derivative works, but protection for a work employing preexisting material
         in which copyright subsists does not extend to any part of the work in which
-        such material has been used unlawfully."},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s103/a@2020-01-01","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s103/b","text_version":{"id":1030582,"url":"https://authorityspoke.com/api/v1/textversions/1030582/","content":"The
+        such material has been used unlawfully."},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s103/a@2020-01-01/","end_date":null,"children":[],"citations":[]},{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s103/b","text_version":{"id":1030582,"url":"https://authorityspoke.com/api/v1/textversions/1030582/","content":"The
         copyright in a compilation or derivative work extends only to the material
         contributed by the author of such work, as distinguished from the preexisting
         material employed in the work, and does not imply any exclusive right in the

@@ -13,7 +13,7 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV@1791-12-15
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/IV@1791-12-15/
   response:
     body:
       string: '{"heading":"AMENDMENT IV.","start_date":"1791-12-15","node":"/us/const/amendment/IV","text_version":{"id":735706,"url":"https://authorityspoke.com/api/v1/textversions/735706/","content":"The
@@ -21,7 +21,7 @@ interactions:
         against unreasonable searches and seizures, shall not be violated, and no
         Warrants shall issue, but upon probable cause, supported by Oath or affirmation,
         and particularly describing the place to be searched, and the persons or things
-        to be seized."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/IV@1791-12-15","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment@1791-12-15"}'
+        to be seized."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/IV@1791-12-15/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment@1791-12-15/"}'
     headers:
       Allow:
       - GET, POST, PUT, PATCH, HEAD, OPTIONS

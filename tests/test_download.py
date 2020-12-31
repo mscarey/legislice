@@ -51,7 +51,7 @@ class TestDownloadJSON:
         assert not response.history
 
         waiver = response.json()
-        assert waiver["url"].endswith("acts/47/6D@2020-01-01")
+        assert waiver["url"].endswith("acts/47/6D@2020-01-01/")
         assert waiver["children"][0]["start_date"] == "2013-07-18"
 
     @pytest.mark.vcr()
@@ -80,7 +80,7 @@ class TestDownloadJSON:
         waiver = test_client.fetch(
             query="/test/acts/47/6D", date=datetime.date(1940, 1, 1)
         )
-        assert waiver["url"].endswith("acts/47/6D@1940-01-01")
+        assert waiver["url"].endswith("acts/47/6D@1940-01-01/")
         assert waiver["children"][0]["start_date"] == "1935-04-01"
 
     @pytest.mark.vcr()
@@ -171,12 +171,14 @@ class TestDownloadAndLoad:
     def test_download_from_cross_reference(self, test_client):
         ref = CrossReference(
             target_uri="/test/acts/47/6C",
-            target_url=f"{API_ROOT}/test/acts/47/6C@2020-01-01",
+            target_url=f"{API_ROOT}/test/acts/47/6C@2020-01-01/",
             target_node=1660695,
             reference_text="Section 6C",
         )
         cited = test_client.fetch(ref)
-        assert cited["content"].startswith("Where an exemption is granted")
+        assert cited["text_version"]["content"].startswith(
+            "Where an exemption is granted"
+        )
 
 
 class TestReadJSON:

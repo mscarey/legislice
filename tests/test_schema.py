@@ -170,11 +170,11 @@ class TestLoadEnactment:
             "node": "/test/acts/47/6D/1",
             "children": [],
             "end_date": None,
-            "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@2020-01-01",
+            "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@2020-01-01/",
             "citations": [
                 {
                     "target_uri": "/test/acts/47/6C",
-                    "target_url": "http://127.0.0.1:8000/api/v1/test/acts/47/6C@2020-01-01",
+                    "target_url": "http://127.0.0.1:8000/api/v1/test/acts/47/6C@2020-01-01/",
                     "target_node": 1660695,
                     "reference_text": "Section 6C",
                 }

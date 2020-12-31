@@ -13,7 +13,7 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18/
   response:
     body:
       string: '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s109/b/4","text_version":{"id":1030745,"url":"https://authorityspoke.com/api/v1/textversions/1030745/","content":"Any
@@ -22,9 +22,9 @@ interactions:
         (1) is an infringer of copyright under section 501 of this title and is subject
         to the remedies set forth in sections 502, 503, 504, and 505. Such violation
         shall not be a criminal offense under section 506 or cause such person to
-        be subject to the criminal penalties set forth in section 2319 of title 18."},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18","end_date":null,"children":[],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501@2013-07-18","target_node":1252985,"reference_text":"section
-        501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"https://authorityspoke.com/api/v1/us/usc/t18/s2319@2013-07-18","target_node":1151186,"reference_text":"section
-        2319 of title 18"}],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b@2013-07-18"}'
+        be subject to the criminal penalties set forth in section 2319 of title 18."},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18/","end_date":null,"children":[],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501@2013-07-18","target_node":1252985,"reference_text":"section
+        501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"https://authorityspoke.com/api/v1/us/usc/t18/s2319@2013-07-18/","target_node":1151186,"reference_text":"section
+        2319 of title 18"}],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b@2013-07-18/"}'
     headers:
       Allow:
       - GET, POST, PUT, PATCH, HEAD, OPTIONS

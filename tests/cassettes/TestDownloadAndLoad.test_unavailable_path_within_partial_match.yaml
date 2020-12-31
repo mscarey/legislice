@@ -13,7 +13,7 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/2/b@2010-12-15
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/2/b@2010-12-15/
   response:
     body:
       string: '{"detail":"Not found."}'

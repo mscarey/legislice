@@ -13,11 +13,11 @@ interactions:
       authorization:
       - DUMMY
     method: GET
-    uri: https://authorityspoke.com/api/v1/test/acts/47/8/2/b@1999-01-01
+    uri: https://authorityspoke.com/api/v1/test/acts/47/8/2/b@1999-01-01/
   response:
     body:
-      string: '{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/2/b","text_version":{"id":1142681,"url":"https://authorityspoke.com/api/v1/textversions/1142681/","content":"obtain
-        a beardcoin from the Department of Beards"},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/2/b@1999-01-01","end_date":"2013-07-18","children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/test/acts/47/8/2@1999-01-01"}'
+      string: '{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/2/b/","text_version":{"id":1142681,"url":"https://authorityspoke.com/api/v1/textversions/1142681/","content":"obtain
+        a beardcoin from the Department of Beards"},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/2/b@1999-01-01/","end_date":"2013-07-18","children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/test/acts/47/8/2@1999-01-01/"}'
     headers:
       Allow:
       - GET, POST, PUT, PATCH, HEAD, OPTIONS

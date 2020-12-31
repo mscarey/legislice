@@ -54,7 +54,7 @@ def section6d():
                 "end_date": None,
                 "node": "/test/acts/47/6D/1",
                 "start_date": "2013-07-18",
-                "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@2018-03-11",
+                "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/1@2018-03-11/",
             },
             {
                 "heading": "",
@@ -63,14 +63,14 @@ def section6d():
                 "end_date": None,
                 "node": "/test/acts/47/6D/2",
                 "start_date": "1935-04-01",
-                "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/2@2018-03-11",
+                "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D/2@2018-03-11/",
             },
         ],
         "end_date": None,
         "node": "/test/acts/47/6D",
         "start_date": "1935-04-01",
-        "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D@2018-03-11",
-        "parent": "http://127.0.0.1:8000/api/v1/test/acts/47@2018-03-11",
+        "url": "http://127.0.0.1:8000/api/v1/test/acts/47/6D@2018-03-11/",
+        "parent": "http://127.0.0.1:8000/api/v1/test/acts/47@2018-03-11/",
     }
 
 
