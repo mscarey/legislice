@@ -776,6 +776,7 @@ def consolidate_enactments(enactments: List[Enactment]) -> List[Enactment]:
         a list of :class:`Enactment`\s without overlapping text
     """
     consolidated: List[Enactment] = []
+    enactments = list(enactments)
     while enactments:
         match_made = False
         left = enactments.pop()

@@ -6,7 +6,6 @@ from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
-from requests import api
 
 from legislice.download import Client
 from legislice.enactments import Enactment, consolidate_enactments
@@ -946,4 +945,3 @@ class TestConsolidateEnactments:
 
         combined = consolidate_enactments([due_process_5, due_process_14])
         assert len(combined) == 2
-

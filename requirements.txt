@@ -1,6 +1,6 @@
 apispec[validation]
 marshmallow>=3.2.2
-anchorpoint>=0.4.3
+anchorpoint>=0.4.4
 python-dotenv
 requests
 roman
