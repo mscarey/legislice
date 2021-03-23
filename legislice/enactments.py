@@ -48,13 +48,12 @@ class CrossReference:
 class CitingProvisionLocation:
     """Memo indicating where an Enactment can be downloaded."""
 
-    heading: str
     node: str
     start_date: date
+    heading: str = ""
 
     def __repr__(self):
-        result = f"({self.node} {self.start_date})"
-        return result
+        return f"({self.node} {self.start_date})"
 
     def __gt__(self, other: CitingProvisionLocation):
         if self.start_date != other.start_date:
@@ -76,10 +75,13 @@ class InboundReference:
         self.locations = locations
 
     def __repr__(self):
-        result = f"InboundReference to {self.target_uri}, from {max(self.locations)}"
+        result = f"InboundReference to {self.target_uri}, from {self.latest_location()}"
         if len(self.locations) > 1:
             result = f"{result} and {len(self.locations) - 1} other locations"
         return result
+
+    def latest_location(self) -> CitingProvisionLocation:
+        return max(self.locations)
 
 
 class TextVersion:

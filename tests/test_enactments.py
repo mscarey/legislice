@@ -9,7 +9,9 @@ import pytest
 
 from legislice.download import Client
 from legislice.enactments import (
+    CitingProvisionLocation,
     Enactment,
+    InboundReference,
     LinkedEnactment,
     TextVersion,
     consolidate_enactments,
@@ -166,6 +168,23 @@ class TestEnactmentDetails:
     def test_regulation_level(self, test_client):
         enactment = test_client.read("/us/cfr/t37/s202.1")
         assert enactment.level == "regulation"
+
+    def test_compare_inbound_citations_on_same_date(self):
+
+        inbound_ref = InboundReference(
+            content="or as provided in Section 5",
+            reference_text="Section 5",
+            target_uri="/test/acts/47/5",
+            locations=[
+                CitingProvisionLocation(
+                    node="/test/acts/47/3/1", start_date=date(2000, 2, 2)
+                ),
+                CitingProvisionLocation(
+                    node="/test/acts/47/7", start_date=date(2000, 2, 2)
+                ),
+            ],
+        )
+        assert inbound_ref.latest_location().node == "/test/acts/47/7"
 
 
 class TestCrossReferences:
