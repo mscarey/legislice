@@ -8,7 +8,12 @@ from dotenv import load_dotenv
 import pytest
 
 from legislice.download import Client
-from legislice.enactments import Enactment, consolidate_enactments
+from legislice.enactments import (
+    Enactment,
+    LinkedEnactment,
+    TextVersion,
+    consolidate_enactments,
+)
 from legislice.schemas import EnactmentSchema
 
 load_dotenv()
@@ -82,6 +87,26 @@ class TestLinkedEnactment:
         assert "for documentation." in enactment.text_sequence()[0].text
         enactment.select("for documentation.")
         assert enactment.selected_text() == "…for documentation."
+
+    def test_linked_enactment_without_children(self):
+        enactment = LinkedEnactment(
+            node="/test/golden",
+            heading="The Golden Rule",
+            content="Do unto others as you would have them do to you.",
+            selection="Do unto others",
+            start_date=date(1, 1, 1),
+        )
+        assert enactment.children == []
+        assert enactment.selected_text() == "Do unto others…"
+
+    def test_error_blank_content(self):
+        with pytest.raises(ValueError):
+            LinkedEnactment(
+                node="/test/unwritten",
+                heading="The Unwritten Rule",
+                textversion=TextVersion(content=""),
+                start_date=date(2001, 1, 1),
+            )
 
 
 class TestEnactmentDetails:
@@ -875,6 +900,18 @@ class TestAddEnactments:
             == "…Department of Beards, Australian Federal Police…"
         )
 
+    def test_unable_to_add_subsection_with_new_text(
+        self, old_section_8, section_8, test_client
+    ):
+        old_version = test_client.read_from_json(old_section_8)
+        new_version = test_client.read_from_json(section_8)
+        old_version.select(
+            TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
+        )
+        new_version.select("remove the beard with electrolysis")
+        with pytest.raises(TextSelectionError):
+            old_version.select_more_text_from_changed_version(new_version)
+
     def test_add_string_as_selector(self, section_11_subdivided):
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
@@ -884,6 +921,13 @@ class TestAddEnactments:
             more.selected_text()
             == "The Department of Beards may issue licenses to such…hairdressers…"
         )
+
+    def test_cannot_select_text_with_citation(self, section_11_subdivided):
+        schema = EnactmentSchema()
+        section = schema.load(section_11_subdivided)
+        cite = section.as_citation()
+        with pytest.raises(TypeError):
+            section.select_more(cite)
 
 
 class TestConsolidateEnactments:

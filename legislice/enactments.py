@@ -632,11 +632,6 @@ class Enactment(BaseEnactment):
             position = quote_selector.as_position(self.text)
             if position:
                 incoming_position_selectors.append(position)
-            else:
-                raise ValueError(
-                    f"Incoming text selection {quote_selector}  "
-                    f"cannot be found in the provision text."
-                )
             if not quote_selector.is_unique_in(self.text):
                 raise ValueError(
                     f"Incoming text selection {quote_selector} cannot be placed because it "
@@ -660,12 +655,7 @@ class Enactment(BaseEnactment):
         Select text, in addition to any previous selection.
         """
         if not isinstance(selection, TextPositionSet):
-            try:
-                selection = self.convert_selection_to_set(selection)
-            except ValueError:
-                raise TypeError(
-                    f"Cannot select more Enactment text with type {type(selection)}."
-                )
+            selection = self.convert_selection_to_set(selection)
 
         # Ignore child nodes if selector was passed in without an end
         if any(selector.end > 99999 for selector in selection):

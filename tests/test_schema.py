@@ -221,6 +221,8 @@ class TestLoadEnactment:
 
 
 class TestLoadLinkedEnactment:
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
+
     def test_load_linked_enactment(self):
         schema = LinkedEnactmentSchema()
         data = {
@@ -239,6 +241,17 @@ class TestLoadLinkedEnactment:
         }
         result = schema.load(data)
         assert result.children[0] == "https://authorityspoke.com/api/v1/us/const/"
+
+    @pytest.mark.vcr
+    def test_text_sequence_for_linked_enactment(self, test_client):
+        schema = LinkedEnactmentSchema()
+        enactment = test_client.read(query="/test", date="2020-01-01")
+        assert "for documentation." in enactment.text_sequence()[0].text
+        enactment.select("for documentation.")
+        assert enactment.selected_text() == "…for documentation."
+        dumped = schema.dump(enactment)
+        loaded = schema.load(dumped)
+        assert loaded.selected_text() == "…for documentation."
 
 
 class TestDumpEnactment:

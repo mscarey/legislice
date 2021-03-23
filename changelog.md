@@ -1,6 +1,12 @@
 Changelog
 =========
 
+dev
+------------------
+
+- add EnactmentGroup class
+- drop Python 3.7 support
+
 0.4.1 (2020-12-31)
 ------------------
 
