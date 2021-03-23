@@ -19,6 +19,7 @@ class TestIndexEnactments:
         section6d["name"] = "section6d"
         mentioned.index_enactment(section6d)
         assert mentioned["section6d"]["start_date"] == "1935-04-01"
+        assert "EnactmentIndex({'section6d" in str(mentioned)
 
 
 class TestCollectEnactments:

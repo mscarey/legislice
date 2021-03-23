@@ -38,18 +38,6 @@ class EnactmentIndex(OrderedDict):
         value.update(self[name])
         return value
 
-    def sorted_by_length(self) -> EnactmentIndex:
-        """
-        Sort dict items from longest to shortest.
-        Used to ensure that keys nearer the start can't be substrings of later keys.
-        """
-        return EnactmentIndex(
-            sorted(self.items(), key=lambda t: len(t[0]), reverse=True)
-        )
-
-    def __str__(self):
-        return f"EnactmentIndex({str(dict(self))})"
-
     def __repr__(self):
         return f"EnactmentIndex({repr(dict(self))})"
 
@@ -147,8 +135,6 @@ def collect_enactments(
             else:
                 new_dict[key] = value
 
-        if new_dict.get("source"):
-            new_dict["node"] = new_dict.pop("source")
         if new_dict.get("node") or (new_dict.get("name") in mentioned.keys()):
             new_dict = ensure_enactment_has_name(new_dict)
             new_dict = mentioned.index_enactment(new_dict)
