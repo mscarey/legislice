@@ -1,17 +1,17 @@
+from copy import deepcopy
+
+import pytest
+
 from legislice.groups import EnactmentGroup
 
 
 class TestEnactmentGroups:
-    def test_make_group(self, test_client):
-        copyright_clause = test_client.read("/us/const/article/I/8/8")
-        copyright_statute = test_client.read("/us/usc/t17/s102/b")
+    def test_make_group(self, copyright_clause, copyright_statute):
         group = EnactmentGroup([copyright_clause, copyright_statute])
         assert len(group) == 2
+        assert isinstance(EnactmentGroup(group), EnactmentGroup)
 
-    def test_consolidate_adjacent_passages(self, test_client):
-        copyright_clause = test_client.read("/us/const/article/I/8/8")
-        copyright_statute = test_client.read("/us/usc/t17/s102/b")
-
+    def test_consolidate_adjacent_passages(self, copyright_clause, copyright_statute):
         copyright_clause.select(None)
         securing_for_authors = copyright_clause + (
             "To promote the Progress of Science and "
@@ -26,8 +26,72 @@ class TestEnactmentGroups:
 
         combined = left + right
         assert len(combined) == 2
+        assert "/us/usc/t17/s102/b" in repr(combined)
         assert any(
             law.selected_text().startswith("To promote the Progress")
             and law.selected_text().endswith("their respective Writings…")
             for law in combined
         )
+
+    def test_wrong_type_in_group(self, section6d, test_client):
+        section = test_client.read_from_json(section6d)
+        cite = section.as_citation()
+        with pytest.raises(TypeError):
+            EnactmentGroup([cite])
+
+
+class TestImplies:
+    def test_no_implication_of_group(self, copyright_clause, copyright_statute):
+        extra = deepcopy(copyright_clause)
+        extra.select(None)
+        securing_for_authors = extra + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        and_inventors = extra + "and Inventors"
+        left = EnactmentGroup(copyright_clause)
+        right = EnactmentGroup([securing_for_authors, and_inventors, copyright_statute])
+        assert not left.implies(right)
+
+    def test_implication_of_group(self, copyright_clause, copyright_statute):
+        extra = deepcopy(copyright_clause)
+        extra.select(None)
+        securing_for_authors = extra + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        and_inventors = extra + "and Inventors"
+        left = EnactmentGroup([copyright_clause, copyright_statute])
+        right = EnactmentGroup([securing_for_authors, and_inventors])
+        assert left.implies(right)
+        assert left >= right
+
+    def test_implication_of_enactment(self, copyright_clause, copyright_statute):
+        extra = deepcopy(copyright_clause)
+        extra.select(None)
+        securing_for_authors = extra + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        left = EnactmentGroup([copyright_clause, copyright_statute])
+        assert left > securing_for_authors
+
+
+class TestAdd:
+    def test_add_enactment_to_group(self, copyright_clause):
+        copyright_clause.select(None)
+        securing_for_authors = copyright_clause + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        and_inventors = copyright_clause + "and Inventors"
+        right_to_writings = (
+            copyright_clause + "the exclusive Right to their respective Writings"
+        )
+        left = EnactmentGroup([securing_for_authors, and_inventors])
+        right = right_to_writings
+        result = left + right
+        assert len(result) == 1
+        assert "respective Writings…" in str(result)
+        assert "/us/const/article/I/8/8" in str(result[0])
+        assert "1788-09-13" in str(result[:])

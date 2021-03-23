@@ -537,3 +537,44 @@ def provision_with_text_anchor():
         "anchors": "qualify for copyright protection. |17 U.S.C. § 102(a)|.",
     }
 
+
+@pytest.fixture(scope="class")
+def copyright_clause(test_client):
+    return test_client.read_from_json(
+        {
+            "heading": "Patents and copyrights.",
+            "start_date": "1788-09-13",
+            "node": "/us/const/article/I/8/8",
+            "text_version": {
+                "id": 735650,
+                "url": "https://authorityspoke.com/api/v1/textversions/735650/",
+                "content": "To promote the Progress of Science and useful Arts, by securing for limited Times to Authors and Inventors the exclusive Right to their respective Writings and Discoveries;",
+            },
+            "url": "https://authorityspoke.com/api/v1/us/const/article/I/8/8/",
+            "end_date": None,
+            "children": [],
+            "citations": [],
+            "parent": "https://authorityspoke.com/api/v1/us/const/article/I/8/",
+        }
+    )
+
+
+@pytest.fixture(scope="class")
+def copyright_statute(test_client):
+    return test_client.read_from_json(
+        {
+            "heading": "",
+            "start_date": "2013-07-18",
+            "node": "/us/usc/t17/s102/b",
+            "text_version": {
+                "id": 1030580,
+                "url": "https://authorityspoke.com/api/v1/textversions/1030580/",
+                "content": "In no case does copyright protection for an original work of authorship extend to any idea, procedure, process, system, method of operation, concept, principle, or discovery, regardless of the form in which it is described, explained, illustrated, or embodied in such work.",
+            },
+            "url": "https://authorityspoke.com/api/v1/us/usc/t17/s102/b/",
+            "end_date": None,
+            "children": [],
+            "citations": [],
+            "parent": "https://authorityspoke.com/api/v1/us/usc/t17/s102/",
+        }
+    )

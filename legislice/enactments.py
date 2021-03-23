@@ -789,6 +789,6 @@ def consolidate_enactments(enactments: List[Enactment]) -> List[Enactment]:
                 break
             except ValueError:
                 pass
-        if match_made is False:
+        if not match_made:
             consolidated.append(left)
     return consolidated
