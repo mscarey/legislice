@@ -1,0 +1,59 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test/acts/47/8@1950-01-01/
+  response:
+    body:
+      string: '{"heading":"Notice to remedy","start_date":"1935-04-01","node":"/test/acts/47/8","text_version":null,"url":"https://authorityspoke.com/api/v1/test/acts/47/8@1950-01-01/","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/1","text_version":{"id":1142679,"url":"https://authorityspoke.com/api/v1/textversions/1142679/","content":"Where
+        an officer of the Department of Beards, Australian Federal Police, state or
+        territorial police, or military police of the Australian Defence Force finds
+        a person to be wearing a beard within the territory of the Commonwealth of
+        Australia, and that person fails or is unable to produce a beardcoin as proof
+        of holding an exemption under section 6, that officer shall in the first instance
+        issue such person a notice to remedy."},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/1@1950-01-01/","end_date":null,"children":[],"citations":[{"target_uri":"/test/acts/47/6","target_url":"https://authorityspoke.com/api/v1/test/acts/47/6@1950-01-01/","target_node":1386965,"reference_text":"section
+        6"}]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/2","text_version":{"id":1142683,"url":"https://authorityspoke.com/api/v1/textversions/1142683/","content":"Any
+        such person issued a notice to remedy under subsection 1 must either:"},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/2@1950-01-01/","end_date":null,"children":[{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/2/a","text_version":{"id":1142680,"url":"https://authorityspoke.com/api/v1/textversions/1142680/","content":"shave
+        in such a way that they are no longer in breach of section 5, or"},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/2/a@1950-01-01/","end_date":null,"children":[],"citations":[{"target_uri":"/test/acts/47/5","target_url":"https://authorityspoke.com/api/v1/test/acts/47/5@1950-01-01/","target_node":1386964,"reference_text":"section
+        5"}]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/2/b","text_version":{"id":1142681,"url":"https://authorityspoke.com/api/v1/textversions/1142681/","content":"obtain
+        a beardcoin from the Department of Beards"},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/2/b@1950-01-01/","end_date":"2013-07-18","children":[],"citations":[]},{"heading":"","start_date":"1935-04-01","node":"/test/acts/47/8/2/b-con","text_version":{"id":1142682,"url":"https://authorityspoke.com/api/v1/textversions/1142682/","content":"within
+        14 days of such notice being issued to them."},"url":"https://authorityspoke.com/api/v1/test/acts/47/8/2/b-con@1950-01-01/","end_date":"2013-07-18","children":[],"citations":[]}],"citations":[{"target_uri":"/test/acts/47/8/1","target_url":"https://authorityspoke.com/api/v1/test/acts/47/8/1@1950-01-01/","target_node":1386980,"reference_text":"subsection
+        1"}]}],"citations":[],"parent":"https://authorityspoke.com/api/v1/test/acts/47@1950-01-01/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2931'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 24 Mar 2021 07:40:15 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn/20.0.4
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

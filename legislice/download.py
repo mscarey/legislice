@@ -117,12 +117,8 @@ class Client:
 
         if date:
             if "@" in target:
-                if not target.endswith(date):
-                    raise ValueError(
-                        f"Date param {date} does not match date in URL {target}"
-                    )
-            else:
-                target = f"{target}@{date}"
+                target = target.split("@")[0]
+            target = f"{target}@{date}"
 
         return self._fetch_from_url(url=target).json()
 

@@ -90,6 +90,20 @@ class TestDownloadJSON:
         assert waiver["children"][0]["start_date"] == "1935-04-01"
 
     @pytest.mark.vcr()
+    def test_fetch_cross_reference_to_old_version(self, test_client):
+        """Test that statute can be fetched with a post-enactment date it was in effect."""
+        reference = CrossReference(
+            target_uri="/test/acts/47/8",
+            target_url="https://authorityspoke.com/api/v1/test/acts/47/8@1935-04-01/",
+            reference_text="section 8",
+        )
+        enactment = test_client.fetch_cross_reference(
+            query=reference, date=datetime.date(1950, 1, 1)
+        )
+        assert enactment.start_date == "1935-04-01"
+        assert enactment.url.endswith("@1950-01-01")
+
+    @pytest.mark.vcr()
     def test_omit_terminal_slash(self, test_client):
         statute = test_client.fetch(query="us/usc/t17/s102/b/")
         assert not statute["node"].endswith("/")
