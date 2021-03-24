@@ -21,6 +21,13 @@ class TestIndexEnactments:
         assert mentioned["section6d"]["start_date"] == "1935-04-01"
         assert "EnactmentIndex({'section6d" in str(mentioned)
 
+    def test_index_key_error(self, section6d):
+        mentioned = EnactmentIndex()
+        section6d["name"] = "section6d"
+        mentioned.index_enactment(section6d)
+        with pytest.raises(KeyError):
+            mentioned.get_by_name("not in index")
+
 
 class TestCollectEnactments:
     """Tests for finding and collecting Enactment records from a nested dict."""

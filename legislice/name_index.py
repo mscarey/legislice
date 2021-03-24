@@ -29,11 +29,6 @@ class EnactmentIndex(OrderedDict):
         :returns:
             the value stored at the key "name", plus a name field.
         """
-
-        if not self.get(name):
-            raise ValueError(
-                f'Name "{name}" not found in the index of mentioned Enactments'
-            )
         value = {"name": name}
         value.update(self[name])
         return value

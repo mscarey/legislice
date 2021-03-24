@@ -205,6 +205,14 @@ class TestCrossReferences:
             == 'CrossReference(target_uri="/test/acts/47/6C", reference_text="Section 6C")'
         )
 
+    @pytest.mark.vcr()
+    def test_locations_of_cross_reference(self, test_client):
+        enactment = test_client.read("/test/acts/47/6D")
+        assert "Section 6C" in enactment.text
+        references = enactment.cross_references()
+        citations = test_client.citations_to(references[0])
+        assert citations[0].target_uri == "/test/acts/47/6C"
+
 
 class TestSelectText:
     def test_same_quotation_from_enactments_of_differing_depths(

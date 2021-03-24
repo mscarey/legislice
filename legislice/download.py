@@ -207,6 +207,7 @@ class Client:
         return response.json()
 
     def uri_from_query(self, target: Union[str, Enactment, CrossReference]) -> str:
+        """Get a URI for the target object."""
         if isinstance(target, Enactment):
             return target.node
         elif isinstance(target, CrossReference):
