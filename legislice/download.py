@@ -124,10 +124,6 @@ class Client:
             else:
                 target = f"{target}@{date}"
 
-        if not target.startswith(self.api_root):
-            raise ValueError(
-                f'target_url of cross-reference, "{target}", does not start with Client\'s api_root, "{self.api_root}"'
-            )
         return self._fetch_from_url(url=target).json()
 
     def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
@@ -173,10 +169,11 @@ class Client:
                 self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
         return code_uri
 
-    def url_from_enactment_uri(
-        self, uri: str, date: Union[datetime.date, str] = ""
+    def url_from_enactment_path(
+        self, path: str, date: Union[datetime.date, str] = ""
     ) -> str:
-        query_with_root = self.api_root + normalize_path(uri)
+        """Generate URL for API call for specified USLM path and date."""
+        query_with_root = self.api_root + normalize_path(path)
 
         if isinstance(date, datetime.date):
             date = date.isoformat()
@@ -202,7 +199,7 @@ class Client:
             you select a date when two versions of the provision were in effect at the same time,
             you will be given the version that became effective later.
         """
-        url = self.url_from_enactment_uri(uri=query, date=date)
+        url = self.url_from_enactment_path(path=query, date=date)
         response = self._fetch_from_url(url=url)
         return response.json()
 
@@ -322,6 +319,11 @@ class Client:
         return enactment_index
 
     def _fetch_from_url(self, url: str) -> requests.Response:
+        if not url.startswith(self.api_root):
+            raise ValueError(
+                f'target_url of cross-reference, "{url}", does not start with Client\'s api_root, "{self.api_root}"'
+            )
+
         headers = {}
         if self.api_token:
             headers["Authorization"] = f"Token {self.api_token}"

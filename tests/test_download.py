@@ -29,7 +29,7 @@ class TestDownloadJSON:
 
     @pytest.mark.vcr()
     def test_fetch_section(self, test_client):
-        url = self.client.url_from_enactment_uri("/test/acts/47/1")
+        url = self.client.url_from_enactment_path("/test/acts/47/1")
         response = self.client._fetch_from_url(url=url)
 
         # Test that there was no redirect from the API
@@ -40,9 +40,15 @@ class TestDownloadJSON:
         assert section["end_date"] is None
         assert section["heading"] == "Short title"
 
+    def test_download_from_wrong_domain_raises_error(self, test_client):
+        url = self.client.url_from_enactment_path("/test/acts/47/1")
+        wrong_url = url.replace("authorityspoke.com", "pythonforlaw.com")
+        with pytest.raises(ValueError):
+            self.client._fetch_from_url(url=wrong_url)
+
     @pytest.mark.vcr()
     def test_fetch_current_section_with_date(self, test_client):
-        url = self.client.url_from_enactment_uri(
+        url = self.client.url_from_enactment_path(
             "/test/acts/47/6D", date=datetime.date(2020, 1, 1)
         )
         response = self.client._fetch_from_url(url=url)
