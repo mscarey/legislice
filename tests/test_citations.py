@@ -1,6 +1,16 @@
 import pytest
 
-from legislice import Enactment
+from legislice import Citation, Enactment
+
+
+class TestMakeCitation:
+    def test_bad_jurisdiction(self):
+        with pytest.raises(KeyError):
+            Citation(jurisdiction="atlantis", code="acts")
+
+    def test_bad_code(self):
+        with pytest.raises(KeyError):
+            Citation(jurisdiction="us", code="proclamations")
 
 
 class TestSerializeCitation:

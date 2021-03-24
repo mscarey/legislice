@@ -100,8 +100,8 @@ class TestDownloadJSON:
         enactment = test_client.fetch_cross_reference(
             query=reference, date=datetime.date(1950, 1, 1)
         )
-        assert enactment.start_date == "1935-04-01"
-        assert enactment.url.endswith("@1950-01-01")
+        assert enactment["start_date"] == "1935-04-01"
+        assert enactment["url"].endswith("@1950-01-01/")
 
     @pytest.mark.vcr()
     def test_omit_terminal_slash(self, test_client):
