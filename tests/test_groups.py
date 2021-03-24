@@ -95,3 +95,16 @@ class TestAdd:
         assert "respective Writings…" in str(result)
         assert "/us/const/article/I/8/8" in str(result[0])
         assert "1788-09-13" in str(result[:])
+
+    def test_add_empty_group(self, copyright_clause, copyright_statute):
+        copyright_clause.select(None)
+        securing_for_authors = copyright_clause + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        writings = copyright_clause + "their respective Writings"
+        left = EnactmentGroup([securing_for_authors, writings, copyright_statute])
+        assert len(left) == 2
+        right = EnactmentGroup(None)
+        result = left + right
+        assert len(result) == 2

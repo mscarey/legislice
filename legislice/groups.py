@@ -1,20 +1,25 @@
 from __future__ import annotations
 
 import textwrap
-from typing import Sequence, Tuple, Union
+from typing import Optional, Sequence, Tuple, Union
 
 from legislice.enactments import Enactment, consolidate_enactments
 
 
 class EnactmentGroup:
     def __init__(
-        self, enactments: Union[EnactmentGroup, Sequence[Enactment], Enactment] = ()
+        self,
+        enactments: Optional[
+            Union[EnactmentGroup, Sequence[Enactment], Enactment]
+        ] = None,
     ):
         """Normalize ``factors`` as sequence attribute."""
         if isinstance(enactments, EnactmentGroup):
             self.sequence: Tuple[Enactment, ...] = enactments.sequence
         elif isinstance(enactments, Sequence):
             self.sequence = tuple(enactments)
+        elif enactments is None:
+            self.sequence = ()
         else:
             self.sequence = (enactments,)
         for enactment in self.sequence:
