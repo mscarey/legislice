@@ -10,12 +10,10 @@ import pytest
 
 from legislice.download import (
     Client,
-    LegisliceDateError,
     LegislicePathError,
     LegisliceTokenError,
 )
 from legislice.enactments import InboundReference
-from legislice.name_index import collect_enactments
 
 
 load_dotenv()

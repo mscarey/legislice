@@ -14,7 +14,6 @@ from legislice.enactments import (
     TextVersion,
     CitingProvisionLocation,
 )
-from legislice.name_index import EnactmentIndex
 
 
 def enactment_needs_api_update(data: RawEnactment) -> bool:
@@ -93,18 +92,6 @@ class CrossReferenceSchema(Schema):
 
 class ExpandableSchema(Schema):
     """Base schema for classes that can be cross-referenced by name in input JSON."""
-
-    def get_indexed_enactment(self, data, **kwargs):
-        """Replace data to load with any object with same name in "enactment_index"."""
-        if isinstance(data, str):
-            name_to_retrieve = data
-        elif data.get("name") and enactment_needs_api_update(data):
-            name_to_retrieve = data["name"]
-        else:
-            return data
-
-        mentioned = self.context.get("enactment_index") or EnactmentIndex()
-        return deepcopy(mentioned.get_by_name(name_to_retrieve))
 
     def wrap_single_element_in_list(self, data: Dict, many_element: str):
         """Make a specified field a list if it isn't already a list."""
@@ -213,7 +200,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
-        data = self.get_indexed_enactment(data)
+        # data = self.get_indexed_enactment(data)
         data = self.nest_content_in_textversion(data)
         data = self.wrap_single_element_in_list(data, "selection")
         data = self.move_selector_fields(data)

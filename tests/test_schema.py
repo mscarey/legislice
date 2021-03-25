@@ -10,7 +10,7 @@ from marshmallow import ValidationError
 import pytest
 
 from legislice.download import Client
-from legislice.name_index import collect_enactments
+
 from legislice.schemas import (
     CrossReferenceSchema,
     EnactmentSchema,
@@ -126,13 +126,6 @@ class TestLoadEnactment:
         record = test_client.update_enactment_from_api(provision_with_text_anchor)
         result = schema.load(record)
         assert result.anchors[0].exact == "17 U.S.C. § 102(a)"
-
-    def test_retrieve_enactment_by_name(self, section6d, section_11_together):
-        obj, indexed = collect_enactments([section6d, section_11_together])
-        schema = EnactmentSchema(many=True)
-        schema.context["enactment_index"] = indexed
-        enactments = schema.load(obj)
-        assert enactments[0].start_date.isoformat() == "1935-04-01"
 
     def test_enactment_does_not_fail_for_excess_selector(self, section_11_subdivided):
         """Test selector that extends into the text of a subnode."""
@@ -349,4 +342,3 @@ class TestLoadInboundReferences:
         loaded = schema.load(data)
         assert loaded.target_uri == "/us/usc/t17/s501"
         assert loaded.reference_text == "section 501 of this title"
-

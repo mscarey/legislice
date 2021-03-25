@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 import requests
 
@@ -9,7 +9,7 @@ from legislice.enactments import (
     CitingProvisionLocation,
     InboundReference,
 )
-from legislice.name_index import EnactmentIndex
+
 from legislice.schemas import (
     InboundReferenceSchema,
     get_schema_for_node,
@@ -306,8 +306,8 @@ class Client:
         return new_data
 
     def update_entries_in_enactment_index(
-        self, enactment_index: EnactmentIndex
-    ) -> EnactmentIndex:
+        self, enactment_index: Mapping[str, RawEnactment]
+    ) -> Mapping[str, RawEnactment]:
         """Fill in missing fields in every entry in an :class:`~legislice.name_index.EnactmentIndex`."""
         for key, value in enactment_index.items():
             if enactment_needs_api_update(value):

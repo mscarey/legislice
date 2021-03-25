@@ -61,6 +61,12 @@ class CitationSchema(Schema):
 
 @dataclass
 class Citation:
+    r"""
+    A citation style for referring to an :class:`~legislice.enactments.Enactment` in written text.
+
+    Intended for use with `Citation Style Language (CSL) <https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html>`_.
+    """
+
     def __init__(
         self,
         jurisdiction: str,
@@ -92,9 +98,11 @@ class Citation:
         return name.replace("sec.", "§")
 
     def as_dict(self) -> str:
+        """Dump Citation Style Language data as Python object."""
         schema = CitationSchema()
         return schema.dump(self)
 
     def as_json(self) -> str:
+        """Dump Citation Style Language data as JSON."""
         schema = CitationSchema()
         return schema.dumps(self)
