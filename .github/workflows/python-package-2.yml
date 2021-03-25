@@ -31,13 +31,10 @@ jobs:
         env:
           LEGISLICE_API_TOKEN: ${{ secrets.LEGISLICE_API_TOKEN }}
           API_ROOT: https://authorityspoke.com/api/v1
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           pytest tests/ --vcr-record=none --cov=legislice --cov-report=term-missing
       - name: Upload coverage data to coveralls.io
         if: matrix.python-version == 3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: coveralls --service=github
+        run: coveralls
