@@ -90,25 +90,6 @@ class CrossReferenceSchema(Schema):
         return self.__model__(**data)
 
 
-class ExpandableSchema(Schema):
-    """Base schema for classes that can be cross-referenced by name in input JSON."""
-
-    def wrap_single_element_in_list(self, data: Dict, many_element: str):
-        """Make a specified field a list if it isn't already a list."""
-        if data.get(many_element) is None:
-            data[many_element] = []
-        elif not isinstance(data[many_element], list):
-            data[many_element] = [data[many_element]]
-        return data
-
-    @post_load
-    def make_object(self, data, **kwargs):
-        if data.get("selection"):
-            data["selection"] = [item for item in data["selection"] if item is not None]
-
-        return self.__model__(**data)
-
-
 class TextVersionSchema(Schema):
     __model__ = TextVersion
     content = fields.Str(required=True)
@@ -122,7 +103,7 @@ class TextVersionSchema(Schema):
         return self.__model__(**data)
 
 
-class LinkedEnactmentSchema(ExpandableSchema):
+class LinkedEnactmentSchema(Schema):
     """Schema for passages from legislation without the full text of child nodes."""
 
     __model__: Union[Type[Enactment], Type[LinkedEnactment]] = LinkedEnactment
@@ -140,6 +121,14 @@ class LinkedEnactmentSchema(ExpandableSchema):
     class Meta:
         unknown = EXCLUDE
         ordered = True
+
+    def wrap_single_element_in_list(self, data: Dict, many_element: str):
+        """Make a specified field a list if it isn't already a list."""
+        if data.get(many_element) is None:
+            data[many_element] = []
+        elif not isinstance(data[many_element], list):
+            data[many_element] = [data[many_element]]
+        return data
 
     def move_selector_fields(self, data: RawEnactment, **kwargs):
         """
@@ -200,13 +189,19 @@ class LinkedEnactmentSchema(ExpandableSchema):
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
-        # data = self.get_indexed_enactment(data)
         data = self.nest_content_in_textversion(data)
         data = self.wrap_single_element_in_list(data, "selection")
         data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "anchors")
         data = self.is_revision_date_known(data)
         return data
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        if data.get("selection"):
+            data["selection"] = [item for item in data["selection"] if item is not None]
+
+        return self.__model__(**data)
 
 
 class EnactmentSchema(LinkedEnactmentSchema):
