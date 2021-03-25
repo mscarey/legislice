@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-vcr
+          pip install pytest pytest-vcr coveralls
           pip install -r requirements.txt
           pip install -e .
       - name: Test with pytest
@@ -33,4 +33,9 @@ jobs:
           LEGISLICE_API_TOKEN: ${{ secrets.LEGISLICE_API_TOKEN }}
           API_ROOT: https://authorityspoke.com/api/v1
         run: |
-          pytest --vcr-record=none
+          pytest --vcr-record=none --cov=legislice --cov-report=term-missing
+      - name: Upload coverage data to coveralls.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls --service=github
