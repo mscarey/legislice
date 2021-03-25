@@ -37,4 +37,7 @@ jobs:
         run: |
           pytest --vcr-record=none --cov=legislice --cov-report=term-missing
       - name: Upload coverage data to coveralls.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: coveralls --service=github
