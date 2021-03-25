@@ -1,9 +1,6 @@
 Enactments
 =======================================
 
-.. autoclass:: legislice.enactments.CrossReference
-    :members:
-
 .. autoclass:: legislice.enactments.InboundReference
     :members:
 
@@ -14,6 +11,9 @@ Enactments
     :members:
 
 .. autoclass:: legislice.enactments.Enactment
+    :members:
+
+.. autoclass:: legislice.enactments.CrossReference
     :members:
 
 .. autofunction:: legislice.enactments.consolidate_enactments

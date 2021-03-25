@@ -63,6 +63,7 @@ class EnactmentGroup:
     def __add__(
         self, other: Union[EnactmentGroup, Sequence[Enactment], Enactment]
     ) -> EnactmentGroup:
+        """Combine two EnactmentGroups, consolidating any duplicate Enactments."""
         if isinstance(other, self.__class__):
             return self._add_group(other)
         to_add = self.__class__(other)
@@ -83,6 +84,7 @@ class EnactmentGroup:
         return all(self._implies_enactment(other_law) for other_law in other)
 
     def implies(self, other: Union[Enactment, EnactmentGroup]) -> bool:
+        """Determine whether self includes all the text of another Enactment or EnactmentGroup."""
         if isinstance(other, Enactment):
             return self._implies_enactment(other)
         return self._implies(other)

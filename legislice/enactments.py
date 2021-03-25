@@ -151,7 +151,7 @@ class BaseEnactment:
     ):
         self.node = node
         if text_version:
-            self.text_version = text_version
+            self.text_version: Optional[TextVersion] = text_version
         elif content:
             self.text_version = TextVersion(content=content)
         else:
@@ -419,10 +419,7 @@ class LinkedEnactment(BaseEnactment):
         **kwargs,
     ):
 
-        if not children:
-            self._children = []
-        else:
-            self._children = children
+        self._children = children or []
         super().__init__(*args, **kwargs)
 
         if selection:
@@ -459,10 +456,7 @@ class Enactment(BaseEnactment):
         *args,
         **kwargs,
     ):
-        if not children:
-            self._children = []
-        else:
-            self._children = children
+        self._children = children or []
         super().__init__(*args, **kwargs)
         self._selection = TextPositionSet()
         if selection:
@@ -756,7 +750,7 @@ class Enactment(BaseEnactment):
         return self.implies(other)
 
 
-def consolidate_enactments(enactments: List[Enactment]) -> List[Enactment]:
+def consolidate_enactments(enactments: Sequence[Enactment]) -> List[Enactment]:
     r"""
     Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.
 

@@ -1,6 +1,6 @@
 from copy import deepcopy
 import datetime
-from typing import Dict, Union
+from typing import Dict, Type, Union
 
 from anchorpoint.schemas import SelectorSchema
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
@@ -131,13 +131,14 @@ class TextVersionSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs):
+        r"""Load data as a :class:`~legislice.enactments.TextVersion`\."""
         return self.__model__(**data)
 
 
 class LinkedEnactmentSchema(ExpandableSchema):
     """Schema for passages from legislation without the full text of child nodes."""
 
-    __model__ = LinkedEnactment
+    __model__: Union[Type[Enactment], Type[LinkedEnactment]] = LinkedEnactment
     node = fields.Url(relative=True, required=True)
     heading = fields.Str(required=True)
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
@@ -174,6 +175,7 @@ class LinkedEnactmentSchema(ExpandableSchema):
         return data
 
     def nest_content_in_textversion(self, data):
+        """Correct user-generated data omitting a layer of nesting."""
         if data.get("content"):
             if not data.get("text_version"):
                 data["text_version"] = {}
@@ -182,6 +184,12 @@ class LinkedEnactmentSchema(ExpandableSchema):
         return data
 
     def is_revision_date_known(self, data):
+        r"""
+        Determine if Enactment's start_date reflects its last revision date.
+
+        If not, then the `start_date` merely reflects the earliest date that versions
+        of the :class:`Enactment`\'s code exist in the database.
+        """
         if not self.context.get("coverage"):
             data["known_revision_date"] = False
         elif self.context["coverage"]["earliest_in_db"] and (
@@ -225,6 +233,7 @@ class EnactmentSchema(LinkedEnactmentSchema):
 
 
 def get_schema_for_node(path: str):
+    """Decide whether to load Enactment with descendant nodes or only with links to child nodes."""
     if path.count("/") < 4:
         return LinkedEnactmentSchema
     return EnactmentSchema

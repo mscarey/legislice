@@ -96,6 +96,7 @@ def create_name_for_enactment(obj: RawEnactment) -> str:
 
 
 def ensure_enactment_has_name(obj: RawEnactment) -> RawEnactment:
+
     if not obj.get("name"):
         new_name = create_name_for_enactment(obj)
         if new_name:
@@ -110,6 +111,7 @@ def collect_enactments(
 ) -> Tuple[RawFactor, EnactmentIndex]:
     """
     Make a dict of all nested objects labeled by name, creating names if needed.
+
     To be used during loading to expand name references to full objects.
     """
     mentioned = mentioned or EnactmentIndex()
