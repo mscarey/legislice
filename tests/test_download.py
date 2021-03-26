@@ -329,6 +329,7 @@ class TestInboundCitations:
         cited = test_client.read(reference)
         assert cited.node == "/us/usc/t17/s109/b/4"
         assert cited.start_date == datetime.date(2013, 7, 18)
+        assert repr(reference).startswith('InboundReference(content="')
 
     @pytest.mark.vcr()
     def test_download_enactment_from_citing_location(self, test_client):

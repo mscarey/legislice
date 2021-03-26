@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import textwrap
-from typing import Optional, Sequence, Tuple, Union
+from typing import List, Optional, Sequence, Tuple, Union
 
 from legislice.enactments import Enactment, consolidate_enactments
 
@@ -19,13 +19,13 @@ class EnactmentGroup:
     ):
         """Normalize ``factors`` as sequence attribute."""
         if isinstance(enactments, EnactmentGroup):
-            self.sequence: Tuple[Enactment, ...] = enactments.sequence
+            self.sequence: List[Enactment] = enactments.sequence
         elif isinstance(enactments, Sequence):
-            self.sequence = tuple(enactments)
+            self.sequence = list(enactments)
         elif enactments is None:
-            self.sequence = ()
+            self.sequence = []
         else:
-            self.sequence = (enactments,)
+            self.sequence = [enactments]
         for enactment in self.sequence:
             if not isinstance(enactment, Enactment):
                 raise TypeError(
@@ -34,6 +34,7 @@ class EnactmentGroup:
                     f"type {enactment.__class__.__name__}, not type Enactment"
                 )
         self.sequence = consolidate_enactments(self.sequence)
+        self.sequence.sort(key=lambda x: x.node)
 
     def _at_index(self, key: int) -> Enactment:
         return self.sequence[key]

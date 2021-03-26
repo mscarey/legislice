@@ -108,3 +108,26 @@ class TestAdd:
         right = EnactmentGroup(None)
         result = left + right
         assert len(result) == 2
+
+    def test_enactments_ordered_after_adding_groups(self, first_a, second_a, third_a):
+        establishment_clause = deepcopy(first_a)
+        establishment_clause.select(
+            "Congress shall make no law respecting an establishment of religion"
+        )
+        speech_clause = deepcopy(first_a)
+        speech_clause.select(
+            ["Congress shall make no law", "abridging the freedom of speech"]
+        )
+
+        arms_clause = deepcopy(second_a)
+        arms_clause.select(
+            "the right of the people to keep and bear arms, shall not be infringed."
+        )
+        third_amendment = deepcopy(third_a)
+
+        left = EnactmentGroup([establishment_clause, arms_clause])
+        right = EnactmentGroup([third_amendment, speech_clause])
+
+        combined = left + right
+        assert len(combined) == 3
+        assert combined[0].node == "/us/const/amendment/I"

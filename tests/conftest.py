@@ -474,6 +474,69 @@ def make_selector() -> Dict[str, TextQuoteSelector]:
     }
 
 
+@pytest.fixture(scope="class")
+def first_a(test_client):
+    return test_client.read_from_json(
+        {
+            "heading": "AMENDMENT I.",
+            "start_date": "1791-12-15",
+            "node": "/us/const/amendment/I",
+            "text_version": {
+                "id": 735703,
+                "url": "https://authorityspoke.com/api/v1/textversions/735703/",
+                "content": "Congress shall make no law respecting an establishment of religion, or prohibiting the free exercise thereof; or abridging the freedom of speech, or of the press; or the right of the people peaceably to assemble, and to petition the Government for a redress of grievances.",
+            },
+            "url": "https://authorityspoke.com/api/v1/us/const/amendment/I/",
+            "end_date": None,
+            "children": [],
+            "citations": [],
+            "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+        }
+    )
+
+
+@pytest.fixture(scope="class")
+def second_a(test_client):
+    return test_client.read_from_json(
+        {
+            "heading": "AMENDMENT II.",
+            "start_date": "1791-12-15",
+            "node": "/us/const/amendment/II",
+            "text_version": {
+                "id": 735704,
+                "url": "https://authorityspoke.com/api/v1/textversions/735704/",
+                "content": "A well regulated Militia being necessary to the security of a free State, the right of the people to keep and bear arms, shall not be infringed.",
+            },
+            "url": "https://authorityspoke.com/api/v1/us/const/amendment/II/",
+            "end_date": None,
+            "children": [],
+            "citations": [],
+            "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+        }
+    )
+
+
+@pytest.fixture(scope="class")
+def third_a(test_client):
+    return test_client.read_from_json(
+        {
+            "heading": "AMENDMENT III.",
+            "start_date": "1791-12-15",
+            "node": "/us/const/amendment/III",
+            "text_version": {
+                "id": 735705,
+                "url": "https://authorityspoke.com/api/v1/textversions/735705/",
+                "content": "No soldier shall, in time of peace be quartered in any house, without the consent of the Owner, nor in time of war, but in a manner to be prescribed by law.",
+            },
+            "url": "https://authorityspoke.com/api/v1/us/const/amendment/III/",
+            "end_date": None,
+            "children": [],
+            "citations": [],
+            "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
+        }
+    )
+
+
 @pytest.fixture(scope="module")
 def fourth_a():
     return {

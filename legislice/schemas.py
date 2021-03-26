@@ -231,6 +231,12 @@ class EnactmentSchema(LinkedEnactmentSchema):
     __model__ = Enactment
     children = fields.List(fields.Nested(lambda: EnactmentSchema()))
 
+    class Meta:
+        """Exclude unknown fields from schema."""
+
+        unknown = EXCLUDE
+        ordered = True
+
 
 def get_schema_for_node(path: str):
     """Decide whether to load Enactment with descendant nodes or only with links to child nodes."""

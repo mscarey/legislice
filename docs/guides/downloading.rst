@@ -134,7 +134,7 @@ text. One way to load an :class:`~legislice.enactments.Enactment` is with the
 :class:`~legislice.download.Client`'s :meth:`~legislice.download.Client.read_from_json` method.
 
     >>> client.read_from_json(fourth_a)
-    Enactment(source=/us/const/amendment/IV, start_date=1791-12-15, selection=TextPositionSet([TextPositionSelector[0, 332)]))
+    Enactment(node="/us/const/amendment/IV", start_date=1791-12-15, selection=TextPositionSet([TextPositionSelector[0, 332)]))
 
 Instead of always using :meth:`~legislice.download.Client.fetch` followed by
 :meth:`~legislice.download.Client.read_from_json`, we can combine the two functions together
@@ -165,8 +165,8 @@ The text of the Thirteenth Amendment is all within Section 1 and Section
 get a list of provisions contained within an ``Enactment``.
 
     >>> thirteenth_a.children
-    [Enactment(source=/us/const/amendment/XIII/1, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 207)])),
-    Enactment(source=/us/const/amendment/XIII/2, start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 77)]))]
+    [Enactment(node="/us/const/amendment/XIII/1", start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 207)])),
+    Enactment(node="/us/const/amendment/XIII/2", start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 77)]))]
 
 Then we can access each child provision as its own ``Enactment`` object
 from the ``children`` list. Remember that lists in Python start at index
@@ -217,7 +217,7 @@ When we query the API for a provision at a path with less than four
 parts (e.g., when we query for an entire Title of the United States
 Code), the response doesn’t include the full text of the provision’s
 children. Instead, it only contains URLs that link to the child nodes.
-This might help to automate the process of navigating the API and
+These URL links might help to automate the process of navigating the API and
 discovering the provisions we want. Here’s an example that discovers
 the URLs for the articles of the US Constitution.
 
@@ -305,7 +305,7 @@ subsections nested inside the cited provision. We can use the download
 
     >>> citing_enactment = client.read(inbound_refs[0])
     >>> citing_enactment
-    Enactment(source=/us/usc/t17/s109/b/4, start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 472)]))
+    Enactment(node="/us/usc/t17/s109/b/4", start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 472)]))
 
 This Enactment happens not to have any child nodes nested within it, so
 its full text is the same as what we saw when we looked at the
@@ -343,7 +343,7 @@ makes an :class:`~legislice.enactments.Enactment` from the most recent location 
 provision has been enacted.
 
     >>> client.read(refs_to_definitions[0])
-    Enactment(source=/us/usc/t2/s4579/a/4/A, start_date=2018-05-09, selection=TextPositionSet([TextPositionSelector[0, 68)]))
+    Enactment(node="/us/usc/t2/s4579/a/4/A", start_date=2018-05-09, selection=TextPositionSet([TextPositionSelector[0, 68)]))
 
 
 If we need the :class:`~legislice.enactments.Enactment` representing the statutory text before it was
@@ -354,7 +354,7 @@ earlier start date, and an earlier end date.
 
     >>> citing_enactment_before_renumbering = client.read(refs_to_definitions[0].locations[0])
     >>> citing_enactment_before_renumbering
-    Enactment(source=/us/usc/t2/s60c-5/a/2/A, start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 68)]))
+    Enactment(node="/us/usc/t2/s60c-5/a/2/A", start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 68)]))
 
     >>> citing_enactment_before_renumbering.end_date
     datetime.date(2014, 1, 16)

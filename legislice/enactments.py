@@ -75,6 +75,13 @@ class InboundReference:
         self.locations = locations
 
     def __repr__(self):
+        return (
+            f'InboundReference(content="{self.content}", '
+            f'reference_text="{self.reference_text}", '
+            f'target_uri="{self.target_uri}", locations={self.locations})'
+        )
+
+    def __str__(self):
         result = f"InboundReference to {self.target_uri}, from {self.latest_location()}"
         if len(self.locations) > 1:
             result = f"{result} and {len(self.locations) - 1} other locations"
@@ -251,7 +258,10 @@ class BaseEnactment:
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(node={self.node}, start_date={self.start_date}, selection={self.selection})"
+        return (
+            f'{self.__class__.__name__}(node="{self.node}", '
+            f'start_date={repr(self.start_date)}, selection="{self.selection}")'
+        )
 
     def as_citation(self) -> citations.Citation:
         """Create Citation Style Language markup for the Enactment."""

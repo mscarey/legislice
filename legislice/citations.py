@@ -44,6 +44,9 @@ class CitationSchema(Schema):
         data_key="event-date", serialize="dump_event_date", dump_only=True
     )
 
+    class Meta:
+        ordered = True
+
     def dump_event_date(self, obj) -> Optional[Dict[str, List[List[Union[str, int]]]]]:
         if not obj.revision_date:
             return None

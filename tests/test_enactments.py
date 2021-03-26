@@ -35,6 +35,7 @@ class TestMakeEnactment:
             ),
         )
         assert s1.end_date is None
+        assert 'Enactment(node="/test/acts/47/1"' in repr(s1)
 
     def test_init_enactment_with_nesting(self):
         subsection = Enactment(
