@@ -77,7 +77,8 @@ part of the Fourteenth Amendment that’s relevant to a particular case.
 We can use the :meth:`~legislice.enactments.Enactment.select` method to limit the text of the provision
 that’s considered “selected”. One way to do this is with a series of
 strings that exactly match the text we want to select. Because we're selecting only some of
-the text, the output of the ``selected_text`` method will be different.
+the text, the output of the :meth:`~legislice.enactments.BaseEnactment.selected_text` method
+will be different.
 
     >>> fourteenth_amendment.select(["No State shall", "deprive any person of", "liberty", "without due process of law"])
     >>> fourteenth_amendment.selected_text()
@@ -97,14 +98,14 @@ text we've already selected.
     '…No State shall…deprive any person of life, liberty, or property, without due process of law…'
 
 If we need to select a passage that occurs more than once in the
-Enactment, we can import the :class:`anchorpoint.textselectors.TextQuoteSelector` class instead of
+Enactment, we can import the :class:`~anchorpoint.textselectors.TextQuoteSelector` class instead of
 using strings. With a :class:`~anchorpoint.textselectors.TextQuoteSelector`, we specify not just the
 ``exact`` phrase we want to select, but also a ``prefix`` or ``suffix``
 that makes the phrase uniquely identifiable. In this example, the text
 being selected is the second instance of the phrase “twenty-one years of
 age” in the Fourteenth Amendment.
 
-    >>> from legislice.enactments import TextQuoteSelector
+    >>> from legislice import TextQuoteSelector
     >>> fourteenth_amendment.select(TextQuoteSelector(prefix="male citizens ", exact="twenty-one years of age"))
     >>> fourteenth_amendment.selected_text()
     '…twenty-one years of age…'
@@ -235,7 +236,7 @@ other Enactment. Legislice’s :meth:`~legislice.enactments.Enactment.implies`
 and :meth:`~legislice.enactments.Enactment.means` methods can help
 to automate that analysis.
 
-Since we can use ``>=`` as an alias
+Since ``>=`` is an alias
 for :meth:`~legislice.enactments.Enactment.implies`, we might expect
 to be able to use ``==`` as an alias
 for :meth:`~legislice.enactments.Enactment.means`. Currently we can’t
@@ -273,6 +274,47 @@ text from subsection ``a`` and subsection ``b`` in the correct order.
     >>> combined_enactment = s103 + s103a
     >>> combined_enactment.selected_text()
     'The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully.…The copyright in such work is independent of…any copyright protection in the preexisting material.'
+
+.. _enactment-groups:
+
+EnactmentGroups
+---------------
+
+When we want to work with groups of Enactments that may or may not be
+nested inside one another, we can put them together in
+an :class:`~legislice.groups.EnactmentGroup`\.
+When we create a new EnactmentGroup
+or :meth:`~legislice.groups.EnactmentGroup.__add__` two
+EnactmentGroups together, any overlapping
+:class:`~legislice.enactments.Enactment`\s inside
+will be combined into a single Enactment.
+
+In this example, we create two EnactmentGroups called ``left`` and
+``right``, each containing two Enactments, and add them together.
+Because one of the Enactments
+in ``left`` overlaps with one of the Enactments in ``right``, when we
+add ``left`` and ``right`` together those two Enactments will be
+combined into one. Thus the resulting EnactmentGroup will contain three
+Enactments instead of four.
+
+    >>> from legislice import EnactmentGroup
+    >>> establishment_clause = client.read(query="/us/const/amendment/I")
+    >>> establishment_clause.select("Congress shall make no law respecting an establishment of religion")
+    >>> speech_clause = client.read(query="/us/const/amendment/I")
+    >>> speech_clause.select(["Congress shall make no law", "abridging the freedom of speech"])
+    >>> arms_clause = client.read(query="/us/const/amendment/II")
+    >>> arms_clause.select("the right of the people to keep and bear arms, shall not be infringed.")
+    >>> third_amendment = client.read(query="/us/const/amendment/III")
+    >>> left = EnactmentGroup([establishment_clause, arms_clause])
+    >>> right = EnactmentGroup([third_amendment, speech_clause])
+    >>> combined = left + right
+    >>> print(combined)
+    the group of Enactments:
+      "Congress shall make no law respecting an establishment of religion…abridging the freedom of speech…" (/us/const/amendment/I 1791-12-15)
+      "…the right of the people to keep and bear arms, shall not be infringed." (/us/const/amendment/II 1791-12-15)
+      "No soldier shall, in time of peace be quartered in any house, without the consent of the Owner, nor in time of war, but in a manner to be prescribed by law." (/us/const/amendment/III 1791-12-15)
+    >>> len(combined)
+    3
 
 .. _converting-enactments-to-json:
 
@@ -318,6 +360,8 @@ case.
     >>> cares_act_benefits.csl_json()
     '{"container-title": "U.S. Code", "jurisdiction": "us", "volume": "15", "event-date": {"date-parts": [["2020", 4, 10]]}, "type": "legislation", "section": "sec. 9021"}'
 
-This CSL-JSON format currently only identifies the cited provision down
-to the section level. A citation to a subsection or deeper nested
-provision will be the same as a citation to its parent section.
+This CSL-JSON format currently only identifies the cited
+provision down to the section level. Calling
+the :meth:`~legislice.enactments.BaseEnactment.as_citation` method
+on a subsection or deeper nested provision will produce
+the same citation data as its parent section.

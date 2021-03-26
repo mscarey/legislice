@@ -1,9 +1,6 @@
 Enactments
 =======================================
 
-.. autoclass:: legislice.enactments.InboundReference
-    :members:
-
 .. autoclass:: legislice.enactments.BaseEnactment
     :members:
 
@@ -14,6 +11,12 @@ Enactments
     :members:
 
 .. autoclass:: legislice.enactments.CrossReference
+    :members:
+
+.. autoclass:: legislice.enactments.InboundReference
+    :members:
+
+.. autoclass:: legislice.enactments.CitingProvisionLocation
     :members:
 
 .. autofunction:: legislice.enactments.consolidate_enactments

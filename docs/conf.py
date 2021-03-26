@@ -32,7 +32,14 @@ release = legislice.__version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.intersphinx", "sphinx.ext.coverage"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.inheritance_diagram",
+    "sphinx.ext.intersphinx",
+    "sphinx_autodoc_typehints",
+    "sphinx.ext.graphviz",
+    "sphinx.ext.coverage",
+]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "anchorpoint": ("https://anchorpoint.readthedocs.io/en/latest/", None),

@@ -46,7 +46,18 @@ class CrossReference:
 
 @dataclass
 class CitingProvisionLocation:
-    """Memo indicating where an Enactment can be downloaded."""
+    """
+    Memo indicating where an Enactment can be downloaded.
+
+    :param node:
+        location of the citing provision in a legislative code
+
+    :param start_date:
+        start date of the citing version of the provision
+
+    :param heading:
+        heading text for the citing provision
+    """
 
     node: str
     start_date: date
