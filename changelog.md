@@ -1,14 +1,16 @@
 Changelog
 =========
 
-dev
+0.5.0 (2021-03-26)
 ------------------
 
 - add EnactmentGroup class
 - drop Python 3.7 support
 - import Citation and Client at top level of library
 - Client.fetch_cross_reference no longer will ignore "date" param
+- EnactmentGroup init method can accept None as "enactments" param
 - remove "text expansion" module and functions
+- remove ExpandableSchema class
 
 0.4.1 (2020-12-31)
 ------------------
