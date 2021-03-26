@@ -166,33 +166,35 @@ class BaseEnactment:
         self.name = name
 
     @property
-    def source(self):
-        return self.node
-
-    @property
     def heading(self):
+        """Get heading text for this version of the Enactment."""
         return self._heading
 
     @property
     def content(self) -> str:
+        """Get text for this version of the Enactment."""
         if not self.text_version:
             return ""
         return self.text_version.content
 
     @property
     def start_date(self):
+        """Get date when Enactment's text version came into effect."""
         return self._start_date
 
     @property
     def end_date(self):
+        """Get date when Enactment's text version was no longer in effect."""
         return self._end_date
 
     @property
     def children(self):
+        """Get children attribute."""
         return self._children
 
     @property
     def selection(self):
+        """Get selection attribute."""
         return self._selection
 
     @property
@@ -200,6 +202,7 @@ class BaseEnactment:
         return self.content
 
     def get_identifier_part(self, index: int) -> Optional[str]:
+        """Get a part of the split node identifier, by number."""
         identifier_parts = self.node.split("/")
         if len(identifier_parts) < (index + 1):
             return None
@@ -207,26 +210,32 @@ class BaseEnactment:
 
     @property
     def sovereign(self):
+        """Get "sovereign" part of node identifier."""
         return self.get_identifier_part(1)
 
     @property
     def jurisdiction(self):
+        """Get "sovereign" part of node identifier."""
         return self.sovereign
 
     @property
     def code(self):
+        """Get "code" part of node identifier."""
         return self.get_identifier_part(2)
 
     @property
     def title(self):
+        """Get "title" part of node identifier."""
         return self.get_identifier_part(3)
 
     @property
     def section(self):
+        """Get "section" part of node identifier."""
         return self.get_identifier_part(4)
 
     @property
     def level(self) -> str:
+        """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
         code_name, code_level_name = citations.identify_code(self.sovereign, self.code)
         return code_level_name
 
@@ -242,23 +251,23 @@ class BaseEnactment:
         return f'"{text_sequence}" ({self.node} {self.start_date})'
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(source={self.source}, start_date={self.start_date}, selection={self.selection})"
+        return f"{self.__class__.__name__}(node={self.node}, start_date={self.start_date}, selection={self.selection})"
 
     def as_citation(self) -> citations.Citation:
+        """Create Citation Style Language markup for the Enactment."""
         level = self.level
         if level != "statute":
             raise NotImplementedError(
                 f"Citation serialization not implemented for '{level}' provisions."
             )
         revision_date = self.start_date if self.known_revision_date else None
-        citation = citations.Citation(
+        return citations.Citation(
             jurisdiction=self.jurisdiction,
             code=self.code,
             volume=self.title,
             section=self.section,
             revision_date=revision_date,
         )
-        return citation
 
     def cross_references(self) -> List[CrossReference]:
         """Return all cross-references from this node and subnodes."""
@@ -287,10 +296,9 @@ class BaseEnactment:
             Sequence[TextQuoteSelector],
         ],
     ) -> str:
-
+        """Use text selector to get corresponding string from Enactment."""
         position_set = self.convert_selection_to_set(selection)
-        passage = position_set.as_string(text=self.text)
-        return passage
+        return position_set.as_string(text=self.text)
 
     def convert_selection_to_set(
         self,
@@ -303,20 +311,20 @@ class BaseEnactment:
             Sequence[TextQuoteSelector],
         ],
     ) -> TextPositionSet:
+        """Create a TextPositionSet from a different selection method."""
         if selection is True:
             return TextPositionSet(
                 TextPositionSelector(0, len(self.content) + 1, include_end=False)
             )
         factory = TextPositionSetFactory(self.text)
-        position_set = factory.from_selection(selection)
-        return position_set
+        return factory.from_selection(selection)
 
     def convert_quotes_to_position(
         self, quotes: Sequence[TextQuoteSelector]
     ) -> TextPositionSet:
+        """Convert quote selector to the corresponding position selector for this Enactment."""
         factory = TextPositionSetFactory(passage=self.text)
-        positions = factory.from_quote_selectors(quotes)
-        return positions
+        return factory.from_quote_selectors(quotes)
 
     def select_from_text_positions_without_nesting(
         self, selections: Union[List[TextPositionSelector], RangeSet]
@@ -365,7 +373,7 @@ class BaseEnactment:
             Sequence[TextQuoteSelector],
         ],
     ) -> None:
-
+        """Add new text selection, replacing any prior selection."""
         if not isinstance(selection, TextPositionSet):
             selection = self.convert_selection_to_set(selection)
         unused_selectors = self.select_from_text_positions_without_nesting(selection)
@@ -381,6 +389,7 @@ class BaseEnactment:
             Sequence[TextQuoteSelector],
         ],
     ) -> None:
+        """Add new text selection, replacing any prior selection."""
         self.select_without_children(selection)
 
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
@@ -398,6 +407,7 @@ class BaseEnactment:
     def raise_error_for_extra_selector(
         self, unused_selectors: List[TextPositionSelector]
     ) -> None:
+        """Raise an error if any passed selectors begin after the end of the text passage."""
         for selector in unused_selectors:
             if selector.start > len(self.content) + 1:
                 raise ValueError(f'Selector "{selector}" was not used.')
@@ -418,7 +428,7 @@ class LinkedEnactment(BaseEnactment):
         *args,
         **kwargs,
     ):
-
+        """Select text of Enactment that can't have nested Enactments."""
         self._children = children or []
         super().__init__(*args, **kwargs)
 
@@ -437,6 +447,7 @@ class LinkedEnactment(BaseEnactment):
             Sequence[TextQuoteSelector],
         ] = True,
     ) -> None:
+        """Select all text of enactment."""
         self.select_without_children(selection)
 
 
@@ -447,6 +458,8 @@ class Enactment(BaseEnactment):
     :param children:
         other Enactments nested under this one's node
 
+    :param selection:
+        the parts of the Enactment that are being referenced
     """
 
     def __init__(
@@ -456,6 +469,7 @@ class Enactment(BaseEnactment):
         *args,
         **kwargs,
     ):
+        """Assign selected text as attr, including any selected text in child nodes."""
         self._children = children or []
         super().__init__(*args, **kwargs)
         self._selection = TextPositionSet()
@@ -506,8 +520,7 @@ class Enactment(BaseEnactment):
     ) -> TextPositionSet:
         """Select more text within this Enactment's tree_selection, including child nodes."""
         new_selection = self.tree_selection() + added_selection
-        unused_selectors = self.select_from_text_positions(new_selection)
-        return unused_selectors
+        return self.select_from_text_positions(new_selection)
 
     def _update_text_at_included_node(self, other: Enactment) -> Tuple[bool, bool]:
         """Recursively search child nodes for one that can be updated by `other`."""
@@ -569,7 +582,7 @@ class Enactment(BaseEnactment):
 
     def csl_json(self) -> str:
         """
-        Serializes a citation to this provision in Citation Style Language JSON.
+        Serialize a citation to this provision in Citation Style Language JSON.
 
         Experimental feature.
         This CSL-JSON format currently only identifies the cited provision down to
@@ -592,6 +605,7 @@ class Enactment(BaseEnactment):
         return selections
 
     def select_all(self) -> None:
+        """Select all text of Enactment."""
         if self.content:
             self._selection = TextPositionSet(
                 TextPositionSelector(0, len(self.content))
@@ -602,6 +616,7 @@ class Enactment(BaseEnactment):
             child.select_all()
 
     def select_none(self) -> None:
+        """Deselect any Enactment text, including in child nodes."""
         self._selection = TextPositionSet()
         for child in self._children:
             child.select_none()
@@ -647,9 +662,7 @@ class Enactment(BaseEnactment):
             Sequence[TextQuoteSelector],
         ],
     ) -> None:
-        """
-        Select text, in addition to any previous selection.
-        """
+        """Select text, in addition to any previous selection."""
         if not isinstance(selection, TextPositionSet):
             selection = self.convert_selection_to_set(selection)
 

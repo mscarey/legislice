@@ -1,6 +1,5 @@
 from datetime import date
 import os
-from typing import Type
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -128,12 +127,10 @@ class TestEnactmentDetails:
         assert enactment.start_date == date(1791, 12, 15)
         assert "secure in their persons…" in str(enactment)
         assert enactment.node in str(enactment)
-        assert enactment.source == enactment.node
         assert "1791-12-15" in str(enactment)
 
     @pytest.mark.vcr
     def test_sovereign_representation(self, test_client):
-        client = Client(api_token=TOKEN, api_root=API_ROOT)
         enactment = test_client.read(query="/us")
         assert enactment.code is None
         assert enactment.jurisdiction == "us"

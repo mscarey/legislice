@@ -1,4 +1,5 @@
-from copy import deepcopy
+"""Schemas for loading Enactments and related memos and references."""
+
 import datetime
 from typing import Dict, Type, Union
 
@@ -31,6 +32,8 @@ def enactment_needs_api_update(data: RawEnactment) -> bool:
 
 
 class CitingProvisionLocationSchema(Schema):
+    """Schema for memo indicating where an Enactment can be downloaded."""
+
     __model__ = CitingProvisionLocation
 
     heading = fields.Str()
@@ -42,10 +45,19 @@ class CitingProvisionLocationSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs) -> CitingProvisionLocation:
+        r"""Make :class:`~legislice.enactments.CitingProvisionLocation`\."""
         return self.__model__(**data)
 
 
 class InboundReferenceSchema(Schema):
+    r"""
+    Schema for statute text referencing a known statute.
+
+    A given statute may have
+    multiple :class:`~legislice.enactments.InboundReference`\s, and
+    a given InboundReference may exist at multiple nodes.
+    """
+
     __model__ = InboundReference
 
     content = fields.Str()
@@ -60,7 +72,7 @@ class InboundReferenceSchema(Schema):
     def format_data_to_load(
         self, data: Dict[str, Union[Dict[str, str], str]], **kwargs
     ) -> Dict:
-
+        """Get reference_text field from nested "citations" model."""
         reference_text = ""
         for citation in data["citations"]:
             if citation["target_uri"] == data["target_uri"]:
@@ -71,10 +83,13 @@ class InboundReferenceSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs) -> InboundReference:
+        r"""Make :class:`~legislice.enactments.InboundReference`\."""
         return self.__model__(**data)
 
 
 class CrossReferenceSchema(Schema):
+    """Schema for a reference to one Enactment in another Enactment's text."""
+
     __model__ = CrossReference
 
     target_uri = fields.Str(required=True)
@@ -87,10 +102,13 @@ class CrossReferenceSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs) -> CrossReference:
+        r"""Make :class:`~legislice.enactments.CrossReference`\."""
         return self.__model__(**data)
 
 
 class TextVersionSchema(Schema):
+    """Schema for version of statute text."""
+
     __model__ = TextVersion
     content = fields.Str(required=True)
 
@@ -119,6 +137,8 @@ class LinkedEnactmentSchema(Schema):
     children = fields.List(fields.Url(relative=False))
 
     class Meta:
+        """Exclude unknown fields from schema."""
+
         unknown = EXCLUDE
         ordered = True
 
@@ -198,6 +218,7 @@ class LinkedEnactmentSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs):
+        """Make Linked Enactment, omitting any text selectors."""
         if data.get("selection"):
             data["selection"] = [item for item in data["selection"] if item is not None]
 
@@ -209,9 +230,6 @@ class EnactmentSchema(LinkedEnactmentSchema):
 
     __model__ = Enactment
     children = fields.List(fields.Nested(lambda: EnactmentSchema()))
-
-    class Meta:
-        unknown = EXCLUDE
 
 
 def get_schema_for_node(path: str):

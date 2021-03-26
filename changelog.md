@@ -8,6 +8,7 @@ dev
 - drop Python 3.7 support
 - import Citation and Client at top level of library
 - Client.fetch_cross_reference no longer will ignore "date" param
+- remove "text expansion" module and functions
 
 0.4.1 (2020-12-31)
 ------------------

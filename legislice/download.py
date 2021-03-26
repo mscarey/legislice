@@ -1,3 +1,5 @@
+"""Download Enactments from API, with client."""
+
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, Union
 
@@ -20,34 +22,43 @@ RawEnactment = Dict[str, Any]
 
 
 class LegislicePathError(Exception):
+    """Error for API query with invalid path."""
+
     pass
 
 
 class LegisliceDateError(Exception):
+    """Error for API query with invalid date."""
+
     pass
 
 
 class LegisliceTokenError(Exception):
+    """Error for failure to authenticate with API token."""
+
     pass
 
 
 def normalize_path(path: str) -> str:
+    """Make sure path starts but does not end with a slash."""
     return "/" + path.strip("/")
 
 
 class Client:
+    """Downloader for legislative text."""
+
     def __init__(
         self,
-        api_token: str = "",
-        api_root: str = "https://authorityspoke.com/api/v1",
+        api_token: Optional[str] = "",
+        api_root: Optional[str] = "https://authorityspoke.com/api/v1",
         update_coverage_from_api: bool = True,
     ):
         """Create download client with an API token and an API address."""
-        self.api_root = api_root
+        self.api_root = api_root or ""
 
-        if api_token.startswith("Token "):
+        if api_token and api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
-        self.api_token = api_token
+        self.api_token = api_token or ""
         self.coverage: Dict[str, Dict[str, Union[datetime.date, str]]] = {
             "/us/const": {
                 "first_published": datetime.date(1788, 6, 21),
@@ -123,6 +134,7 @@ class Client:
         return self._fetch_from_url(url=target).json()
 
     def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
+        """Document date range of provisions of a code of laws available in API database."""
         target = self.api_root + "/coverage" + code_uri
         coverage = self._fetch_from_url(url=target).json()
         for k, v in coverage.items():
@@ -183,7 +195,7 @@ class Client:
         self, query: str, date: Union[datetime.date, str] = ""
     ) -> RawEnactment:
         """
-        Fetches data about legislation at specified path and date from Client's assigned API root.
+        Fetch data about legislation at specified path and date from Client's assigned API root.
 
         :param query:
             A path to the desired legislation section using the United States Legislation Markup
@@ -243,8 +255,7 @@ class Client:
         for entry in json_citations:
             entry["target_uri"] = target_uri
         schema = InboundReferenceSchema(many=True)
-        citations = schema.load(json_citations)
-        return citations
+        return schema.load(json_citations)
 
     def read_from_json(self, data: RawEnactment) -> Enactment:
         r"""
@@ -275,7 +286,7 @@ class Client:
         self, query: Union[str, CrossReference], date: Union[datetime.date, str] = "",
     ) -> Enactment:
         """
-        Fetches data from Client's assigned API root and builds Enactment or LinkedEnactment.
+        Fetch data from Client's assigned API root and builds Enactment or LinkedEnactment.
 
         All text is selected by default.
 
@@ -302,8 +313,7 @@ class Client:
         """
 
         data_from_api = self.fetch(query=data["node"], date=data.get("start_date"))
-        new_data = {**data, **data_from_api}
-        return new_data
+        return {**data, **data_from_api}
 
     def update_entries_in_enactment_index(
         self, enactment_index: Mapping[str, RawEnactment]

@@ -1,5 +1,4 @@
 import datetime
-from typing import Type
 from legislice import download
 from legislice.enactments import CitingProvisionLocation, CrossReference
 import os

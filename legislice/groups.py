@@ -1,3 +1,5 @@
+"""EnactmentGroup class."""
+
 from __future__ import annotations
 
 import textwrap
@@ -7,6 +9,8 @@ from legislice.enactments import Enactment, consolidate_enactments
 
 
 class EnactmentGroup:
+    """Group of Enactments with comparison methods."""
+
     def __init__(
         self,
         enactments: Optional[
