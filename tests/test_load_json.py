@@ -1,4 +1,7 @@
+from datetime import date
+
 import pytest
+from legislice.download import Client
 
 
 class TestUpdateEnactments:
@@ -70,3 +73,74 @@ class TestUpdateEnactments:
         client = test_client
         enactment = client.read_from_json(data={"node": "/us/const/amendment/IV"})
         assert enactment.selected_text().startswith("The right")
+
+
+class TestLoadAndSelect:
+    client = Client()
+    client.coverage["/us/usc"] = {
+        "earliest_in_db": date(1750, 1, 1),
+        "first_published": date(1750, 1, 1),
+    }
+    response = {
+        "heading": "",
+        "start_date": "2013-07-18",
+        "node": "/us/usc/t18/s1960/b/1",
+        "text_version": {
+            "id": 943740,
+            "url": "https://authorityspoke.com/api/v1/textversions/943740/",
+            "content": "the term “unlicensed money transmitting business” means a money transmitting business which affects interstate or foreign commerce in any manner or degree and—",
+        },
+        "url": "https://authorityspoke.com/api/v1/us/usc/t18/s1960/b/1/",
+        "end_date": None,
+        "children": [
+            {
+                "heading": "",
+                "start_date": "2013-07-18",
+                "node": "/us/usc/t18/s1960/b/1/A",
+                "text_version": {
+                    "id": 943737,
+                    "url": "https://authorityspoke.com/api/v1/textversions/943737/",
+                    "content": "is operated without an appropriate money transmitting license in a State where such operation is punishable as a misdemeanor or a felony under State law, whether or not the defendant knew that the operation was required to be licensed or that the operation was so punishable;",
+                },
+                "url": "https://authorityspoke.com/api/v1/us/usc/t18/s1960/b/1/A/",
+                "end_date": None,
+                "children": [],
+                "citations": [],
+            },
+            {
+                "heading": "",
+                "start_date": "2013-07-18",
+                "node": "/us/usc/t18/s1960/b/1/B",
+                "text_version": {
+                    "id": 943738,
+                    "url": "https://authorityspoke.com/api/v1/textversions/943738/",
+                    "content": "fails to comply with the money transmitting business registration requirements under section 5330 of title 31, United States Code, or regulations prescribed under such section; or",
+                },
+                "url": "https://authorityspoke.com/api/v1/us/usc/t18/s1960/b/1/B/",
+                "end_date": None,
+                "children": [],
+                "citations": [],
+            },
+            {
+                "heading": "",
+                "start_date": "2013-07-18",
+                "node": "/us/usc/t18/s1960/b/1/C",
+                "text_version": {
+                    "id": 943739,
+                    "url": "https://authorityspoke.com/api/v1/textversions/943739/",
+                    "content": "otherwise involves the transportation or transmission of funds that are known to the defendant to have been derived from a criminal offense or are intended to be used to promote or support unlawful activity;",
+                },
+                "url": "https://authorityspoke.com/api/v1/us/usc/t18/s1960/b/1/C/",
+                "end_date": None,
+                "children": [],
+                "citations": [],
+            },
+        ],
+        "citations": [],
+        "parent": "https://authorityspoke.com/api/v1/us/usc/t18/s1960/b/",
+    }
+
+    def test_select_text_with_end_param(self):
+        law = self.client.read_from_json(self.response)
+        law.select(end="or a felony under State law")
+        assert law.selected_text().endswith("or a felony under State law…")

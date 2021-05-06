@@ -704,6 +704,8 @@ class Enactment(BaseEnactment):
             TextQuoteSelector,
             Sequence[TextQuoteSelector],
         ] = True,
+        start: Optional[Union[int, str]] = None,
+        end: Optional[Union[int, str]] = None,
     ) -> None:
         """
         Select text, clearing any previous selection.
@@ -712,10 +714,17 @@ class Enactment(BaseEnactment):
         then any selected passages for the child Enactments will be
         cleared.
         """
-        if selection is True:
-            self.select_all()
-        elif selection is False or selection is None:
+        if selection is False or selection is None:
             self.select_none()
+        elif selection is True:
+            if (start is None) and (end is None):
+                self.select_all()
+            else:
+                selector = TextPositionSelector.from_text(
+                    text=self.text, start=start, end=end
+                )
+                selector_set = self.convert_selection_to_set(selector)
+                self.select_from_text_positions(selector_set)
         else:
             if not isinstance(selection, TextPositionSet):
                 selection = self.convert_selection_to_set(selection)
