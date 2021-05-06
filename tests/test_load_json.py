@@ -144,3 +144,8 @@ class TestLoadAndSelect:
         law = self.client.read_from_json(self.response)
         law.select(end="or a felony under State law")
         assert law.selected_text().endswith("or a felony under State law…")
+
+    def test_end_param_has_no_effect_when_nothing_selected(self):
+        law = self.client.read_from_json(self.response)
+        law.select(selection=False, end="or a felony under State law")
+        assert law.selected_text() == ""

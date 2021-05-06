@@ -717,19 +717,19 @@ class Enactment(BaseEnactment):
         if selection is False or selection is None:
             self.select_none()
         elif selection is True:
-            if (start is None) and (end is None):
-                self.select_all()
-            else:
-                selector = TextPositionSelector.from_text(
-                    text=self.text, start=start, end=end
-                )
-                selector_set = self.convert_selection_to_set(selector)
-                self.select_from_text_positions(selector_set)
+            self.select_all()
         else:
             if not isinstance(selection, TextPositionSet):
                 selection = self.convert_selection_to_set(selection)
             unused_selectors = self.select_from_text_positions(selection)
             self.raise_error_for_extra_selector(unused_selectors)
+
+        if (start is not None) or (end is not None):
+            selector = TextPositionSelector.from_text(
+                text=self.text, start=start, end=end
+            )
+            new_selection = self.tree_selection() & selector
+            self.select_from_text_positions(new_selection)
 
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
