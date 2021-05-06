@@ -723,7 +723,14 @@ class Enactment(BaseEnactment):
                 selection = self.convert_selection_to_set(selection)
             unused_selectors = self.select_from_text_positions(selection)
             self.raise_error_for_extra_selector(unused_selectors)
+        self.limit_selection(start=start, end=end)
 
+    def limit_selection(
+        self,
+        start: Optional[Union[int, str]] = None,
+        end: Optional[Union[int, str]] = None,
+    ) -> None:
+        """Limit selection to the range defined by start and end points."""
         if (start is not None) or (end is not None):
             selector = TextPositionSelector.from_text(
                 text=self.text, start=start, end=end
