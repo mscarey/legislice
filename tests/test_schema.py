@@ -150,6 +150,11 @@ class TestLoadEnactment:
 
         assert enactment.selected_text() == exact + "…"
 
+    def test_load_enactment_missing_textversion_field(self, fourth_a_no_text_version):
+        schema = ExpandableEnactmentSchema(many=False)
+        enactment = schema.load(fourth_a_no_text_version)
+        assert enactment.text.startswith("The right of the people")
+
     def test_node_field_needed_to_load_enactment(self):
         barbers_without_node = {
             "heading": "",
