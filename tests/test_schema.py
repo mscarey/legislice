@@ -16,10 +16,12 @@ from legislice.schemas import (
     EnactmentSchema,
     InboundReferenceSchema,
     LinkedEnactmentSchema,
-    SelectorSchema,
+    PositionSelectorSchema,
     CitingProvisionLocationSchema,
     enactment_needs_api_update,
 )
+
+from legislice.yaml_schemas import SelectorSchema, ExpandableEnactmentSchema
 
 load_dotenv()
 
@@ -81,7 +83,7 @@ class TestLoadEnactment:
         assert result.heading.startswith("Waiver")
 
     def test_enactment_with_nested_selectors(self, section_11_subdivided):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         section_11_subdivided["selection"] = [{"start": 0}]
         for child in section_11_subdivided["children"]:
             child["selection"] = []
@@ -91,7 +93,7 @@ class TestLoadEnactment:
         assert result.selected_text() == answer
 
     def test_enactment_with_True_as_selector(self, section_11_subdivided):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         section_11_subdivided["selection"] = True
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
@@ -99,7 +101,7 @@ class TestLoadEnactment:
         assert result.selected_text() == answer
 
     def test_enactment_with_False_as_selector(self, section_11_subdivided):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         section_11_subdivided["selection"] = False
         section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
         result = schema.load(section_11_subdivided)
@@ -107,13 +109,13 @@ class TestLoadEnactment:
         assert result.selected_text() == answer
 
     def test_selector_not_wrapped_in_list(self, section_11_together):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         section_11_together["selection"] = {"start": 4, "end": 24}
         result = schema.load(section_11_together)
         assert result.selected_text() == "…Department of Beards…"
 
     def test_load_with_text_quote_selector(self, section_11_together):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         section_11_together["selection"] = [{"exact": "Department of Beards"}]
         result = schema.load(section_11_together)
         assert result.selected_text() == "…Department of Beards…"
@@ -122,7 +124,7 @@ class TestLoadEnactment:
     def test_load_enactment_with_text_anchor(
         self, provision_with_text_anchor, test_client
     ):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         record = test_client.update_enactment_from_api(provision_with_text_anchor)
         result = schema.load(record)
         assert result.anchors[0].exact == "17 U.S.C. § 102(a)"
@@ -131,7 +133,7 @@ class TestLoadEnactment:
         """Test selector that extends into the text of a subnode."""
         exact = "The Department of Beards may issue licenses to such barbers"
         section_11_subdivided["exact"] = exact
-        schema = EnactmentSchema(many=False)
+        schema = ExpandableEnactmentSchema(many=False)
         enactment = schema.load(section_11_subdivided)
 
         assert enactment.selected_text() == exact + "…"
@@ -151,7 +153,7 @@ class TestLoadEnactment:
     def test_nest_selector_fields_before_loading(self, test_client, fourth_a):
         fourth_a["selection"] = [{"start": 10, "end": 20}]
         fourth_a["suffix"] = ", and no Warrants shall issue"
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         updated = schema.move_selector_fields(fourth_a)
         assert updated["selection"][1]["suffix"] == ", and no Warrants shall issue"
 
@@ -260,8 +262,9 @@ class TestDumpEnactment:
         assert quote == "Science and useful Arts"
 
     @pytest.mark.vcr()
-    def test_serialize_enactment_after_adding(self, test_client):
-        search = test_client.read("/us/const/amendment/IV")
+    def test_serialize_enactment_after_adding(self, fourth_a):
+        schema = ExpandableEnactmentSchema()
+        search = schema.load(fourth_a)
         warrant = deepcopy(search)
 
         search.select(TextQuoteSelector(suffix=", and no Warrants"))
@@ -274,7 +277,6 @@ class TestDumpEnactment:
 
         # search.select_more_text_at_current_node(warrant.selection)
 
-        schema = EnactmentSchema()
         dumped = schema.dump(combined_enactment)
 
         assert dumped["text_version"]["content"].startswith("The right")

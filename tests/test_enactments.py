@@ -16,6 +16,7 @@ from legislice.enactments import (
     consolidate_enactments,
 )
 from legislice.schemas import EnactmentSchema
+from legislice.yaml_schemas import ExpandableEnactmentSchema
 
 load_dotenv()
 
@@ -437,7 +438,7 @@ class TestSelectFromEnactment:
         section_11_subdivided["selection"] = [
             {"exact": "text that doesn't exist in the code"}
         ]
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         with pytest.raises(TextSelectionError):
             _ = schema.load(section_11_subdivided)
 
@@ -483,7 +484,7 @@ class TestCompareEnactment:
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
 
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
 
         fourth_a = schema.load(fourth_a)
         fourth_a.select_all()
@@ -655,9 +656,10 @@ class TestAddEnactments:
         search_clause = fourth_a.copy()
         search_clause["selection"] = [{"suffix": ", and no Warrants"}]
 
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
 
         fourth_a = schema.load(fourth_a)
+        fourth_a.select_all()
         search_clause = schema.load(search_clause)
 
         greater_plus_lesser = search_clause + fourth_a
@@ -670,7 +672,7 @@ class TestAddEnactments:
         assert lesser_plus_greater.means(fourth_a)
 
     def test_add_overlapping_text_selection(self, fourth_a):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         search = schema.load(fourth_a)
         warrant = schema.load(fourth_a)
         search.select(TextQuoteSelector(suffix=", and no Warrants"))
@@ -689,7 +691,7 @@ class TestAddEnactments:
         assert passage in search.selected_text()
 
     def test_non_overlapping_text_selection(self, fourth_a):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         left = schema.load(fourth_a)
         right = schema.load(fourth_a)
         left.select("The right of the people to be secure in their persons")
@@ -701,7 +703,7 @@ class TestAddEnactments:
         )
 
     def test_select_unavailable_text(self, fourth_a):
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
         fourth = schema.load(fourth_a)
         with pytest.raises(TextSelectionError):
             fourth.select("right to privacy")
@@ -965,11 +967,14 @@ class TestConsolidateEnactments:
         warrants_clause = fourth_a.copy()
         warrants_clause["selection"] = [{"prefix": "shall not be violated,"}]
 
-        schema = EnactmentSchema()
+        schema = ExpandableEnactmentSchema()
 
-        fourth = schema.load(fourth_a)
         search = schema.load(search_clause)
         warrants = schema.load(warrants_clause)
+
+        fourth_amendment = fourth_a.copy()
+        fourth_amendment["selection"] = True
+        fourth = schema.load(fourth_amendment)
 
         consolidated = consolidate_enactments([fourth, search, warrants])
         assert len(consolidated) == 1

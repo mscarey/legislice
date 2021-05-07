@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 from legislice.download import Client
+from legislice.yaml_schemas import ExpandableEnactmentSchema
 
 
 class TestUpdateEnactments:

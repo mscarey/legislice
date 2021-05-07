@@ -332,7 +332,11 @@ def old_section_8():
 def section_11_together():
     return {
         "heading": "Licensed repurchasers of beardcoin",
+        "text_version": {
+            "id": 1142710,
+            "url": "https://authorityspoke.com/api/v1/textversions/1142710/",
         "content": "The Department of Beards may issue licenses to such barbers, hairdressers, or other male grooming professionals as they see fit to purchase a beardcoin from a customer whose beard they have removed, and to resell those beardcoins to the Department of Beards.",
+        },
         "children": [],
         "end_date": "2013-07-18",
         "node": "/test/acts/47/11",
@@ -553,7 +557,6 @@ def fourth_a():
         "children": [],
         "citations": [],
         "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
-        "selection": True,
     }
 
 
@@ -561,14 +564,18 @@ def fourth_a():
 def fifth_a():
     return {
         "heading": "AMENDMENT V.",
-        "content": "No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any Criminal Case to be a witness against himself; nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation.",
-        "children": [],
-        "end_date": None,
-        "node": "/us/const/amendment/V",
         "start_date": "1791-12-15",
+        "node": "/us/const/amendment/V",
+        "text_version": {
+            "id": 735707,
+            "url": "https://authorityspoke.com/api/v1/textversions/735707/",
+            "content": "No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any Criminal Case to be a witness against himself; nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation."
+        },
         "url": "https://authorityspoke.com/api/v1/us/const/amendment/V/",
-        "parent": "https://authorityspoke.com/api/v1/us/const/amendment/",
-        "selection": True,
+        "end_date": None,
+        "children": [],
+        "citations": [],
+        "parent": "https://authorityspoke.com/api/v1/us/const/amendment/"
     }
 
 

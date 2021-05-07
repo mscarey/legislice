@@ -17,6 +17,7 @@ from legislice.schemas import (
     get_schema_for_node,
     enactment_needs_api_update,
 )
+from legislice.yaml_schemas import get_expandable_schema_for_node
 
 RawEnactment = Dict[str, Any]
 
@@ -268,7 +269,7 @@ class Client:
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
 
-        schema_class = get_schema_for_node(data["node"])
+        schema_class = get_expandable_schema_for_node(data["node"])
         schema = schema_class()
 
         # update client's data about the database's coverage
