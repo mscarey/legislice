@@ -21,7 +21,11 @@ from legislice.schemas import (
     enactment_needs_api_update,
 )
 
-from legislice.yaml_schemas import SelectorSchema, ExpandableEnactmentSchema
+from legislice.yaml_schemas import (
+    SelectorSchema,
+    ExpandableEnactmentSchema,
+    get_schema_for_node,
+)
 
 load_dotenv()
 
@@ -59,6 +63,14 @@ class TestLoadSelector:
         schema = SelectorSchema()
         with pytest.raises(ValidationError):
             _ = schema.load(data)
+
+    def test_get_linked_schema(self):
+        schema = get_schema_for_node("/us/usc")
+        assert schema.__name__ == "LinkedEnactmentSchema"
+
+    def test_get_expandable_linked_schema(self):
+        schema = get_schema_for_node("/us/usc", use_text_expansion=True)
+        assert schema.__name__ == "ExpandableLinkedEnactmentSchema"
 
 
 class TestLoadCrossReference:

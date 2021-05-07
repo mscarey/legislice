@@ -14,10 +14,9 @@ from legislice.enactments import (
 
 from legislice.schemas import (
     InboundReferenceSchema,
-    get_schema_for_node,
     enactment_needs_api_update,
 )
-from legislice.yaml_schemas import get_expandable_schema_for_node
+from legislice.yaml_schemas import get_schema_for_node
 
 RawEnactment = Dict[str, Any]
 
@@ -258,7 +257,9 @@ class Client:
         schema = InboundReferenceSchema(many=True)
         return schema.load(json_citations)
 
-    def read_from_json(self, data: RawEnactment) -> Enactment:
+    def read_from_json(
+        self, data: RawEnactment, use_text_expansion: bool = False
+    ) -> Enactment:
         r"""
         Create a new :class:`Enactment` object using imported JSON data.
 
@@ -269,7 +270,9 @@ class Client:
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
 
-        schema_class = get_expandable_schema_for_node(data["node"])
+        schema_class = get_schema_for_node(
+            data["node"], use_text_expansion=use_text_expansion
+        )
         schema = schema_class()
 
         # update client's data about the database's coverage

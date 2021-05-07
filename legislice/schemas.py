@@ -194,10 +194,3 @@ class EnactmentSchema(LinkedEnactmentSchema):
 
         unknown = EXCLUDE
         ordered = True
-
-
-def get_schema_for_node(path: str):
-    """Decide whether to load Enactment with descendant nodes or only with links to child nodes."""
-    if path.count("/") < 4:
-        return LinkedEnactmentSchema
-    return EnactmentSchema

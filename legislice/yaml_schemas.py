@@ -6,18 +6,19 @@ from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
     Enactment,
-    InboundReference,
     LinkedEnactment,
     RawEnactment,
-    CrossReference,
-    TextVersion,
-    CitingProvisionLocation,
 )
 
-from legislice.schemas import CrossReferenceSchema, TextVersionSchema
+from legislice.schemas import (
+    CrossReferenceSchema,
+    TextVersionSchema,
+    LinkedEnactmentSchema,
+    EnactmentSchema,
+)
 
 
-class ExpandableLinkedEnactmentSchema(Schema):
+class ExpandableLinkedEnactmentSchema(LinkedEnactmentSchema):
     """Schema for passages from legislation without the full text of child nodes."""
 
     __model__: Union[Type[Enactment], Type[LinkedEnactment]] = LinkedEnactment
@@ -75,33 +76,6 @@ class ExpandableLinkedEnactmentSchema(Schema):
         data.pop("content", None)
         return data
 
-    def is_revision_date_known(self, data):
-        r"""
-        Determine if Enactment's start_date reflects its last revision date.
-
-        If not, then the `start_date` merely reflects the earliest date that versions
-        of the :class:`Enactment`\'s code exist in the database.
-        """
-        if not self.context.get("coverage"):
-            data["known_revision_date"] = False
-        elif self.context["coverage"]["earliest_in_db"] and (
-            self.context["coverage"]["earliest_in_db"]
-            < datetime.date.fromisoformat(data["start_date"])
-        ):
-            data["known_revision_date"] = True
-        elif (
-            self.context["coverage"]["earliest_in_db"]
-            and self.context["coverage"]["first_published"]
-            and (
-                self.context["coverage"]["earliest_in_db"]
-                <= self.context["coverage"]["first_published"]
-            )
-        ):
-            data["known_revision_date"] = True
-        else:
-            data["known_revision_date"] = False
-        return data
-
     @pre_load
     def format_data_to_load(self, data, **kwargs):
         """Prepare Enactment to load."""
@@ -135,8 +109,13 @@ class ExpandableEnactmentSchema(ExpandableLinkedEnactmentSchema):
         ordered = True
 
 
-def get_expandable_schema_for_node(path: str):
+def get_schema_for_node(path: str, use_text_expansion: bool = False):
     """Decide whether to load Enactment with descendant nodes or only with links to child nodes."""
+    if use_text_expansion:
+        if path.count("/") < 4:
+            return ExpandableLinkedEnactmentSchema
+        return ExpandableEnactmentSchema
+
     if path.count("/") < 4:
-        return ExpandableLinkedEnactmentSchema
-    return ExpandableEnactmentSchema
+        return LinkedEnactmentSchema
+    return EnactmentSchema

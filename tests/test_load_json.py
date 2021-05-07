@@ -42,7 +42,9 @@ class TestUpdateEnactments:
         updated_index = client.update_entries_in_enactment_index(enactment_index)
         updated_enactment = updated_index["person clause"]
         assert updated_enactment["heading"].startswith("Loyalty as a qualification")
-        loaded_enactment = client.read_from_json(updated_enactment)
+        loaded_enactment = client.read_from_json(
+            updated_enactment, use_text_expansion=True
+        )
         assert loaded_enactment.selected_text() == "…person shall…"
 
     @pytest.mark.vcr
@@ -53,7 +55,7 @@ class TestUpdateEnactments:
             "suffix": ", and no Warrants shall issue",
             "start_date": "1791-12-15",
         }
-        enactment = test_client.read_from_json(raw_enactment)
+        enactment = test_client.read_from_json(raw_enactment, use_text_expansion=True)
         assert enactment.selected_text().endswith("shall not be violated…")
 
     @pytest.mark.vcr()
