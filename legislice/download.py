@@ -258,7 +258,7 @@ class Client:
         return schema.load(json_citations)
 
     def read_from_json(
-        self, data: RawEnactment, use_text_expansion: bool = False
+        self, data: RawEnactment, use_text_expansion: bool = True
     ) -> Enactment:
         r"""
         Create a new :class:`Enactment` object using imported JSON data.
@@ -305,7 +305,7 @@ class Client:
             you will be given the version that became effective later.
         """
         raw_enactment = self.fetch(query=query, date=date)
-        enactment = self.read_from_json(raw_enactment)
+        enactment = self.read_from_json(raw_enactment, use_text_expansion=False)
         enactment.select_all()
         return enactment
 
