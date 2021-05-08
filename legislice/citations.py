@@ -1,3 +1,5 @@
+"""Citations to codified citations."""
+
 from dataclasses import dataclass
 from datetime import date
 from typing import Dict, List, Optional, Tuple, Union
@@ -34,6 +36,8 @@ def identify_code(jurisdiction: str, code: str) -> Tuple[str, str]:
 
 
 class CitationSchema(Schema):
+    """Schema for legislative citations."""
+
     document_type = fields.Str(data_key="type", default="legislation", dump_only=True)
     jurisdiction = fields.Str(required=True)
     code = fields.Str(data_key="container-title", required=False)
@@ -48,6 +52,7 @@ class CitationSchema(Schema):
         ordered = True
 
     def dump_event_date(self, obj) -> Optional[Dict[str, List[List[Union[str, int]]]]]:
+        """Serialize date as three numbers in "date-parts" field."""
         if not obj.revision_date:
             return None
 
@@ -78,6 +83,7 @@ class Citation:
         section: Optional[str] = None,
         revision_date: Optional[date] = None,
     ) -> None:
+        """Convert identifier parts to CSL format."""
         self.jurisdiction = jurisdiction
 
         if code:

@@ -1,5 +1,9 @@
 Changelog
 =========
+dev
+------------------
+- separate schemas for YAML and JSON input
+- flag determines if read_from_json uses text expansion
 
 0.5.0 (2021-03-26)
 ------------------

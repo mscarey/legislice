@@ -1,4 +1,4 @@
-"""Schemas for loading Enactments and related memos and references."""
+"""Schemas for loading Enactments from serialized objects or API responses."""
 
 import datetime
 from typing import Dict, Type, Union

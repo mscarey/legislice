@@ -1,8 +1,14 @@
-import datetime
+"""
+Schemas for loading Enactments from user-generated YAML.
+
+These schemas are more cumbersome than the schemas for serialized
+objects or API responses, but they allow more abbreviations and omissions.
+"""
+
 from typing import Dict, Type, Union
 
 from anchorpoint.schemas import SelectorSchema
-from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
+from marshmallow import fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
     Enactment,

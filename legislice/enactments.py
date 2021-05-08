@@ -21,6 +21,8 @@ RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
 @dataclass
 class CrossReference:
     """
+    A legislative provision's citation to another provision.
+
     :param target_uri:
         the path to the target provision from the document root.
 
@@ -72,25 +74,14 @@ class CitingProvisionLocation:
         return self.node > other.node
 
 
+@dataclass
 class InboundReference:
-    def __init__(
-        self,
-        content: str,
-        reference_text: str,
-        target_uri: str,
-        locations: List[CitingProvisionLocation],
-    ) -> None:
-        self.content = content
-        self.reference_text = reference_text
-        self.target_uri = target_uri
-        self.locations = locations
+    """A memo that a TextVersion has a citation to a specified target provision."""
 
-    def __repr__(self):
-        return (
-            f'InboundReference(content="{self.content}", '
-            f'reference_text="{self.reference_text}", '
-            f'target_uri="{self.target_uri}", locations={self.locations})'
-        )
+    content: str
+    reference_text: str
+    target_uri: str
+    locations: List[CitingProvisionLocation]
 
     def __str__(self):
         result = f"InboundReference to {self.target_uri}, from {self.latest_location()}"
@@ -99,6 +90,7 @@ class InboundReference:
         return result
 
     def latest_location(self) -> CitingProvisionLocation:
+        """Get most recent location where the citing text has been enacted."""
         return max(self.locations)
 
 
