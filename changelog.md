@@ -1,9 +1,10 @@
 Changelog
 =========
-dev
+0.5.1 (2021-05-08)
 ------------------
 - separate schemas for YAML and JSON input
 - flag determines if read_from_json uses text expansion
+- change InboundReference to dataclass
 
 0.5.0 (2021-03-26)
 ------------------

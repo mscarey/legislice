@@ -1,3 +1,5 @@
+"""Enactments, their text, and cross-references between them."""
+
 from __future__ import annotations
 
 from collections import deque
@@ -95,9 +97,12 @@ class InboundReference:
 
 
 class TextVersion:
+    """Version of legislative text, enacted at one or more times and locations."""
+
     def __init__(
         self, content: str, url: Optional[str] = None, id: Optional[int] = None,
     ):
+        """Check that TextVersion has content."""
         if not content:
             raise ValueError("TextVersion should not be created with no content.")
         self.content = content
@@ -107,6 +112,10 @@ class TextVersion:
 
 class BaseEnactment:
     """
+    Base class for Enactments.
+
+    Whether connected to subnodes by linking, or nesting.
+
     :param node:
         identifier for the site where the provision is codified
 
@@ -159,6 +168,7 @@ class BaseEnactment:
         *args,
         **kwargs,
     ):
+        """Save parameters as private attributes."""
         self.node = node
         if text_version:
             self.text_version: Optional[TextVersion] = text_version
@@ -209,6 +219,7 @@ class BaseEnactment:
 
     @property
     def text(self):
+        """Get content text of Enactment."""
         return self.content
 
     def get_identifier_part(self, index: int) -> Optional[str]:
