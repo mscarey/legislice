@@ -6,6 +6,7 @@ from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 import pytest
 
+from legislice.citations import CodeLevel
 from legislice.download import Client
 from legislice.enactments import (
     CitingProvisionLocation,
@@ -117,7 +118,7 @@ class TestEnactmentDetails:
     def test_usc_enactment_is_statute(self, test_client):
         enactment = test_client.read(query="/us/usc/t17/s103", date="2020-01-01")
         assert enactment.sovereign == "us"
-        assert enactment.level == "statute"
+        assert enactment.level == CodeLevel.STATUTE
 
     def test_str_representation(self, fourth_a, test_client):
         enactment = test_client.read_from_json(fourth_a)
@@ -125,7 +126,7 @@ class TestEnactmentDetails:
             exact="The right of the people to be secure in their persons"
         )
         enactment.select(selection)
-        assert enactment.level == "constitution"
+        assert enactment.level == CodeLevel.CONSTITUTION
         assert enactment.start_date == date(1791, 12, 15)
         assert "secure in their persons…" in str(enactment)
         assert enactment.node in str(enactment)

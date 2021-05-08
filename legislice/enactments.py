@@ -255,6 +255,11 @@ class BaseEnactment:
         return self.get_identifier_part(4)
 
     @property
+    def is_federal(self):
+        """Check if self is from a federal jurisdiction."""
+        return self.sovereign == "us"
+
+    @property
     def level(self) -> str:
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
         code_name, code_level_name = citations.identify_code(self.sovereign, self.code)
@@ -280,7 +285,7 @@ class BaseEnactment:
     def as_citation(self) -> citations.Citation:
         """Create Citation Style Language markup for the Enactment."""
         level = self.level
-        if level != "statute":
+        if level != citations.CodeLevel.STATUTE:
             raise NotImplementedError(
                 f"Citation serialization not implemented for '{level}' provisions."
             )

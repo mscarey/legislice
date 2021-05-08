@@ -1,7 +1,9 @@
 from copy import deepcopy
+from datetime import date
 
 import pytest
 
+from legislice.enactments import Enactment
 from legislice.groups import EnactmentGroup
 
 
@@ -131,3 +133,13 @@ class TestAdd:
         combined = left + right
         assert len(combined) == 3
         assert combined[0].node == "/us/const/amendment/I"
+
+    def test_sort_enactments_in_group(self, copyright_clause, copyright_statute):
+        regulation = Enactment(
+            node="/us/cfr/t37/s202.1",
+            heading="",
+            start_date=date(1992, 2, 21),
+            content="The following are examples of works not subject to copyright",
+        )
+        group = EnactmentGroup([regulation, copyright_clause, copyright_statute])
+        assert group[-1].node == "/us/cfr/t37/s202.1"

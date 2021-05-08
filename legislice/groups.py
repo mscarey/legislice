@@ -34,7 +34,7 @@ class EnactmentGroup:
                     f"type {enactment.__class__.__name__}, not type Enactment"
                 )
         self.sequence = consolidate_enactments(self.sequence)
-        self.sequence.sort(key=lambda x: x.node)
+        self.sort_members()
 
     def _at_index(self, key: int) -> Enactment:
         return self.sequence[key]
@@ -93,3 +93,14 @@ class EnactmentGroup:
         if isinstance(other, Enactment):
             return self._implies_enactment(other)
         return self._implies(other)
+
+    def sort_members(self) -> None:
+        """
+        Sort Enactments in group, in place.
+
+        Sorts federal before state; constitutional before statute before regulation;
+        and then alphabetically
+        """
+        self.sequence.sort(key=lambda x: x.node)
+        self.sequence.sort(key=lambda x: x.level)
+        self.sequence.sort(key=lambda x: x.is_federal, reverse=True)

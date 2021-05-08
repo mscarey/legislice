@@ -2,21 +2,27 @@
 
 from dataclasses import dataclass
 from datetime import date
+from enum import IntEnum
 from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema, fields, post_dump
 
+
+class CodeLevel(IntEnum):
+    CONSTITUTION = 1
+    STATUTE = 2
+    REGULATION = 3
+
+
 # Path parts known to indicate the level of law they refer to.
 KNOWN_CODES = {
-    "test": {"acts": ["Test Acts", "S"]},
+    "test": {"acts": ["Test Acts", CodeLevel.STATUTE]},
     "us": {
-        "const": ["U.S. Const.", "C"],
-        "usc": ["U.S. Code", "S"],
-        "cfr": ["CFR", "R"],
+        "const": ["U.S. Const.", CodeLevel.CONSTITUTION],
+        "usc": ["U.S. Code", CodeLevel.STATUTE],
+        "cfr": ["CFR", CodeLevel.REGULATION],
     },
 }
-
-CODE_LEVEL_NAMES = {"C": "constitution", "S": "statute", "R": "regulation"}
 
 
 def identify_code(jurisdiction: str, code: str) -> Tuple[str, str]:
@@ -31,8 +37,7 @@ def identify_code(jurisdiction: str, code: str) -> Tuple[str, str]:
     except KeyError:
         raise KeyError(f'"{code}" is not a known code identifier')
 
-    code_level_name = CODE_LEVEL_NAMES[code_level]
-    return code_name, code_level_name
+    return code_name, code_level
 
 
 class CitationSchema(Schema):
