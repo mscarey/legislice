@@ -143,3 +143,21 @@ class TestAdd:
         )
         group = EnactmentGroup([regulation, copyright_clause, copyright_statute])
         assert group[-1].node == "/us/cfr/t37/s202.1"
+
+    def test_sort_state_enactment_in_group(self, copyright_clause, copyright_statute):
+        regulation = Enactment(
+            node="/us/cfr/t37/s202.1",
+            heading="",
+            start_date=date(1992, 2, 21),
+            content="The following are examples of works not subject to copyright",
+        )
+        ca_statute = Enactment(
+            node="/us-ca/code/evid/s351",
+            start_date=date(1966, 1, 1),
+            content="Except as otherwise provided by statute, all relevant evidence is admissible.",
+            heading="",
+        )
+        group = EnactmentGroup(
+            [regulation, ca_statute, copyright_clause, copyright_statute]
+        )
+        assert group[-1].node == "/us-ca/code/evid/s351"

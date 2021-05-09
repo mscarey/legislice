@@ -1,5 +1,9 @@
 Changelog
 =========
+dev
+------------------
+- sort EnactmentGroups by level
+
 0.5.1 (2021-05-08)
 ------------------
 - separate schemas for YAML and JSON input

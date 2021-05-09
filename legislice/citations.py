@@ -12,6 +12,7 @@ class CodeLevel(IntEnum):
     CONSTITUTION = 1
     STATUTE = 2
     REGULATION = 3
+    COURT_RULE = 4
 
 
 # Path parts known to indicate the level of law they refer to.
@@ -21,6 +22,12 @@ KNOWN_CODES = {
         "const": ["U.S. Const.", CodeLevel.CONSTITUTION],
         "usc": ["U.S. Code", CodeLevel.STATUTE],
         "cfr": ["CFR", CodeLevel.REGULATION],
+    },
+    "us-ca": {
+        "const": ["Cal. Const.", CodeLevel.CONSTITUTION],
+        "code": ["Cal. Codes", CodeLevel.STATUTE],
+        "ccr": ["Cal. Code Regs.", CodeLevel.REGULATION],
+        "roc": ["Cal. Rules of Court", CodeLevel.COURT_RULE],
     },
 }
 
