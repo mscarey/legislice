@@ -259,6 +259,7 @@ class TestLoadLinkedEnactment:
         schema = LinkedEnactmentSchema()
         enactment = test_client.read(query="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
+        assert "for documentation." in enactment.selected_text()
         enactment.select("for documentation.")
         assert enactment.selected_text() == "…for documentation."
         dumped = schema.dump(enactment)

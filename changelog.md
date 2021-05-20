@@ -1,8 +1,9 @@
 Changelog
 =========
-dev
+0.5.2 (2021-05-20)
 ------------------
 - sort EnactmentGroups by level
+- add California to KNOWN_CODES
 
 0.5.1 (2021-05-08)
 ------------------
