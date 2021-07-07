@@ -1,6 +1,6 @@
 apispec[validation]
 marshmallow>=3.2.2
-anchorpoint>=0.5.0
+git+git://github.com/mscarey/anchorpoint.git@72e31542315fa3581c87df449a812fc65afbbb03#egg=anchorpoint
 python-dotenv
 requests
 roman
