@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.25.0
+      - python-requests/2.23.0
       authorization:
       - DUMMY
     method: GET
@@ -34,15 +34,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1626'
+      - '1630'
       Content-Type:
       - application/json
       Date:
-      - Fri, 11 Dec 2020 11:12:12 GMT
+      - Wed, 07 Jul 2021 20:19:00 GMT
       Referrer-Policy:
       - same-origin
       Server:
-      - gunicorn/20.0.4
+      - gunicorn
       Vary:
       - Accept, Cookie
       Via:

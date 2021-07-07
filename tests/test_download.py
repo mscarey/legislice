@@ -21,7 +21,7 @@ from legislice.name_index import collect_enactments
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
-API_ROOT = os.getenv("API_ROOT")
+API_ROOT = "https://authorityspoke.com/api/v1"
 
 
 class TestDownloadJSON:
@@ -252,7 +252,9 @@ class TestReadJSON:
 class TestInboundCitations:
     @pytest.mark.vcr()
     def test_fetch_inbound_citations_to_node(self, test_client):
-        infringement_statute = test_client.read(query="/us/usc/t17/s501",)
+        infringement_statute = test_client.read(
+            query="/us/usc/t17/s501",
+        )
         inbound_refs = test_client.fetch_citations_to(infringement_statute)
         period_ref = inbound_refs[0]["locations"][0]
         assert period_ref.get("text_version", {}).get("content") is None
@@ -275,7 +277,9 @@ class TestInboundCitations:
 
     @pytest.mark.vcr()
     def test_read_inbound_citations_to_node(self, test_client):
-        infringement_statute = test_client.read(query="/us/usc/t17/s501",)
+        infringement_statute = test_client.read(
+            query="/us/usc/t17/s501",
+        )
         inbound_refs = test_client.citations_to(infringement_statute)
         assert inbound_refs[0].content.startswith(
             "Any person who distributes a phonorecord"

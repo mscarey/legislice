@@ -15,7 +15,7 @@ from legislice.schemas import EnactmentSchema
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
-API_ROOT = os.getenv("API_ROOT")
+API_ROOT = "https://authorityspoke.com/api/v1"
 
 
 class TestMakeEnactment:
@@ -75,7 +75,7 @@ class TestMakeEnactment:
 
 
 class TestLinkedEnactment:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
+    client = Client(api_token=TOKEN)
 
     @pytest.mark.vcr
     def test_text_sequence_for_linked_enactment(self, test_client):
@@ -400,7 +400,9 @@ class TestSelectFromEnactment:
 
     def test_select_method_clears_previous_selection(self, test_client, section_8):
         old_version = test_client.read_from_json(section_8["children"][1])
-        old_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        old_selector = TextPositionSet(
+            TextPositionSelector(start=0, end=65),
+        )
         old_version.select(old_selector)
         assert old_version.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
@@ -704,7 +706,9 @@ class TestAddEnactments:
 
     def test_get_recursive_selection(self, section_8, test_client):
         version = test_client.read_from_json(section_8["children"][1])
-        selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        selector = TextPositionSet(
+            TextPositionSelector(start=0, end=65),
+        )
         version.select(selector)
         version.children[4].select("obtain a beardcoin from the Department of Beards")
         selector_set = version.tree_selection()
@@ -720,7 +724,9 @@ class TestAddEnactments:
 
     def test_add_selection_from_child_node(self, section_8, test_client):
         parent_version = test_client.read_from_json(section_8["children"][1])
-        parent_selector = TextPositionSet(TextPositionSelector(start=0, end=65),)
+        parent_selector = TextPositionSet(
+            TextPositionSelector(start=0, end=65),
+        )
         parent_version.select(parent_selector)
         parent_version.children[4].select(
             "obtain a beardcoin from the Department of Beards"
@@ -946,4 +952,3 @@ class TestConsolidateEnactments:
 
         combined = consolidate_enactments([due_process_5, due_process_14])
         assert len(combined) == 2
-

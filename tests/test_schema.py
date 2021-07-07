@@ -4,7 +4,11 @@ import json
 
 import os
 
-from anchorpoint.textselectors import TextPositionSelector, TextQuoteSelector
+from anchorpoint.textselectors import (
+    TextPositionSelector,
+    TextQuoteSelector,
+    TextSelectionError,
+)
 from dotenv import load_dotenv
 from marshmallow import ValidationError
 import pytest
@@ -24,7 +28,6 @@ from legislice.schemas import (
 load_dotenv()
 
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
-API_ROOT = os.getenv("API_ROOT")
 
 
 class TestLoadSelector:
@@ -55,12 +58,12 @@ class TestLoadSelector:
     def test_selector_from_string_split_wrongly(self):
         data = "eats,|shoots,|and leaves|"
         schema = SelectorSchema()
-        with pytest.raises(ValidationError):
+        with pytest.raises(TextSelectionError):
             _ = schema.load(data)
 
 
 class TestLoadCrossReference:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
+    client = Client(api_token=TOKEN)
 
     def test_load_citation(self, citation_to_6c):
         schema = CrossReferenceSchema()
@@ -73,7 +76,7 @@ class TestLoadCrossReference:
 
 
 class TestLoadEnactment:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
+    client = Client(api_token=TOKEN)
 
     def test_load_nested_enactment(self, section6d):
         schema = EnactmentSchema()
@@ -336,4 +339,3 @@ class TestLoadInboundReferences:
         loaded = schema.load(data)
         assert loaded.target_uri == "/us/usc/t17/s501"
         assert loaded.reference_text == "section 501 of this title"
-

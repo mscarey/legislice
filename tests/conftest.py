@@ -11,7 +11,7 @@ from legislice.download import Client
 
 load_dotenv()
 
-API_ROOT = os.getenv("API_ROOT")
+API_ROOT = "https://authorityspoke.com/api/v1"
 TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 
@@ -25,7 +25,7 @@ def vcr_config():
 
 @pytest.fixture(scope="class")
 def test_client() -> Client:
-    client = Client(api_token=TOKEN, api_root=API_ROOT)
+    client = Client(api_token=TOKEN)
     client.coverage["/us/usc"] = {
         "latest_heading": "United States Code (USC)",
         "first_published": datetime.date(1926, 6, 30),
@@ -536,4 +536,3 @@ def provision_with_text_anchor():
         "name": "copyright protection provision",
         "anchors": "qualify for copyright protection. |17 U.S.C. § 102(a)|.",
     }
-
