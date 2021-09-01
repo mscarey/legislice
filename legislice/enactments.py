@@ -629,10 +629,12 @@ class Enactment(BaseEnactment):
         """Select text using position selectors and return any unused position selectors."""
         selection_set = self.select_from_text_positions_without_nesting(selection)
 
-        selections = [sel - self.padded_length for sel in selection_set.selectors]
+        selections_after_this_node = selection_set - self.padded_length
         for child in self.children:
-            selections = child.select_from_text_positions(TextPositionSet(selections))
-        return TextPositionSet(selectors=selections)
+            selections_after_this_node = child.select_from_text_positions(
+                selections_after_this_node
+            )
+        return selections_after_this_node
 
     def select_all(self) -> None:
         """Select all text of Enactment."""
