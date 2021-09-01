@@ -540,7 +540,7 @@ def third_a(test_client):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="class")
 def fourth_a():
     return {
         "heading": "AMENDMENT IV.",
