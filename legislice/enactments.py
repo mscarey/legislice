@@ -436,11 +436,9 @@ class BaseEnactment:
             text=self.content, include_nones=include_nones
         )
 
-    def raise_error_for_extra_selector(
-        self, unused_selectors: List[TextPositionSelector]
-    ) -> None:
+    def raise_error_for_extra_selector(self, unused_selectors: TextPositionSet) -> None:
         """Raise an error if any passed selectors begin after the end of the text passage."""
-        for selector in unused_selectors:
+        for selector in unused_selectors.selectors:
             if selector.start > len(self.content) + 1:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
@@ -634,7 +632,7 @@ class Enactment(BaseEnactment):
         selections = [sel - self.padded_length for sel in selection_set.selectors]
         for child in self.children:
             selections = child.select_from_text_positions(TextPositionSet(selections))
-        return selections
+        return TextPositionSet(selectors=selections)
 
     def select_all(self) -> None:
         """Select all text of Enactment."""
