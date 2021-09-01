@@ -715,8 +715,8 @@ class Enactment(BaseEnactment):
             TextQuoteSelector,
             Sequence[TextQuoteSelector],
         ] = True,
-        start: Optional[Union[int, str]] = None,
-        end: Optional[Union[int, str]] = None,
+        start: int = 0,
+        end: Optional[int] = None,
     ) -> None:
         """
         Select text, clearing any previous selection.
@@ -738,11 +738,11 @@ class Enactment(BaseEnactment):
 
     def limit_selection(
         self,
-        start: Optional[Union[int, str]] = None,
-        end: Optional[Union[int, str]] = None,
+        start: int = 0,
+        end: Optional[int] = None,
     ) -> None:
         """Limit selection to the range defined by start and end points."""
-        if (start is not None) or (end is not None):
+        if (start != 0) or (end is not None):
             selector = TextPositionSelector.from_text(
                 text=self.text, start=start, end=end
             )

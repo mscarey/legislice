@@ -777,7 +777,7 @@ class TestAddEnactments:
     def test_add_selection_from_child_node(self, section_8, test_client):
         parent_version = test_client.read_from_json(section_8["children"][1])
         parent_selector = TextPositionSet(
-            TextPositionSelector(start=0, end=65),
+            selectors=TextPositionSelector(start=0, end=65),
         )
         parent_version.select(parent_selector)
         parent_version.children[4].select(
