@@ -100,7 +100,10 @@ class TextVersion:
     """Version of legislative text, enacted at one or more times and locations."""
 
     def __init__(
-        self, content: str, url: Optional[str] = None, id: Optional[int] = None,
+        self,
+        content: str,
+        url: Optional[str] = None,
+        id: Optional[int] = None,
     ):
         """Check that TextVersion has content."""
         if not content:
@@ -343,7 +346,7 @@ class BaseEnactment:
         """Create a TextPositionSet from a different selection method."""
         if selection is True:
             return TextPositionSet(
-                TextPositionSelector(0, len(self.content) + 1, include_end=False)
+                selectors=TextPositionSelector(start=0, end=len(self.content) + 1)
             )
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
@@ -356,7 +359,7 @@ class BaseEnactment:
         return factory.from_quote_selectors(quotes)
 
     def select_from_text_positions_without_nesting(
-        self, selections: Union[List[TextPositionSelector], RangeSet]
+        self, selections: Union[List[TextPositionSelector], TextPositionSet]
     ) -> TextPositionSet:
         r"""
         Move selectors from `selection` to `self._selection` and return any that can't be used.
@@ -371,7 +374,7 @@ class BaseEnactment:
         """
         self._selection: List[TextPositionSelector] = []
 
-        if isinstance(selections, RangeSet):
+        if isinstance(selections, TextPositionSet):
             selections = selections.ranges()
         selections = deque(selections)
 
@@ -387,9 +390,9 @@ class BaseEnactment:
                     selections.appendleft(
                         TextPositionSelector(start=self.padded_length, end=current.end)
                     )
-        selection_as_set = TextPositionSet(self._selection)
+        selection_as_set = TextPositionSet(selections=self._selection)
         self._selection = selection_as_set.add_margin(text=self.content, margin_width=4)
-        return TextPositionSet(selections)
+        return TextPositionSet(selections=selections)
 
     def select_without_children(
         self,
@@ -637,7 +640,7 @@ class Enactment(BaseEnactment):
         """Select all text of Enactment."""
         if self.content:
             self._selection = TextPositionSet(
-                TextPositionSelector(0, len(self.content))
+                selectors=TextPositionSelector(start=0, end=len(self.content))
             )
         else:
             self._selection = TextPositionSet()

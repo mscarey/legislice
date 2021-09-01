@@ -13,4 +13,5 @@ htmlcov/
 old/
 prof/
 venv/
+venvlegis/
 .env
