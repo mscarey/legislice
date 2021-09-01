@@ -697,7 +697,7 @@ class Enactment(BaseEnactment):
             selection = self.convert_selection_to_set(selection)
 
         # Ignore child nodes if selector was passed in without an end
-        if any(selector.end > 99999 for selector in selection):
+        if any(selector.end is None for selector in selection.selectors):
             self.select_without_children(True)
         else:
             unused_selectors = self.select_more_text_in_current_branch(selection)
