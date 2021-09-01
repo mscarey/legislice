@@ -9,7 +9,6 @@ pylint
 pytest-cov
 pytest-profiling
 pytest-vcr
-pytest-xdist
 pytest>=5.3.2
 rstcheck
 sphinx-autodoc-typehints
