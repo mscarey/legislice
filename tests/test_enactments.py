@@ -328,16 +328,16 @@ class TestSelectFromEnactment:
         section = schema.load(section_11_subdivided)
         section.select(TextPositionSelector(start=61, end=73))
         assert section.selected_text() == "…hairdressers…"
-        passage = section.get_passage(TextPositionSelector(112, 127))
+        passage = section.get_passage(TextPositionSelector(start=112, end=127))
         assert passage == "…as they see fit…"
         assert section.selected_text() == "…hairdressers…"
 
     def test_select_nested_text_with_positions(self, section_11_subdivided):
         phrases = TextPositionSet(
             selectors=[
-                TextPositionSelector(0, 51),
-                TextPositionSelector(61, 73),
-                TextPositionSelector(112, 127),
+                TextPositionSelector(start=0, end=51),
+                TextPositionSelector(start=61, end=73),
+                TextPositionSelector(start=112, end=127),
             ],
         )
         schema = EnactmentSchema()
@@ -395,7 +395,10 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
         selection = TextPositionSet(
-            selectors=[TextPositionSelector(0, 10), TextPositionSelector(1000, 1010)]
+            selectors=[
+                TextPositionSelector(start=0, end=10),
+                TextPositionSelector(start=1000, end=1010),
+            ]
         )
         with pytest.raises(ValueError):
             section.children[3].select(selection)
@@ -414,9 +417,9 @@ class TestSelectFromEnactment:
         positions = section.convert_quotes_to_position(quotes)
         assert positions == TextPositionSet(
             selectors=[
-                TextPositionSelector(0, 51),
-                TextPositionSelector(61, 73),
-                TextPositionSelector(112, 127),
+                TextPositionSelector(start=0, end=51),
+                TextPositionSelector(start=61, end=73),
+                TextPositionSelector(start=112, end=127),
             ],
         )
 
@@ -472,7 +475,7 @@ class TestSelectFromEnactment:
     @pytest.mark.vcr
     def test_select_near_end_of_section(self, test_client):
         amendment = test_client.read(query="/us/const/amendment/XIV")
-        selector = TextPositionSelector(1920, 1980)
+        selector = TextPositionSelector(start=1920, end=1980)
         amendment.select(selector)
         assert "The validity of the public debt" in amendment.selected_text()
 

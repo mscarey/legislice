@@ -18,7 +18,6 @@ from legislice.schemas import (
     EnactmentSchema,
     InboundReferenceSchema,
     LinkedEnactmentSchema,
-    PositionSelectorSchema,
     CitingProvisionLocationSchema,
     enactment_needs_api_update,
 )
@@ -306,7 +305,9 @@ class TestDumpEnactment:
         s103 = test_client.read(query="/us/usc/t17/s103", date="2020-01-01")
         schema = EnactmentSchema()
         dumped = schema.dump(s103)
-        assert list(dumped["children"][0]["selection"][0].keys()) == ["start", "end"]
+        key_names = list(dumped["children"][0]["selection"][0].keys())
+        assert "start" in key_names
+        assert "end" in key_names
         as_json = json.dumps(dumped)
         # Start field comes before end field in selector
         assert '"selection": [{"start":' in as_json

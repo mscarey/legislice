@@ -184,7 +184,7 @@ class BaseEnactment:
         self._start_date = start_date
         self.known_revision_date = known_revision_date
         self._end_date = end_date
-        self.anchors = anchors or []
+        self.anchors = TextPositionSet(selectors=anchors or [])
         self._cross_references = citations or []
         self.name = name
 

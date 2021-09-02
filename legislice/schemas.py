@@ -3,7 +3,7 @@
 import datetime
 from typing import Dict, Type, Union
 
-from anchorpoint.schemas import PositionSelectorSchema
+from anchorpoint.schemas import SelectorSchema
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
@@ -131,8 +131,8 @@ class LinkedEnactmentSchema(Schema):
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     known_revision_date = fields.Boolean()
-    selection = fields.Nested(PositionSelectorSchema, many=True, missing=list)
-    anchors = fields.Nested(PositionSelectorSchema, many=True, missing=list)
+    selection = fields.Method("get_selection", deserialize="load_selection")
+    anchors = fields.Method("get_anchors", deserialize="load_anchors")
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
     children = fields.List(fields.Url(relative=False))
 
@@ -141,6 +141,20 @@ class LinkedEnactmentSchema(Schema):
 
         unknown = EXCLUDE
         ordered = True
+
+    def get_selection(self, obj: LinkedEnactment):
+        return obj.selection.dict()["selectors"]
+
+    def load_selection(self, value):
+        schema = SelectorSchema(many=True)
+        return schema.load(value)
+
+    def get_anchors(self, obj: LinkedEnactment):
+        return obj.anchors.dict()["selectors"]
+
+    def load_anchors(self, value):
+        schema = SelectorSchema(many=True)
+        return schema.load(value)
 
     def is_revision_date_known(self, data):
         r"""
