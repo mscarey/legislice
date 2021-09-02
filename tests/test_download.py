@@ -215,7 +215,10 @@ class TestReadJSON:
         data = {
             "start_date": "1935-04-01",
             "selection": [
-                {"start": 0, "include_end": False, "end": 250, "include_start": True}
+                {
+                    "start": 0,
+                    "end": 250,
+                }
             ],
             "text_version": {
                 "content": (

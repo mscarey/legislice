@@ -326,7 +326,7 @@ class TestSelectFromEnactment:
         """
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
-        section.select(TextPositionSelector(61, 73))
+        section.select(TextPositionSelector(start=61, end=73))
         assert section.selected_text() == "…hairdressers…"
         passage = section.get_passage(TextPositionSelector(112, 127))
         assert passage == "…as they see fit…"
@@ -334,9 +334,11 @@ class TestSelectFromEnactment:
 
     def test_select_nested_text_with_positions(self, section_11_subdivided):
         phrases = TextPositionSet(
-            TextPositionSelector(0, 51),
-            TextPositionSelector(61, 73),
-            TextPositionSelector(112, 127),
+            selectors=[
+                TextPositionSelector(0, 51),
+                TextPositionSelector(61, 73),
+                TextPositionSelector(112, 127),
+            ],
         )
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
@@ -393,7 +395,7 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
         selection = TextPositionSet(
-            TextPositionSelector(0, 10), TextPositionSelector(1000, 1010)
+            selectors=[TextPositionSelector(0, 10), TextPositionSelector(1000, 1010)]
         )
         with pytest.raises(ValueError):
             section.children[3].select(selection)
@@ -411,9 +413,11 @@ class TestSelectFromEnactment:
         ]
         positions = section.convert_quotes_to_position(quotes)
         assert positions == TextPositionSet(
-            TextPositionSelector(0, 51),
-            TextPositionSelector(61, 73),
-            TextPositionSelector(112, 127),
+            selectors=[
+                TextPositionSelector(0, 51),
+                TextPositionSelector(61, 73),
+                TextPositionSelector(112, 127),
+            ],
         )
 
     @pytest.mark.vcr
@@ -452,7 +456,7 @@ class TestSelectFromEnactment:
     def test_select_method_clears_previous_selection(self, test_client, section_8):
         old_version = test_client.read_from_json(section_8["children"][1])
         old_selector = TextPositionSet(
-            TextPositionSelector(start=0, end=65),
+            selectors=TextPositionSelector(start=0, end=65),
         )
         old_version.select(old_selector)
         assert old_version.selected_text() == (
@@ -759,7 +763,7 @@ class TestAddEnactments:
     def test_get_recursive_selection(self, section_8, test_client):
         version = test_client.read_from_json(section_8["children"][1])
         selector = TextPositionSet(
-            TextPositionSelector(start=0, end=65),
+            selectors=TextPositionSelector(start=0, end=65),
         )
         version.select(selector)
         version.children[4].select("obtain a beardcoin from the Department of Beards")

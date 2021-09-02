@@ -355,7 +355,7 @@ class BaseEnactment:
         self, quotes: Sequence[TextQuoteSelector]
     ) -> TextPositionSet:
         """Convert quote selector to the corresponding position selector for this Enactment."""
-        factory = TextPositionSetFactory(passage=self.text)
+        factory = TextPositionSetFactory(text=self.text)
         return factory.from_quote_selectors(quotes)
 
     def select_from_text_positions_without_nesting(
@@ -372,27 +372,31 @@ class BaseEnactment:
         :returns:
             Any unused selections (beyond the end of the node content)
         """
-        self._selection: List[TextPositionSelector] = []
+        self_selection: List[TextPositionSelector] = []
 
         if isinstance(selections, TextPositionSet):
-            selections = selections.ranges()
+            selections = selections.selectors
         selections = deque(selections)
 
-        while selections and selections[0].start < len(self.content):
+        while (
+            selections
+            and (selections[0].end is not None)
+            and (selections[0].start < len(self.content))
+        ):
             current = selections.popleft()
             if current.end < len(self.content):
-                self._selection.append(current)
+                self_selection.append(current)
             else:
-                self._selection.append(
+                self_selection.append(
                     TextPositionSelector(start=current.start, end=len(self.content))
                 )
                 if current.end > self.padded_length:
                     selections.appendleft(
                         TextPositionSelector(start=self.padded_length, end=current.end)
                     )
-        selection_as_set = TextPositionSet(selections=self._selection)
+        selection_as_set = TextPositionSet(selectors=self_selection)
         self._selection = selection_as_set.add_margin(text=self.content, margin_width=4)
-        return TextPositionSet(selections=selections)
+        return TextPositionSet(selectors=selections)
 
     def select_without_children(
         self,
@@ -668,7 +672,7 @@ class Enactment(BaseEnactment):
         """
         incoming_quote_selectors = [
             selector.as_quote_selector(other.text)
-            for selector in other.tree_selection()
+            for selector in other.tree_selection().selectors
         ]
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:
@@ -681,7 +685,7 @@ class Enactment(BaseEnactment):
                     f"is not unique in the provision text."
                 )
         self.select_more_text_in_current_branch(
-            TextPositionSet(incoming_position_selectors)
+            TextPositionSet(selectors=incoming_position_selectors)
         )
 
     def select_more(
