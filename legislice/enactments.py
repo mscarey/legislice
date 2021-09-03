@@ -110,7 +110,7 @@ class TextVersion(BaseModel):
         return content
 
 
-class BaseEnactment:
+class Enactment:
     """
     Base class for Enactments.
 
@@ -165,10 +165,13 @@ class BaseEnactment:
         anchors: Union[List[TextPositionSelector], List[TextQuoteSelector]] = None,
         citations: List[CrossReference] = None,
         name: str = "",
+        children: Union[List[Enactment], List[str]] = None,
+        selection: Union[bool, List[TextPositionSelector]] = True,
         *args,
         **kwargs,
     ):
         """Save parameters as private attributes."""
+        self._children: Union[List[Enactment], List[str]] = children or []
         self.node = node
         if text_version:
             self.text_version: Optional[TextVersion] = text_version
@@ -190,6 +193,9 @@ class BaseEnactment:
                 self.anchors = anchors
         else:
             self.anchors = None
+        self._selection = TextPositionSet()
+        if selection:
+            self.select_more(selection)
 
     @property
     def heading(self):
@@ -219,14 +225,14 @@ class BaseEnactment:
         return self._children
 
     @property
+    def nested_children(self):
+        """Get nested children attribute."""
+        return [child for child in self.children if isinstance(child, Enactment)]
+
+    @property
     def selection(self):
         """Get selection attribute."""
         return self._selection
-
-    @property
-    def text(self):
-        """Get content text of Enactment."""
-        return self.content
 
     def get_identifier_part(self, index: int) -> Optional[str]:
         """Get a part of the split node identifier, by number."""
@@ -443,18 +449,6 @@ class BaseEnactment:
             if isinstance(child, Enactment):
                 child.select_all()
 
-    def text_sequence(self, include_nones: bool = True) -> TextSequence:
-        """
-        List the phrases in the Enactment selected by TextPositionSelectors.
-
-        :param include_nones:
-            Whether the list of phrases should include `None` to indicate a block of
-            unselected text
-        """
-        return self.selection.as_text_sequence(
-            text=self.content, include_nones=include_nones
-        )
-
     def raise_error_for_extra_selector(self, unused_selectors: TextPositionSet) -> None:
         """Raise an error if any passed selectors begin after the end of the text passage."""
         for selector in unused_selectors.selectors:
@@ -476,62 +470,40 @@ class BaseEnactment:
         citation = self.as_citation()
         return citation.csl_json()
 
-
-class LinkedEnactment(BaseEnactment):
-    """
-    One or more passages of legislative text, selected from within a cited location.
-
-    :param children:
-        URLs of other nodes nested within this one
-    """
-
-    def __init__(
+    def select_more(
         self,
-        children: List[str] = None,
-        selection: Union[bool, List[TextPositionSelector]] = True,
-        *args,
-        **kwargs,
-    ):
-        """Select text of Enactment that can't have nested Enactments."""
-        self._children = children or []
-        super().__init__(*args, **kwargs)
+        selection: Union[
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> None:
+        """Select text, in addition to any previous selection."""
+        if not isinstance(selection, TextPositionSet):
+            selection = self.convert_selection_to_set(selection)
 
-        if selection:
-            self.select_without_children(selection)
+        # Ignore child nodes if selector was passed in without an end
+        if any(selector.end is None for selector in selection.selectors):
+            self.select_without_children(True)
         else:
-            self._selection = TextPositionSet()
+            unused_selectors = self.select_more_text_in_current_branch(selection)
+            self.raise_error_for_extra_selector(unused_selectors)
 
-
-class Enactment(BaseEnactment):
-    """
-    One or more passages of legislative text, selected from within a cited location.
-
-    :param children:
-        other Enactments nested under this one's node
-
-    :param selection:
-        the parts of the Enactment that are being referenced
-    """
-
-    def __init__(
-        self,
-        children: List[Enactment] = None,
-        selection: Union[bool, List[TextPositionSelector]] = True,
-        *args,
-        **kwargs,
-    ):
-        """Assign selected text as attr, including any selected text in child nodes."""
-        self._children = children or []
-        super().__init__(*args, **kwargs)
-        self._selection = TextPositionSet()
-        if selection:
-            self.select_more(selection)
+    def select_more_text_in_current_branch(
+        self, added_selection: TextPositionSet
+    ) -> TextPositionSet:
+        """Select more text within this Enactment's tree_selection, including child nodes."""
+        new_selection = self.tree_selection() + added_selection
+        return self.select_from_text_positions(new_selection)
 
     @property
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
         text_parts = [self.content]
-        for child in self.children:
+
+        for child in self.nested_children:
             if child.text:
                 text_parts.append(child.text)
         joined = " ".join(text_parts)
@@ -545,7 +517,7 @@ class Enactment(BaseEnactment):
         new_tree_length = tree_length + self.padded_length
         new_selector_set = selector_set + selectors_at_node_with_offset
 
-        for child in self.children:
+        for child in self.nested_children:
             new_selector_set, new_tree_length = child._tree_selection(
                 selector_set=new_selector_set, tree_length=new_tree_length
             )
@@ -565,13 +537,6 @@ class Enactment(BaseEnactment):
         """Select more text at this Enactment's node, not in child nodes."""
         new_selection = self.selection + added_selection
         self._selection = new_selection
-
-    def select_more_text_in_current_branch(
-        self, added_selection: TextPositionSet
-    ) -> TextPositionSet:
-        """Select more text within this Enactment's tree_selection, including child nodes."""
-        new_selection = self.tree_selection() + added_selection
-        return self.select_from_text_positions(new_selection)
 
     def _update_text_at_included_node(self, other: Enactment) -> Tuple[bool, bool]:
         """Recursively search child nodes for one that can be updated by `other`."""
@@ -636,7 +601,7 @@ class Enactment(BaseEnactment):
         selection_set = self.select_from_text_positions_without_nesting(selection)
 
         selections_after_this_node = selection_set - self.padded_length
-        for child in self.children:
+        for child in self.nested_children:
             selections_after_this_node = child.select_from_text_positions(
                 selections_after_this_node
             )
@@ -678,27 +643,6 @@ class Enactment(BaseEnactment):
         self.select_more_text_in_current_branch(
             TextPositionSet(selectors=incoming_position_selectors)
         )
-
-    def select_more(
-        self,
-        selection: Union[
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
-    ) -> None:
-        """Select text, in addition to any previous selection."""
-        if not isinstance(selection, TextPositionSet):
-            selection = self.convert_selection_to_set(selection)
-
-        # Ignore child nodes if selector was passed in without an end
-        if any(selector.end is None for selector in selection.selectors):
-            self.select_without_children(True)
-        else:
-            unused_selectors = self.select_more_text_in_current_branch(selection)
-            self.raise_error_for_extra_selector(unused_selectors)
 
     def select(
         self,
@@ -752,8 +696,10 @@ class Enactment(BaseEnactment):
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        selected = super().text_sequence(include_nones=include_nones)
-        for child in self.children:
+        selected = self.selection.as_text_sequence(
+            text=self.content, include_nones=include_nones
+        )
+        for child in self.nested_children:
             if selected:
                 selected = selected + child.text_sequence(include_nones=include_nones)
             else:

@@ -13,7 +13,6 @@ from legislice.enactments import (
     CitingProvisionLocation,
     Enactment,
     InboundReference,
-    LinkedEnactment,
     TextVersion,
     consolidate_enactments,
 )
@@ -96,7 +95,7 @@ class TestLinkedEnactment:
         assert "for documentation" in enactment.text
 
     def test_linked_enactment_without_children(self):
-        enactment = LinkedEnactment(
+        enactment = Enactment(
             node="/test/golden",
             heading="The Golden Rule",
             content="Do unto others as you would have them do to you.",
@@ -108,7 +107,7 @@ class TestLinkedEnactment:
 
     def test_error_blank_content(self):
         with pytest.raises(ValueError):
-            LinkedEnactment(
+            Enactment(
                 node="/test/unwritten",
                 heading="The Unwritten Rule",
                 textversion=TextVersion(content=""),

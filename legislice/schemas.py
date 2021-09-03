@@ -10,7 +10,6 @@ from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 from legislice.enactments import (
     Enactment,
     InboundReference,
-    LinkedEnactment,
     RawEnactment,
     CrossReference,
     TextVersion,
@@ -126,7 +125,7 @@ class TextVersionSchema(Schema):
 class LinkedEnactmentSchema(Schema):
     """Schema for passages from legislation without the full text of child nodes."""
 
-    __model__: Union[Type[Enactment], Type[LinkedEnactment]] = LinkedEnactment
+    __model__ = Enactment
     node = fields.Url(relative=True, required=True)
     heading = fields.Str(required=True)
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
@@ -148,14 +147,14 @@ class LinkedEnactmentSchema(Schema):
         unknown = EXCLUDE
         ordered = True
 
-    def get_selection(self, obj: LinkedEnactment):
+    def get_selection(self, obj: Enactment):
         return obj.selection.dict()["selectors"]
 
     def load_selection(self, value):
         schema = SelectorSchema(many=True)
         return schema.load(value)
 
-    def get_anchors(self, obj: LinkedEnactment):
+    def get_anchors(self, obj: Enactment):
         if not obj.anchors:
             return None
         if isinstance(obj.anchors, TextPositionSet):

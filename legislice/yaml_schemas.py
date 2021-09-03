@@ -12,7 +12,6 @@ from marshmallow import fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
     Enactment,
-    LinkedEnactment,
     RawEnactment,
 )
 
@@ -27,7 +26,7 @@ from legislice.schemas import (
 class ExpandableLinkedEnactmentSchema(LinkedEnactmentSchema):
     """Schema for passages from legislation without the full text of child nodes."""
 
-    __model__: Union[Type[Enactment], Type[LinkedEnactment]] = LinkedEnactment
+    __model__: Enactment
     node = fields.Url(relative=True, required=True)
     heading = fields.Str(required=True)
     text_version = fields.Nested(TextVersionSchema, required=False, missing=None)
