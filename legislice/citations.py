@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from datetime import date
 from enum import IntEnum
+import json
 from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema, fields
@@ -115,18 +116,31 @@ class Citation(BaseModel):
             value = "sec. " + value.lstrip("s")
         return value
 
+    def revision_date_parts(self) -> List[List[Union[str, int]]]:
+        """Return date as three numbers in "date-parts" field."""
+        if not self.revision_date:
+            return []
+
+        return [
+            [
+                str(self.revision_date.year),
+                self.revision_date.month,
+                self.revision_date.day,
+            ]
+        ]
+
     def __str__(self):
         name = f"{self.volume} {self.code} {self.section}"
         if self.revision_date:
             name += f" ({self.revision_date.year})"
         return name.replace("sec.", "§")
 
-    def as_dict(self) -> str:
-        """Dump Citation Style Language data as Python object."""
+    def csl_dict(self) -> Dict[str, Union[str, int, List[List[Union[str, int]]]]]:
+        """Return citation as a Citation Style Language object."""
         schema = CitationSchema()
         return schema.dump(self)
 
-    def as_json(self) -> str:
-        """Dump Citation Style Language data as JSON."""
-        schema = CitationSchema()
-        return schema.dumps(self)
+    def csl_json(self) -> str:
+        """Return citation as Citation Style Language JSON."""
+        obj = self.csl_dict()
+        return json.dumps(obj)
