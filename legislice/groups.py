@@ -39,7 +39,7 @@ class EnactmentGroup:
     def _at_index(self, key: int) -> Enactment:
         return self.sequence[key]
 
-    def __getitem__(self, key: Union[int, slice]) -> Enactment:
+    def __getitem__(self, key: Union[int, slice]) -> Union[Enactment, EnactmentGroup]:
         if isinstance(key, slice):
             start, stop, step = key.indices(len(self))
             return self.__class__([self._at_index(i) for i in range(start, stop, step)])

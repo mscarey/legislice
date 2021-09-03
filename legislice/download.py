@@ -133,7 +133,7 @@ class Client:
 
         return self._fetch_from_url(url=target).json()
 
-    def fetch_db_coverage(self, code_uri: str) -> Dict[str, datetime.date]:
+    def fetch_db_coverage(self, code_uri: str) -> Dict[str, Union[str, datetime.date]]:
         """Document date range of provisions of a code of laws available in API database."""
         target = self.api_root + "/coverage" + code_uri
         coverage = self._fetch_from_url(url=target).json()

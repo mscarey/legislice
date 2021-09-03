@@ -34,8 +34,12 @@ class ExpandableLinkedEnactmentSchema(LinkedEnactmentSchema):
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     known_revision_date = fields.Boolean()
-    selection = fields.Nested(SelectorSchema, many=True, missing=list)
-    anchors = fields.Nested(SelectorSchema, many=True, missing=list)
+    selection = fields.Method(
+        "get_selection", deserialize="load_selection", required=False, missing=None
+    )
+    anchors = fields.Method(
+        "get_anchors", deserialize="load_anchors", required=False, missing=None
+    )
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
     children = fields.List(fields.Url(relative=False))
 

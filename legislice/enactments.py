@@ -9,7 +9,6 @@ from datetime import date
 from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.utils.ranges import RangeSet
 from anchorpoint.schemas import TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet
 from anchorpoint.textsequences import TextSequence
@@ -70,10 +69,10 @@ class CitingProvisionLocation:
     def __repr__(self):
         return f"({self.node} {self.start_date})"
 
-    def __gt__(self, other: CitingProvisionLocation):
+    def __lt__(self, other: CitingProvisionLocation):
         if self.start_date != other.start_date:
-            return self.start_date > other.start_date
-        return self.node > other.node
+            return self.start_date < other.start_date
+        return self.node < other.node
 
 
 @dataclass

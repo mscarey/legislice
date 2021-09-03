@@ -30,6 +30,7 @@ def enactment_needs_api_update(data: RawEnactment) -> bool:
         return True
     if data.get("content") is None and data.get("text_version") is None:
         return False
+    return False
 
 
 class CitingProvisionLocationSchema(Schema):
