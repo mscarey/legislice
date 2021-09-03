@@ -431,6 +431,18 @@ class BaseEnactment:
         """Add new text selection, replacing any prior selection."""
         self.select_without_children(selection)
 
+    def select_all(self) -> None:
+        """Select all text of Enactment."""
+        if self.content:
+            self._selection = TextPositionSet(
+                selectors=TextPositionSelector(start=0, end=len(self.content))
+            )
+        else:
+            self._selection = TextPositionSet()
+        for child in self._children:
+            if isinstance(child, Enactment):
+                child.select_all()
+
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
         List the phrases in the Enactment selected by TextPositionSelectors.
@@ -488,19 +500,6 @@ class LinkedEnactment(BaseEnactment):
             self.select_without_children(selection)
         else:
             self._selection = TextPositionSet()
-
-    def select_all(
-        self,
-        selection: Union[
-            bool,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ] = True,
-    ) -> None:
-        """Select all text of enactment."""
-        self.select_without_children(selection)
 
 
 class Enactment(BaseEnactment):
@@ -642,17 +641,6 @@ class Enactment(BaseEnactment):
                 selections_after_this_node
             )
         return selections_after_this_node
-
-    def select_all(self) -> None:
-        """Select all text of Enactment."""
-        if self.content:
-            self._selection = TextPositionSet(
-                selectors=TextPositionSelector(start=0, end=len(self.content))
-            )
-        else:
-            self._selection = TextPositionSet()
-        for child in self._children:
-            child.select_all()
 
     def select_none(self) -> None:
         """Deselect any Enactment text, including in child nodes."""
