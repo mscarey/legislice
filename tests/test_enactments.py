@@ -4,6 +4,7 @@ import os
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
+from pydantic import ValidationError
 import pytest
 
 from legislice.citations import CodeLevel
@@ -18,6 +19,7 @@ from legislice.enactments import (
 )
 from legislice.schemas import EnactmentSchema
 from legislice.yaml_schemas import ExpandableEnactmentSchema
+
 
 load_dotenv()
 
@@ -967,7 +969,7 @@ class TestAddEnactments:
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
         cite = section.as_citation()
-        with pytest.raises(TypeError):
+        with pytest.raises(ValidationError):
             section.select_more(cite)
 
 

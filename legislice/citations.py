@@ -6,6 +6,8 @@ from enum import IntEnum
 from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema, fields
+from pydantic.class_validators import validator, root_validator
+from pydantic.main import BaseModel
 
 
 class CodeLevel(IntEnum):
@@ -79,38 +81,39 @@ class CitationSchema(Schema):
         }
 
 
-@dataclass
-class Citation:
+class Citation(BaseModel):
     r"""
     A citation style for referring to an :class:`~legislice.enactments.Enactment` in written text.
 
     Intended for use with `Citation Style Language (CSL) <https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html>`_.
     """
 
-    def __init__(
-        self,
-        jurisdiction: str,
-        code: Optional[str] = None,
-        volume: Optional[str] = None,
-        section: Optional[str] = None,
-        revision_date: Optional[date] = None,
-    ) -> None:
-        """Convert identifier parts to CSL format."""
-        self.jurisdiction = jurisdiction
+    jurisdiction: str
+    code: Optional[str] = None
+    code_level_name: Optional[str] = None
+    volume: Optional[str] = None
+    section: Optional[str] = None
+    revision_date: Optional[date] = None
 
-        if code:
-            code, code_level_name = identify_code(jurisdiction=jurisdiction, code=code)
-        self.code = code
+    @root_validator(pre=True)
+    def validate_code(cls, obj):
+        if obj.get("code"):
+            obj["code"], obj["code_level_name"] = identify_code(
+                jurisdiction=obj["jurisdiction"], code=obj["code"]
+            )
+        return obj
 
-        if volume:
-            volume = volume.lstrip("t")
-        self.volume = volume
+    @validator("volume")
+    def validate_volume(cls, value):
+        if value:
+            value = value.lstrip("t")
+        return value
 
-        if section:
-            section = "sec. " + section.lstrip("s")
-        self.section = section
-
-        self.revision_date = revision_date
+    @validator("section")
+    def validate_section(cls, value):
+        if value and not value.startswith("sec. "):
+            value = "sec. " + value.lstrip("s")
+        return value
 
     def __str__(self):
         name = f"{self.volume} {self.code} {self.section}"

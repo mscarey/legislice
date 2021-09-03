@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
-from dataclasses import dataclass
+
 from datetime import date
 from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
@@ -15,7 +15,7 @@ from anchorpoint.textsequences import TextSequence
 
 from legislice import citations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
@@ -94,21 +94,20 @@ class InboundReference(BaseModel):
         return max(self.locations)
 
 
-class TextVersion:
+class TextVersion(BaseModel):
     """Version of legislative text, enacted at one or more times and locations."""
 
-    def __init__(
-        self,
-        content: str,
-        url: Optional[str] = None,
-        id: Optional[int] = None,
-    ):
-        """Check that TextVersion has content."""
+    content: str
+    url: Optional[str] = None
+    id: Optional[int] = None
+
+    @validator("content")
+    def content_exists(cls, content: str) -> str:
         if not content:
-            raise ValueError("TextVersion should not be created with no content.")
-        self.content = content
-        self.url = url
-        self.id = id
+            raise ValueError(
+                "TextVersion should not be created with an empty string for content."
+            )
+        return content
 
 
 class BaseEnactment:
