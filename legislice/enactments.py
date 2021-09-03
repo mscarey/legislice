@@ -630,7 +630,7 @@ class Enactment(BaseEnactment):
         guide to this CSL-JSON format.
         """
         citation = self.as_citation()
-        return citation.json()
+        return citation.csl_json()
 
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""

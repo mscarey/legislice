@@ -1,6 +1,5 @@
 """Citations to codified citations."""
 
-from dataclasses import dataclass
 from datetime import date
 from enum import IntEnum
 import json
@@ -86,7 +85,8 @@ class Citation(BaseModel):
     r"""
     A citation style for referring to an :class:`~legislice.enactments.Enactment` in written text.
 
-    Intended for use with `Citation Style Language (CSL) <https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html>`_.
+    Intended for use with `Citation Style Language
+    (CSL) <https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html>`_.
     """
 
     jurisdiction: str

@@ -134,6 +134,11 @@ class TestEnactmentDetails:
         assert enactment.node in str(enactment)
         assert "1791-12-15" in str(enactment)
 
+    def test_csl_json_fields(self, test_client, section_11_subdivided):
+        section = test_client.read_from_json(section_11_subdivided)
+        cite_json = section.csl_json()
+        assert "event-date" in cite_json
+
     @pytest.mark.vcr
     def test_sovereign_representation(self, test_client):
         enactment = test_client.read(query="/us")
