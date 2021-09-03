@@ -110,7 +110,7 @@ class TextVersion(BaseModel):
         return content
 
 
-class Enactment:
+class Enactment(BaseModel):
     """
     Base class for Enactments.
 
@@ -153,54 +153,32 @@ class Enactment:
         a user-assigned label for the object
     """
 
-    def __init__(
-        self,
-        node: str,
-        heading: str,
-        start_date: date,
-        known_revision_date: bool = True,
-        text_version: Optional[TextVersion] = None,
-        content: Optional[str] = None,
-        end_date: Optional[date] = None,
-        anchors: Union[List[TextPositionSelector], List[TextQuoteSelector]] = None,
-        citations: List[CrossReference] = None,
-        name: str = "",
-        children: Union[List[Enactment], List[str]] = None,
-        selection: Union[bool, List[TextPositionSelector]] = True,
-        *args,
-        **kwargs,
-    ):
-        """Save parameters as private attributes."""
-        self._children: Union[List[Enactment], List[str]] = children or []
-        self.node = node
-        if text_version:
-            self.text_version: Optional[TextVersion] = text_version
-        elif content:
-            self.text_version = TextVersion(content=content)
-        else:
-            self.text_version = None
+    node: str
+    heading: str
+    start_date: date
+    known_revision_date: bool = True
+    text_version: Optional[TextVersion] = None
+    end_date: Optional[date] = None
+    anchors: Union[
+        TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
+    ] = []
+    citations: List[CrossReference] = []
+    name: str = ""
+    children: Union[List[Enactment], List[str]] = None
+    selection: Union[bool, List[TextPositionSelector]] = True
 
-        self._heading = heading
-        self._start_date = start_date
-        self.known_revision_date = known_revision_date
-        self._end_date = end_date
-        self._cross_references = citations or []
-        self.name = name
-        if anchors:
-            if all(isinstance(anchor, TextPositionSelector) for anchor in anchors):
-                self.anchors = TextPositionSet(selectors=anchors)
-            else:
-                self.anchors = anchors
-        else:
-            self.anchors = None
-        self._selection = TextPositionSet()
-        if selection:
-            self.select_more(selection)
-
-    @property
-    def heading(self):
-        """Get heading text for this version of the Enactment."""
-        return self._heading
+    @validator("anchors")
+    def anchors_to_set(
+        cls, anchors
+    ) -> Optional[
+        Union[TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]]
+    ]:
+        """Convert a list of anchors to a TextPositionSet."""
+        if anchors and all(
+            isinstance(anchor, TextPositionSelector) for anchor in anchors
+        ):
+            return TextPositionSet(selectors=anchors)
+        return anchors
 
     @property
     def content(self) -> str:
@@ -210,29 +188,9 @@ class Enactment:
         return self.text_version.content
 
     @property
-    def start_date(self):
-        """Get date when Enactment's text version came into effect."""
-        return self._start_date
-
-    @property
-    def end_date(self):
-        """Get date when Enactment's text version was no longer in effect."""
-        return self._end_date
-
-    @property
-    def children(self):
-        """Get children attribute."""
-        return self._children
-
-    @property
     def nested_children(self):
         """Get nested children attribute."""
         return [child for child in self.children if isinstance(child, Enactment)]
-
-    @property
-    def selection(self):
-        """Get selection attribute."""
-        return self._selection
 
     def get_identifier_part(self, index: int) -> Optional[str]:
         """Get a part of the split node identifier, by number."""
@@ -750,6 +708,29 @@ class Enactment:
         if self.means(other):
             return False
         return self.implies(other)
+
+
+class EnactmentPassage(BaseModel):
+    """An Enactment with selectors indicating which text is being referenced."""
+
+    enactment: Enactment
+    selection: TextPositionSet
+
+
+class AnchoredEnactmentPassage(BaseModel):
+    """A quoted Enactment passage with anchors to an external document.
+
+    :param passage:
+        an EnactmentPassage with selectors indicating which part
+        of the Enactment is being referenced.
+
+    :param anchor:
+        anchors to text in an external document that references
+        the EnactmentPassage
+    """
+
+    passage: EnactmentPassage
+    anchors: Union[TextPositionSet, List[TextQuoteSelector]]
 
 
 def consolidate_enactments(enactments: Sequence[Enactment]) -> List[Enactment]:
