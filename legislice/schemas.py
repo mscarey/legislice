@@ -4,6 +4,7 @@ import datetime
 from typing import Dict, Type, Union
 
 from anchorpoint.schemas import SelectorSchema
+from anchorpoint.textselectors import TextPositionSet
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
@@ -131,8 +132,12 @@ class LinkedEnactmentSchema(Schema):
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     known_revision_date = fields.Boolean()
-    selection = fields.Method("get_selection", deserialize="load_selection")
-    anchors = fields.Method("get_anchors", deserialize="load_anchors")
+    selection = fields.Method(
+        "get_selection", deserialize="load_selection", required=False, missing=None
+    )
+    anchors = fields.Method(
+        "get_anchors", deserialize="load_anchors", required=False, missing=None
+    )
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
     children = fields.List(fields.Url(relative=False))
 
@@ -150,7 +155,11 @@ class LinkedEnactmentSchema(Schema):
         return schema.load(value)
 
     def get_anchors(self, obj: LinkedEnactment):
-        return obj.anchors.dict()["selectors"]
+        if not obj.anchors:
+            return None
+        if isinstance(obj.anchors, TextPositionSet):
+            return obj.anchors.dict()["selectors"]
+        return [anchor.dict() for anchor in obj.anchors]
 
     def load_anchors(self, value):
         schema = SelectorSchema(many=True)

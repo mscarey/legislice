@@ -184,9 +184,15 @@ class BaseEnactment:
         self._start_date = start_date
         self.known_revision_date = known_revision_date
         self._end_date = end_date
-        self.anchors = TextPositionSet(selectors=anchors or [])
         self._cross_references = citations or []
         self.name = name
+        if anchors:
+            if all(isinstance(anchor, TextPositionSelector) for anchor in anchors):
+                self.anchors = TextPositionSet(selectors=anchors)
+            else:
+                self.anchors = anchors
+        else:
+            self.anchors = None
 
     @property
     def heading(self):
