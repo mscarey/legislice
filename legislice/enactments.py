@@ -15,12 +15,13 @@ from anchorpoint.textsequences import TextSequence
 
 from legislice import citations
 
+from pydantic import BaseModel
+
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
 
 
-@dataclass
-class CrossReference:
+class CrossReference(BaseModel):
     """
     A legislative provision's citation to another provision.
 
@@ -43,12 +44,11 @@ class CrossReference:
     reference_text: str
     target_node: Optional[int] = None
 
-    def __repr__(self):
+    def __str__(self):
         return f'CrossReference(target_uri="{self.target_uri}", reference_text="{self.reference_text}")'
 
 
-@dataclass
-class CitingProvisionLocation:
+class CitingProvisionLocation(BaseModel):
     """
     Memo indicating where an Enactment can be downloaded.
 
@@ -66,7 +66,7 @@ class CitingProvisionLocation:
     start_date: date
     heading: str = ""
 
-    def __repr__(self):
+    def __str__(self):
         return f"({self.node} {self.start_date})"
 
     def __lt__(self, other: CitingProvisionLocation):
@@ -75,8 +75,7 @@ class CitingProvisionLocation:
         return self.node < other.node
 
 
-@dataclass
-class InboundReference:
+class InboundReference(BaseModel):
     """A memo that a TextVersion has a citation to a specified target provision."""
 
     content: str
