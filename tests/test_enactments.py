@@ -93,6 +93,7 @@ class TestLinkedEnactment:
         assert "for documentation." in enactment.text_sequence()[0].text
         enactment.select("for documentation.")
         assert enactment.selected_text() == "…for documentation."
+        assert "for documentation" in enactment.text
 
     def test_linked_enactment_without_children(self):
         enactment = LinkedEnactment(
@@ -113,6 +114,10 @@ class TestLinkedEnactment:
                 textversion=TextVersion(content=""),
                 start_date=date(2001, 1, 1),
             )
+
+    def test_csl_cite_for_usc(self, test_client):
+        enactment = test_client.read(query="/us/usc", date="2020-01-01")
+        assert '"container-title": "U.S. Code"' in enactment.csl_json()
 
 
 class TestEnactmentDetails:

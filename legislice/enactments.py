@@ -449,6 +449,21 @@ class BaseEnactment:
             if selector.start > len(self.content) + 1:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
+    def csl_json(self) -> str:
+        """
+        Serialize a citation to this provision in Citation Style Language JSON.
+
+        Experimental feature.
+        This CSL-JSON format currently only identifies the cited provision down to
+        the section level. A citation to a subsection or deeper nested provision will
+        be the same as a citation to its parent section.
+
+        See https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html for a
+        guide to this CSL-JSON format.
+        """
+        citation = self.as_citation()
+        return citation.csl_json()
+
 
 class LinkedEnactment(BaseEnactment):
     """
@@ -616,21 +631,6 @@ class Enactment(BaseEnactment):
             "Can't add selected text from two different Enactments "
             "when neither is a descendant of the other."
         )
-
-    def csl_json(self) -> str:
-        """
-        Serialize a citation to this provision in Citation Style Language JSON.
-
-        Experimental feature.
-        This CSL-JSON format currently only identifies the cited provision down to
-        the section level. A citation to a subsection or deeper nested provision will
-        be the same as a citation to its parent section.
-
-        See https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html for a
-        guide to this CSL-JSON format.
-        """
-        citation = self.as_citation()
-        return citation.csl_json()
 
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""

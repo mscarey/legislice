@@ -90,7 +90,7 @@ class Citation(BaseModel):
     """
 
     jurisdiction: str
-    code: Optional[str] = None
+    code: str
     code_level_name: Optional[str] = None
     volume: Optional[str] = None
     section: Optional[str] = None
