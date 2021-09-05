@@ -15,7 +15,7 @@ from anchorpoint.textsequences import TextSequence
 
 from legislice import citations
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, root_validator
 
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
@@ -97,17 +97,17 @@ class InboundReference(BaseModel):
 class TextVersion(BaseModel):
     """Version of legislative text, enacted at one or more times and locations."""
 
-    content: str
+    text: str
     url: Optional[str] = None
     id: Optional[int] = None
 
-    @validator("content")
-    def content_exists(cls, content: str) -> str:
-        if not content:
+    @validator("text")
+    def content_exists(cls, text: str) -> str:
+        if not text:
             raise ValueError(
                 "TextVersion should not be created with an empty string for content."
             )
-        return content
+        return text
 
 
 class Enactment(BaseModel):
@@ -157,14 +157,14 @@ class Enactment(BaseModel):
     heading: str
     start_date: date
     known_revision_date: bool = True
-    text_version: Optional[TextVersion] = None
+    content: Optional[TextVersion] = None
     end_date: Optional[date] = None
     anchors: Union[
         TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
     ] = []
     citations: List[CrossReference] = []
     name: str = ""
-    children: Union[List[Enactment], List[str]] = None
+    children: Union[List[Enactment], List[str]] = []
     selection: Union[bool, List[TextPositionSelector]] = True
 
     @validator("anchors")
@@ -180,12 +180,23 @@ class Enactment(BaseModel):
             return TextPositionSet(selectors=anchors)
         return anchors
 
+    @validator("content", pre=True)
+    def make_text_version_from_str(
+        cls, value: Optional[Union[TextVersion, str]]
+    ) -> Optional[TextVersion]:
+        """Allow content to be used to populate text_version."""
+        if isinstance(value, str):
+            if value:
+                return TextVersion(text=value)
+            return None
+        return value or None
+
     @property
-    def content(self) -> str:
+    def local_text(self) -> str:
         """Get text for this version of the Enactment."""
-        if not self.text_version:
+        if not self.content:
             return ""
-        return self.text_version.content
+        return self.content.text
 
     @property
     def nested_children(self):
@@ -459,11 +470,11 @@ class Enactment(BaseModel):
     @property
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
-        text_parts = [self.content]
+        text_parts = [self.local_text]
 
         for child in self.nested_children:
             if child.text:
-                text_parts.append(child.text)
+                text_parts.append(child.local_text)
         joined = " ".join(text_parts)
         return joined.strip()
 
@@ -708,6 +719,9 @@ class Enactment(BaseModel):
         if self.means(other):
             return False
         return self.implies(other)
+
+
+Enactment.update_forward_refs()
 
 
 class EnactmentPassage(BaseModel):

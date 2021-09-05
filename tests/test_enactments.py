@@ -38,6 +38,7 @@ class TestMakeEnactment:
             ),
         )
         assert s1.end_date is None
+        assert s1.nested_children == []
         assert 'Enactment(node="/test/acts/47/1"' in repr(s1)
 
     def test_init_enactment_with_nesting(self):
@@ -57,7 +58,7 @@ class TestMakeEnactment:
             start_date=date(1935, 4, 1),
         )
 
-        assert section.children[0].content.startswith("The beardcoin shall")
+        assert section.children[0].text.startswith("The beardcoin shall")
 
     def test_protect_from_change(self):
         subsection = Enactment(
