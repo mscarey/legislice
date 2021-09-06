@@ -44,31 +44,21 @@ class TestMakeEnactment:
     def test_init_enactment_with_nesting(self):
         subsection = Enactment(
             heading="",
-            content="The beardcoin shall be a cryptocurrency token…",
+            text_version="The beardcoin shall be a cryptocurrency token…",
             node="/test/acts/47/6C/1",
             start_date=date(2013, 7, 18),
         )
 
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted under section 6…",
+            text_version="Where an exemption is granted under section 6…",
             node="/test/acts/47/6C",
             children=[subsection],
             end_date=None,
             start_date=date(1935, 4, 1),
         )
 
-        assert section.children[0].text.startswith("The beardcoin shall")
-
-    def test_protect_from_change(self):
-        subsection = Enactment(
-            heading="",
-            content="The beardcoin shall be a cryptocurrency token.",
-            node="/test/acts/47/6C/1",
-            start_date=date(2013, 7, 18),
-        )
-        with pytest.raises(AttributeError):
-            subsection.content = "The beardcoin shall be a gold coin."
+        assert section.children[0].content.startswith("The beardcoin shall")
 
     def test_create_TextPositionSet_on_init(self, section_11_subdivided):
         schema = EnactmentSchema()

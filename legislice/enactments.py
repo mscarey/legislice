@@ -97,17 +97,17 @@ class InboundReference(BaseModel):
 class TextVersion(BaseModel):
     """Version of legislative text, enacted at one or more times and locations."""
 
-    text: str
+    content: str
     url: Optional[str] = None
     id: Optional[int] = None
 
-    @validator("text")
-    def content_exists(cls, text: str) -> str:
-        if not text:
+    @validator("content")
+    def content_exists(cls, content: str) -> str:
+        if not content:
             raise ValueError(
                 "TextVersion should not be created with an empty string for content."
             )
-        return text
+        return content
 
 
 class Enactment(BaseModel):
@@ -157,7 +157,7 @@ class Enactment(BaseModel):
     heading: str
     start_date: date
     known_revision_date: bool = True
-    content: Optional[TextVersion] = None
+    text_version: Optional[TextVersion] = None
     end_date: Optional[date] = None
     anchors: Union[
         TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
@@ -180,23 +180,23 @@ class Enactment(BaseModel):
             return TextPositionSet(selectors=anchors)
         return anchors
 
-    @validator("content", pre=True)
+    @validator("text_version", pre=True)
     def make_text_version_from_str(
         cls, value: Optional[Union[TextVersion, str]]
     ) -> Optional[TextVersion]:
         """Allow content to be used to populate text_version."""
         if isinstance(value, str):
             if value:
-                return TextVersion(text=value)
+                return TextVersion(content=value)
             return None
         return value or None
 
     @property
-    def local_text(self) -> str:
+    def content(self) -> str:
         """Get text for this version of the Enactment."""
-        if not self.content:
+        if not self.text_version:
             return ""
-        return self.content.text
+        return self.text_version.content
 
     @property
     def nested_children(self):
@@ -470,11 +470,11 @@ class Enactment(BaseModel):
     @property
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
-        text_parts = [self.local_text]
+        text_parts = [self.content]
 
         for child in self.nested_children:
             if child.text:
-                text_parts.append(child.local_text)
+                text_parts.append(child.content)
         joined = " ".join(text_parts)
         return joined.strip()
 
