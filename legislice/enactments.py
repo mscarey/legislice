@@ -165,20 +165,6 @@ class Enactment(BaseModel):
     citations: List[CrossReference] = []
     name: str = ""
     children: Union[List[Enactment], List[str]] = []
-    selection: Union[bool, List[TextPositionSelector]] = True
-
-    @validator("anchors")
-    def anchors_to_set(
-        cls, anchors
-    ) -> Optional[
-        Union[TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]]
-    ]:
-        """Convert a list of anchors to a TextPositionSet."""
-        if anchors and all(
-            isinstance(anchor, TextPositionSelector) for anchor in anchors
-        ):
-            return TextPositionSet(selectors=anchors)
-        return anchors
 
     @validator("text_version", pre=True)
     def make_text_version_from_str(
@@ -260,7 +246,7 @@ class Enactment(BaseModel):
     def __repr__(self):
         return (
             f'{self.__class__.__name__}(node="{self.node}", '
-            f'start_date={repr(self.start_date)}, selection="{self.selection}")'
+            f'start_date={repr(self.start_date)}, selection="{self.text}")'
         )
 
     def as_citation(self) -> citations.Citation:
@@ -285,16 +271,6 @@ class Enactment(BaseModel):
         for child in self.children:
             result += child.cross_references()
         return result
-
-    def selected_text(self) -> str:
-        """
-        Return this provision's text that is within the ranges described by self.selection.
-
-        Based on creating an :class:`anchorpoint.textsequences.TextSequence` from this Enactment's
-        text content and the ranges in its selection attribute.
-        """
-        text_sequence = self.text_sequence()
-        return str(text_sequence)
 
     def get_passage(
         self,
@@ -439,34 +415,6 @@ class Enactment(BaseModel):
         citation = self.as_citation()
         return citation.csl_json()
 
-    def select_more(
-        self,
-        selection: Union[
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
-    ) -> None:
-        """Select text, in addition to any previous selection."""
-        if not isinstance(selection, TextPositionSet):
-            selection = self.convert_selection_to_set(selection)
-
-        # Ignore child nodes if selector was passed in without an end
-        if any(selector.end is None for selector in selection.selectors):
-            self.select_without_children(True)
-        else:
-            unused_selectors = self.select_more_text_in_current_branch(selection)
-            self.raise_error_for_extra_selector(unused_selectors)
-
-    def select_more_text_in_current_branch(
-        self, added_selection: TextPositionSet
-    ) -> TextPositionSet:
-        """Select more text within this Enactment's tree_selection, including child nodes."""
-        new_selection = self.tree_selection() + added_selection
-        return self.select_from_text_positions(new_selection)
-
     @property
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
@@ -477,6 +425,90 @@ class Enactment(BaseModel):
                 text_parts.append(child.content)
         joined = " ".join(text_parts)
         return joined.strip()
+
+    def implies(self, other: Enactment) -> bool:
+        """Test whether ``self`` has all the text passages of ``other``."""
+        if not isinstance(other, self.__class__):
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
+            )
+        self_selected_passages = self.text_sequence(include_nones=False)
+        other_selected_passages = other.text_sequence(include_nones=False)
+        return self_selected_passages >= other_selected_passages
+
+    def __ge__(self, other: Enactment) -> bool:
+        """
+        Test whether ``self`` implies ``other``.
+
+        :returns:
+            Whether ``self`` contains at least all the same text as ``other``.
+        """
+        return self.implies(other)
+
+    def __gt__(self, other) -> bool:
+        """Test whether ``self`` implies ``other`` without having same meaning."""
+        if self.means(other):
+            return False
+        return self.implies(other)
+
+
+Enactment.update_forward_refs()
+
+
+class EnactmentPassage(BaseModel):
+    """An Enactment with selectors indicating which text is being referenced."""
+
+    enactment: Enactment
+    selection: TextPositionSet
+
+    @property
+    def text(self):
+        """Get all text including subnodes, regardless of which text is "selected"."""
+        return self.enactment.text
+
+    def select(
+        self,
+        selection: Union[
+            bool,
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ] = True,
+        start: int = 0,
+        end: Optional[int] = None,
+    ) -> None:
+        """
+        Select text, clearing any previous selection.
+
+        If the selection includes no selectors for child Enactments,
+        then any selected passages for the child Enactments will be
+        cleared.
+        """
+        if selection is False or selection is None:
+            self.select_none()
+        elif selection is True:
+            self.select_all()
+        else:
+            if not isinstance(selection, TextPositionSet):
+                selection = self.convert_selection_to_set(selection)
+            unused_selectors = self.select_from_text_positions(selection)
+            self.raise_error_for_extra_selector(unused_selectors)
+        self.limit_selection(start=start, end=end)
+
+    def limit_selection(
+        self,
+        start: int = 0,
+        end: Optional[int] = None,
+    ) -> None:
+        """Limit selection to the range defined by start and end points."""
+        if (start != 0) or (end is not None):
+            selector = TextPositionSelector.from_text(
+                text=self.text, start=start, end=end
+            )
+            new_selection = self.tree_selection() & selector
+            self.select_from_text_positions(new_selection)
 
     def _tree_selection(
         self, selector_set: TextPositionSet, tree_length: int
@@ -613,49 +645,15 @@ class Enactment(BaseModel):
             TextPositionSet(selectors=incoming_position_selectors)
         )
 
-    def select(
-        self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ] = True,
-        start: int = 0,
-        end: Optional[int] = None,
-    ) -> None:
+    def selected_text(self) -> str:
         """
-        Select text, clearing any previous selection.
+        Return this provision's text that is within the ranges described by self.selection.
 
-        If the selection includes no selectors for child Enactments,
-        then any selected passages for the child Enactments will be
-        cleared.
+        Based on creating an :class:`anchorpoint.textsequences.TextSequence` from this Enactment's
+        text content and the ranges in its selection attribute.
         """
-        if selection is False or selection is None:
-            self.select_none()
-        elif selection is True:
-            self.select_all()
-        else:
-            if not isinstance(selection, TextPositionSet):
-                selection = self.convert_selection_to_set(selection)
-            unused_selectors = self.select_from_text_positions(selection)
-            self.raise_error_for_extra_selector(unused_selectors)
-        self.limit_selection(start=start, end=end)
-
-    def limit_selection(
-        self,
-        start: int = 0,
-        end: Optional[int] = None,
-    ) -> None:
-        """Limit selection to the range defined by start and end points."""
-        if (start != 0) or (end is not None):
-            selector = TextPositionSelector.from_text(
-                text=self.text, start=start, end=end
-            )
-            new_selection = self.tree_selection() & selector
-            self.select_from_text_positions(new_selection)
+        text_sequence = self.text_sequence()
+        return str(text_sequence)
 
     def text_sequence(self, include_nones: bool = True) -> TextSequence:
         """
@@ -676,6 +674,34 @@ class Enactment(BaseModel):
 
         return selected
 
+    def select_more(
+        self,
+        selection: Union[
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ],
+    ) -> None:
+        """Select text, in addition to any previous selection."""
+        if not isinstance(selection, TextPositionSet):
+            selection = self.convert_selection_to_set(selection)
+
+        # Ignore child nodes if selector was passed in without an end
+        if any(selector.end is None for selector in selection.selectors):
+            self.select_without_children(True)
+        else:
+            unused_selectors = self.select_more_text_in_current_branch(selection)
+            self.raise_error_for_extra_selector(unused_selectors)
+
+    def select_more_text_in_current_branch(
+        self, added_selection: TextPositionSet
+    ) -> TextPositionSet:
+        """Select more text within this Enactment's tree_selection, including child nodes."""
+        new_selection = self.tree_selection() + added_selection
+        return self.select_from_text_positions(new_selection)
+
     def means(self, other: Enactment) -> bool:
         r"""
         Find whether meaning of ``self`` is equivalent to that of ``other``.
@@ -695,41 +721,6 @@ class Enactment(BaseModel):
         other_selected_passages = other.text_sequence()
         return self_selected_passages.means(other_selected_passages)
 
-    def implies(self, other: Enactment) -> bool:
-        """Test whether ``self`` has all the text passages of ``other``."""
-        if not isinstance(other, self.__class__):
-            raise TypeError(
-                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
-            )
-        self_selected_passages = self.text_sequence(include_nones=False)
-        other_selected_passages = other.text_sequence(include_nones=False)
-        return self_selected_passages >= other_selected_passages
-
-    def __ge__(self, other: Enactment) -> bool:
-        """
-        Test whether ``self`` implies ``other``.
-
-        :returns:
-            Whether ``self`` contains at least all the same text as ``other``.
-        """
-        return self.implies(other)
-
-    def __gt__(self, other) -> bool:
-        """Test whether ``self`` implies ``other`` without having same meaning."""
-        if self.means(other):
-            return False
-        return self.implies(other)
-
-
-Enactment.update_forward_refs()
-
-
-class EnactmentPassage(BaseModel):
-    """An Enactment with selectors indicating which text is being referenced."""
-
-    enactment: Enactment
-    selection: TextPositionSet
-
 
 class AnchoredEnactmentPassage(BaseModel):
     """A quoted Enactment passage with anchors to an external document.
@@ -745,6 +736,19 @@ class AnchoredEnactmentPassage(BaseModel):
 
     passage: EnactmentPassage
     anchors: Union[TextPositionSet, List[TextQuoteSelector]]
+
+    @validator("anchors")
+    def anchors_to_set(
+        cls, anchors
+    ) -> Optional[
+        Union[TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]]
+    ]:
+        """Convert a list of anchors to a TextPositionSet."""
+        if anchors and all(
+            isinstance(anchor, TextPositionSelector) for anchor in anchors
+        ):
+            return TextPositionSet(selectors=anchors)
+        return anchors
 
 
 def consolidate_enactments(enactments: Sequence[Enactment]) -> List[Enactment]:

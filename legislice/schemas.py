@@ -9,6 +9,8 @@ from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
     Enactment,
+    EnactmentPassage,
+    AnchoredEnactmentPassage,
     InboundReference,
     RawEnactment,
     CrossReference,
@@ -132,12 +134,6 @@ class LinkedEnactmentSchema(Schema):
     start_date = fields.Date(required=True)
     end_date = fields.Date(missing=None)
     known_revision_date = fields.Boolean()
-    selection = fields.Method(
-        "get_selection", deserialize="load_selection", required=False, missing=None
-    )
-    anchors = fields.Method(
-        "get_anchors", deserialize="load_anchors", required=False, missing=None
-    )
     citations = fields.Nested(CrossReferenceSchema, many=True, missing=list)
     children = fields.List(fields.Url(relative=False))
 
@@ -146,24 +142,6 @@ class LinkedEnactmentSchema(Schema):
 
         unknown = EXCLUDE
         ordered = True
-
-    def get_selection(self, obj: Enactment):
-        return obj.selection.dict()["selectors"]
-
-    def load_selection(self, value):
-        schema = SelectorSchema(many=True)
-        return schema.load(value)
-
-    def get_anchors(self, obj: Enactment):
-        if not obj.anchors:
-            return None
-        if isinstance(obj.anchors, TextPositionSet):
-            return obj.anchors.dict()["selectors"]
-        return [anchor.dict() for anchor in obj.anchors]
-
-    def load_anchors(self, value):
-        schema = SelectorSchema(many=True)
-        return schema.load(value)
 
     def is_revision_date_known(self, data):
         r"""
@@ -217,3 +195,55 @@ class EnactmentSchema(LinkedEnactmentSchema):
 
         unknown = EXCLUDE
         ordered = True
+
+    @pre_load
+    def format_data_to_load(self, data, **kwargs):
+        """Prepare Enactment to load."""
+        data = self.is_revision_date_known(data)
+        return data
+
+
+class TextPositionSetSchema(Schema):
+    """Schema for a set of positions in a text."""
+
+    __model__ = TextPositionSet
+    selectors = fields.Nested(SelectorSchema, many=True)
+
+
+class EnactmentPassageSchema(Schema):
+    """Schema for passages from legislation."""
+
+    __model__ = EnactmentPassage
+    enactment = fields.Nested(EnactmentSchema)
+    selection = fields.Nested(TextPositionSetSchema)
+
+    class Meta:
+        """Exclude unknown fields from schema."""
+
+        unknown = EXCLUDE
+        ordered = True
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        """Make EnactmentPassage, omitting any text selectors."""
+        return self.__model__(**data)
+
+
+class AnchoredEnactmentPassageSchema(Schema):
+
+    __model__ = AnchoredEnactmentPassage
+    passage = fields.Nested(EnactmentPassageSchema)
+    anchors = anchors = fields.Method(
+        "get_anchors", deserialize="load_anchors", required=False, missing=None
+    )
+
+    def get_anchors(self, obj: Enactment):
+        if not obj.anchors:
+            return None
+        if isinstance(obj.anchors, TextPositionSet):
+            return obj.anchors.dict()["selectors"]
+        return [anchor.dict() for anchor in obj.anchors]
+
+    def load_anchors(self, value):
+        schema = SelectorSchema(many=True)
+        return schema.load(value)

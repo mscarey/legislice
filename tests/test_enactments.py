@@ -16,7 +16,7 @@ from legislice.enactments import (
     TextVersion,
     consolidate_enactments,
 )
-from legislice.schemas import EnactmentSchema
+from legislice.schemas import EnactmentSchema, EnactmentPassageSchema
 from legislice.yaml_schemas import ExpandableEnactmentSchema
 
 
@@ -61,12 +61,20 @@ class TestMakeEnactment:
         assert section.children[0].content.startswith("The beardcoin shall")
 
     def test_create_TextPositionSet_on_init(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        section_11_subdivided["selection"] = [{"start": 0}]
-        for child in section_11_subdivided["children"]:
-            child["selection"] = []
-        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
-        result = schema.load(section_11_subdivided)
+        schema = EnactmentPassageSchema()
+        len_s11 = len(section_11_subdivided["text_version"]["content"])
+        data = {
+            "enactment": section_11_subdivided,
+            "selection": {"selectors": [{"start": 0, "end": len_s11}]},
+        }
+        start_point = len_s11 + len(
+            section_11_subdivided["children"][0]["text_version"]["content"]
+        )
+
+        data["selection"]["selectors"].append(
+            {"start": start_point, "end": start_point + 12}
+        )
+        result = schema.load(data)
         assert isinstance(result.selection, TextPositionSet)
         assert (
             result.selected_text()
