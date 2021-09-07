@@ -664,14 +664,8 @@ class EnactmentPassage(BaseModel):
             unselected text
         """
         selected = self.selection.as_text_sequence(
-            text=self.content, include_nones=include_nones
+            text=self.enactment.text, include_nones=include_nones
         )
-        for child in self.nested_children:
-            if selected:
-                selected = selected + child.text_sequence(include_nones=include_nones)
-            else:
-                selected = child.text_sequence(include_nones=include_nones)
-
         return selected
 
     def select_more(

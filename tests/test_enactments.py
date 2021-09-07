@@ -71,8 +71,10 @@ class TestMakeEnactment:
             section_11_subdivided["children"][0]["text_version"]["content"]
         )
 
+        margin = 2
+        expected = "hairdressers"
         data["selection"]["selectors"].append(
-            {"start": start_point, "end": start_point + 12}
+            {"start": start_point + margin, "end": start_point + margin + len(expected)}
         )
         result = schema.load(data)
         assert isinstance(result.selection, TextPositionSet)
