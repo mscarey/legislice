@@ -90,10 +90,10 @@ class TestLinkedEnactment:
     @pytest.mark.vcr
     def test_text_sequence_for_linked_enactment(self, test_client):
         enactment = test_client.read(query="/test", date="2020-01-01")
-        assert "for documentation." in enactment.text_sequence()[0].text
-        enactment.select("for documentation.")
-        assert enactment.selected_text() == "…for documentation."
-        assert "for documentation" in enactment.text
+        assert "for documentation." in enactment.text
+        selected = enactment.select("for documentation.")
+        assert selected.selected_text() == "…for documentation."
+        assert "for documentation" in selected.text
 
     def test_linked_enactment_without_children(self):
         enactment = Enactment(

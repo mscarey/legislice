@@ -265,7 +265,6 @@ class Client:
 
         If fields are missing from the JSON, they will be fetched using the API key.
         """
-        data_has_selection_field = "selection" in data.keys()
 
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
@@ -280,11 +279,7 @@ class Client:
         if self.coverage.get(code_uri):
             schema.context["coverage"] = self.coverage[code_uri]
 
-        enactment = schema.load(data)
-
-        if not enactment.selected_text() and not data_has_selection_field:
-            enactment.select_all()
-        return enactment
+        return schema.load(data)
 
     def read(
         self,

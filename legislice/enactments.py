@@ -312,6 +312,43 @@ class Enactment(BaseModel):
         factory = TextPositionSetFactory(text=self.text)
         return factory.from_quote_selectors(quotes)
 
+    def limit_selection(
+        self,
+        selection: TextPositionSet,
+        start: int = 0,
+        end: Optional[int] = None,
+    ) -> TextPositionSet:
+        """Limit selection to the range defined by start and end points."""
+
+        limit_selector = TextPositionSelector.from_text(
+            text=self.text, start=start, end=end
+        )
+        return selection & limit_selector
+
+    def select(
+        self,
+        selection: Union[
+            bool,
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ] = True,
+        start: int = 0,
+        end: Optional[int] = None,
+    ) -> EnactmentPassage:
+        """Select text from Enactment."""
+        selection_set = self.make_selection(selection=selection, start=start, end=end)
+        return EnactmentPassage(enactment=self, selection=selection_set)
+
+    def select_all(self) -> EnactmentPassage:
+        """Return a passage for this Enactment, including all subnodes."""
+        selection = TextPositionSet(
+            selectors=TextPositionSelector(start=0, end=len(self.text))
+        )
+        return EnactmentPassage(enactment=self, selection=selection)
+
     def select_from_text_positions_without_nesting(
         self, selections: Union[List[TextPositionSelector], TextPositionSet]
     ) -> TextPositionSet:
@@ -369,30 +406,33 @@ class Enactment(BaseModel):
         unused_selectors = self.select_from_text_positions_without_nesting(selection)
         self.raise_error_for_extra_selector(unused_selectors)
 
-    def select(
+    def make_selection(
         self,
         selection: Union[
             bool,
+            str,
             TextPositionSelector,
             TextPositionSet,
             TextQuoteSelector,
             Sequence[TextQuoteSelector],
-        ],
-    ) -> None:
-        """Add new text selection, replacing any prior selection."""
-        self.select_without_children(selection)
-
-    def select_all(self) -> None:
-        """Select all text of Enactment."""
-        if self.content:
-            self._selection = TextPositionSet(
-                selectors=TextPositionSelector(start=0, end=len(self.content))
+        ] = True,
+        start: int = 0,
+        end: Optional[int] = None,
+    ) -> TextPositionSet:
+        """
+        Make a TextPositionSet for specified text in this Enactment.
+        """
+        if selection is False or selection is None:
+            return TextPositionSet()
+        elif selection is True:
+            return TextPositionSet(
+                selectors=TextPositionSelector(start=0, end=len(self.text))
             )
         else:
-            self._selection = TextPositionSet()
-        for child in self._children:
-            if isinstance(child, Enactment):
-                child.select_all()
+            if not isinstance(selection, TextPositionSet):
+                selection = self.convert_selection_to_set(selection)
+            self.raise_error_for_extra_selector(selection)
+        return self.limit_selection(selection=selection, start=start, end=end)
 
     def raise_error_for_extra_selector(self, unused_selectors: TextPositionSet) -> None:
         """Raise an error if any passed selectors begin after the end of the text passage."""
@@ -466,36 +506,12 @@ class EnactmentPassage(BaseModel):
         """Get all text including subnodes, regardless of which text is "selected"."""
         return self.enactment.text
 
-    def select(
-        self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ] = True,
-        start: int = 0,
-        end: Optional[int] = None,
-    ) -> None:
-        """
-        Select text, clearing any previous selection.
-
-        If the selection includes no selectors for child Enactments,
-        then any selected passages for the child Enactments will be
-        cleared.
-        """
-        if selection is False or selection is None:
-            self.select_none()
-        elif selection is True:
-            self.select_all()
-        else:
-            if not isinstance(selection, TextPositionSet):
-                selection = self.convert_selection_to_set(selection)
-            unused_selectors = self.select_from_text_positions(selection)
-            self.raise_error_for_extra_selector(unused_selectors)
-        self.limit_selection(start=start, end=end)
+    def select_all(self) -> None:
+        """Select all text of Enactment."""
+        text = self.enactment.text
+        self.selection = TextPositionSet(
+            selectors=[TextPositionSelector(start=0, end=len(text))]
+        )
 
     def limit_selection(
         self,
@@ -503,12 +519,13 @@ class EnactmentPassage(BaseModel):
         end: Optional[int] = None,
     ) -> None:
         """Limit selection to the range defined by start and end points."""
-        if (start != 0) or (end is not None):
-            selector = TextPositionSelector.from_text(
-                text=self.text, start=start, end=end
-            )
-            new_selection = self.tree_selection() & selector
-            self.select_from_text_positions(new_selection)
+
+        limit_selector = TextPositionSelector.from_text(
+            text=self.text, start=start, end=end
+        )
+        new_selection = self.selection & limit_selector
+        self._selection = new_selection
+        return None
 
     def _tree_selection(
         self, selector_set: TextPositionSet, tree_length: int
@@ -596,6 +613,26 @@ class EnactmentPassage(BaseModel):
             "Can't add selected text from two different Enactments "
             "when neither is a descendant of the other."
         )
+
+    def select(
+        self,
+        selection: Union[
+            bool,
+            str,
+            TextPositionSelector,
+            TextPositionSet,
+            TextQuoteSelector,
+            Sequence[TextQuoteSelector],
+        ] = True,
+        start: int = 0,
+        end: Optional[int] = None,
+    ) -> None:
+        """Select text from Enactment."""
+        selection_set = self.enactment.make_selection(
+            selection=selection, start=start, end=end
+        )
+        self.selection = selection_set
+        return None
 
     def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
         """Select text using position selectors and return any unused position selectors."""
