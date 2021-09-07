@@ -95,16 +95,16 @@ class TestLinkedEnactment:
         assert selected.selected_text() == "…for documentation."
         assert "for documentation" in selected.text
 
-    def test_linked_enactment_without_children(self):
+    def test_enactment_without_children(self):
         enactment = Enactment(
             node="/test/golden",
             heading="The Golden Rule",
-            content="Do unto others as you would have them do to you.",
-            selection="Do unto others",
+            text_version="Do unto others as you would have them do to you.",
             start_date=date(1, 1, 1),
         )
         assert enactment.children == []
-        assert enactment.selected_text() == "Do unto others…"
+        new = enactment.select("Do unto others")
+        assert new.selected_text() == "Do unto others…"
 
     def test_error_blank_content(self):
         with pytest.raises(ValueError):
