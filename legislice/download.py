@@ -269,17 +269,13 @@ class Client:
         if enactment_needs_api_update(data):
             data = self.update_enactment_from_api(data)
 
-        schema_class = get_schema_for_node(
-            data["node"], use_text_expansion=use_text_expansion
-        )
-        schema = schema_class()
-
         # update client's data about the database's coverage
         code_uri = self.get_db_coverage(data["node"])
         if self.coverage.get(code_uri):
-            schema.context["coverage"] = self.coverage[code_uri]
+            data["earliest_in_db"] = self.coverage[code_uri]["earliest_in_db"]
+            data["first_published"] = self.coverage[code_uri]["first_published"]
 
-        return schema.load(data)
+        return Enactment(**data)
 
     def read(
         self,

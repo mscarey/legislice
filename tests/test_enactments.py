@@ -127,17 +127,18 @@ class TestEnactmentDetails:
         assert enactment.sovereign == "us"
         assert enactment.level == CodeLevel.STATUTE
 
+    @pytest.mark.vcr
     def test_str_representation(self, fourth_a, test_client):
         enactment = test_client.read_from_json(fourth_a)
         selection = TextQuoteSelector(
             exact="The right of the people to be secure in their persons"
         )
-        enactment.select(selection)
-        assert enactment.level == CodeLevel.CONSTITUTION
-        assert enactment.start_date == date(1791, 12, 15)
-        assert "secure in their persons…" in str(enactment)
-        assert enactment.node in str(enactment)
-        assert "1791-12-15" in str(enactment)
+        new = enactment.select(selection)
+        assert new.level == CodeLevel.CONSTITUTION
+        assert new.start_date == date(1791, 12, 15)
+        assert "secure in their persons…" in str(new)
+        assert enactment.node in str(new)
+        assert "1791-12-15" in str(new)
 
     def test_csl_json_fields(self, test_client, section_11_subdivided):
         section = test_client.read_from_json(section_11_subdivided)
@@ -1009,16 +1010,16 @@ class TestConsolidateEnactments:
     @pytest.mark.vcr()
     def test_consolidate_adjacent_passages(self, test_client):
         copyright_clause = test_client.read("/us/const/article/I/8/8")
-        copyright_statute = test_client.read("/us/usc/t17/s102/b")
+        copyright_statute = test_client.read("/us/usc/t17/s102/b").select_all()
 
-        copyright_clause.select(None)
-        securing_for_authors = copyright_clause + (
+        selection = copyright_clause.select(None)
+        securing_for_authors = selection + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        and_inventors = copyright_clause + "and Inventors"
+        and_inventors = selection + "and Inventors"
         right_to_writings = (
-            copyright_clause + "the exclusive Right to their respective Writings"
+            selection + "the exclusive Right to their respective Writings"
         )
         to_combine = [
             copyright_statute,
@@ -1040,8 +1041,9 @@ class TestConsolidateEnactments:
         due_process_5 = schema.load(fifth_a)
         due_process_14 = schema.load(fourteenth_dp)
 
-        due_process_5.select("life, liberty, or property, without due process of law")
-        due_process_14.select("life, liberty, or property, without due process of law")
+        passage = "life, liberty, or property, without due process of law"
+        quote_5 = due_process_5.select(passage)
+        quote_14 = due_process_14.select(passage)
 
-        combined = consolidate_enactments([due_process_5, due_process_14])
+        combined = consolidate_enactments([quote_5, quote_14])
         assert len(combined) == 2

@@ -240,8 +240,7 @@ class Enactment(BaseModel):
         return 0
 
     def __str__(self):
-        text_sequence = self.text_sequence()
-        return f'"{text_sequence}" ({self.node} {self.start_date})'
+        return f"{self.node} ({self.start_date})"
 
     def __repr__(self):
         return (
@@ -505,6 +504,53 @@ class EnactmentPassage(BaseModel):
     def text(self):
         """Get all text including subnodes, regardless of which text is "selected"."""
         return self.enactment.text
+
+    @property
+    def sovereign(self):
+        """Get "sovereign" part of node identifier."""
+        return self.get_identifier_part(1)
+
+    @property
+    def jurisdiction(self):
+        """Get "sovereign" part of node identifier."""
+        return self.enactment.sovereign
+
+    @property
+    def code(self):
+        """Get "code" part of node identifier."""
+        return self.enactment.code
+
+    @property
+    def title(self):
+        """Get "title" part of node identifier."""
+        return self.enactment.title
+
+    @property
+    def section(self):
+        """Get "section" part of node identifier."""
+        return self.enactment.section
+
+    @property
+    def is_federal(self):
+        """Check if self is from a federal jurisdiction."""
+        return self.enactment.is_federal
+
+    @property
+    def level(self) -> str:
+        """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
+        return self.enactment.level
+
+    @property
+    def start_date(self):
+        return self.enactment.start_date
+
+    @property
+    def end_date(self):
+        return self.enactment.end_date
+
+    def __str__(self):
+        text_sequence = self.text_sequence()
+        return f'"{text_sequence}" ({self.enactment.node} {self.start_date})'
 
     def select_all(self) -> None:
         """Select all text of Enactment."""
