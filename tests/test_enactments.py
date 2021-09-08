@@ -300,8 +300,8 @@ class TestSelectText:
             TextQuoteSelector(exact="hairdressers", suffix=", or other male grooming"),
             TextQuoteSelector(exact="as they see fit"),
         ]
-        section.select(quotes)
-        text_sequence = section.text_sequence()
+        selection = section.select(quotes)
+        text_sequence = selection.text_sequence()
         assert str(text_sequence) == (
             "The Department of Beards may issue "
             "licenses to such…hairdressers…as they see fit…"
@@ -315,9 +315,9 @@ class TestSelectText:
     def test_select_space_between_selected_passages(self, fourteenth_dp, test_client):
         """Test that the space between "property," and "without" is selected."""
         section_1 = test_client.read_from_json(fourteenth_dp)
-        section_1.select("without due process of law")
-        section_1.select_more("life, liberty, or property,")
-        now_selected = section_1.selected_text()
+        selection = section_1.select("without due process of law")
+        new_selection = selection.select_more("life, liberty, or property,")
+        now_selected = new_selection.selected_text()
         assert "or property, without" in now_selected
 
 

@@ -807,14 +807,10 @@ class EnactmentPassage(BaseModel):
     ) -> None:
         """Select text, in addition to any previous selection."""
         if not isinstance(selection, TextPositionSet):
-            selection = self.convert_selection_to_set(selection)
+            selection = self.enactment.convert_selection_to_set(selection)
 
-        # Ignore child nodes if selector was passed in without an end
-        if any(selector.end is None for selector in selection.selectors):
-            self.select_without_children(True)
-        else:
-            unused_selectors = self.select_more_text_in_current_branch(selection)
-            self.raise_error_for_extra_selector(unused_selectors)
+        unused_selectors = self.select_more_text_in_current_branch(selection)
+        self.enactment.raise_error_for_extra_selector(unused_selectors)
 
     def select_more_text_in_current_branch(
         self, added_selection: TextPositionSet
