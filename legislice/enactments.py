@@ -809,8 +809,9 @@ class EnactmentPassage(BaseModel):
         if not isinstance(selection, TextPositionSet):
             selection = self.enactment.convert_selection_to_set(selection)
 
-        unused_selectors = self.select_more_text_in_current_branch(selection)
-        self.enactment.raise_error_for_extra_selector(unused_selectors)
+        self.selection += selection
+        self.selection = self.selection.add_margin(text=self.text, margin_width=4)
+        self.enactment.raise_error_for_extra_selector(selection)
 
     def select_more_text_in_current_branch(
         self, added_selection: TextPositionSet

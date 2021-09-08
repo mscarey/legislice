@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 from legislice.download import Client
+from legislice.enactments import EnactmentPassage
 
 
 class TestUpdateEnactments:
@@ -74,7 +75,8 @@ class TestUpdateEnactments:
     def test_text_in_updated_enactment_is_selected_by_default(self, test_client):
         client = test_client
         enactment = client.read_from_json(data={"node": "/us/const/amendment/IV"})
-        assert enactment.selected_text().startswith("The right")
+        passage = EnactmentPassage(enactment=enactment)
+        assert passage.selected_text().startswith("The right")
 
 
 class TestLoadAndSelect:
@@ -144,10 +146,10 @@ class TestLoadAndSelect:
 
     def test_select_text_with_end_param(self):
         law = self.client.read_from_json(self.response)
-        law.select(end="or a felony under State law")
-        assert law.selected_text().endswith("or a felony under State law…")
+        passage = law.select(end="or a felony under State law")
+        assert passage.selected_text().endswith("or a felony under State law…")
 
     def test_end_param_has_no_effect_when_nothing_selected(self):
         law = self.client.read_from_json(self.response)
-        law.select(selection=False, end="or a felony under State law")
-        assert law.selected_text() == ""
+        passage = law.select(selection=False, end="or a felony under State law")
+        assert passage.selected_text() == ""

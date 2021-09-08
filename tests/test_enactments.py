@@ -316,8 +316,8 @@ class TestSelectText:
         """Test that the space between "property," and "without" is selected."""
         section_1 = test_client.read_from_json(fourteenth_dp)
         selection = section_1.select("without due process of law")
-        new_selection = selection.select_more("life, liberty, or property,")
-        now_selected = new_selection.selected_text()
+        selection.select_more("life, liberty, or property,")
+        now_selected = selection.selected_text()
         assert "or property, without" in now_selected
 
 
