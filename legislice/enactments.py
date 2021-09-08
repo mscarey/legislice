@@ -266,8 +266,8 @@ class Enactment(BaseModel):
 
     def cross_references(self) -> List[CrossReference]:
         """Return all cross-references from this node and subnodes."""
-        result = self._cross_references[:]
-        for child in self.children:
+        result = self.citations[:]
+        for child in self.nested_children:
             result += child.cross_references()
         return result
 

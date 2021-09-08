@@ -204,7 +204,7 @@ class TestCrossReferences:
     @pytest.mark.vcr()
     def test_no_local_cross_references(self, test_client):
         enactment = test_client.read("/test/acts/47/6D")
-        citations = enactment._cross_references
+        citations = enactment.citations
         assert len(citations) == 0
 
     @pytest.mark.vcr()
