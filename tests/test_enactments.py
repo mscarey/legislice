@@ -454,41 +454,40 @@ class TestSelectFromEnactment:
         assert passage.selected_text() == "…issue licenses…"
 
     def test_invalid_selector_text(self, section_11_subdivided):
-        section_11_subdivided["selection"] = [
-            {"exact": "text that doesn't exist in the code"}
-        ]
-        schema = ExpandableEnactmentSchema()
+        selector = TextQuoteSelector(exact="text that doesn't exist in the code")
+        enactment = Enactment(**section_11_subdivided)
+
         with pytest.raises(TextSelectionError):
-            _ = schema.load(section_11_subdivided)
+            enactment.select(selector)
 
     def test_select_text_with_string(self, fourth_a):
         schema = EnactmentSchema()
         fourth_a = schema.load(fourth_a)
-        fourth_a.select("The right of the people")
-        assert fourth_a.selected_text() == "The right of the people…"
+        passage = fourth_a.select("The right of the people")
+        assert passage.selected_text() == "The right of the people…"
 
     def test_select_method_clears_previous_selection(self, test_client, section_8):
         old_version = test_client.read_from_json(section_8["children"][1])
         old_selector = TextPositionSet(
             selectors=TextPositionSelector(start=0, end=65),
         )
-        old_version.select(old_selector)
-        assert old_version.selected_text() == (
+        passage = old_version.select(old_selector)
+        assert passage.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
         )
 
     @pytest.mark.vcr
     def test_no_space_before_ellipsis(self, test_client):
         enactment = test_client.read(query="/us/usc/t17/s102/b")
-        enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
-        assert " …" not in enactment.selected_text()
+        passage = enactment.select(TextQuoteSelector(suffix="idea, procedure,"))
+        assert " …" not in passage.selected_text()
 
     @pytest.mark.vcr
     def test_select_near_end_of_section(self, test_client):
         amendment = test_client.read(query="/us/const/amendment/XIV")
         selector = TextPositionSelector(start=1920, end=1980)
-        amendment.select(selector)
-        assert "The validity of the public debt" in amendment.selected_text()
+        passage = amendment.select(selector)
+        assert "The validity of the public debt" in passage.selected_text()
 
 
 class TestCompareEnactment:
