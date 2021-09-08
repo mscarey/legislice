@@ -318,6 +318,12 @@ class Enactment(BaseModel):
         )
         return selection & limit_selector
 
+    def limit_selection_to_current_node(
+        self, selection: TextPositionSet
+    ) -> TextPositionSet:
+        """Limit selection to the current node."""
+        return self.limit_selection(selection=selection, start=0, end=len(self.text))
+
     def text_sequence(self, include_nones=True) -> TextSequence:
         selection = self.tree_selection()
         return selection.as_text_sequence(text=self.text, include_nones=include_nones)
@@ -618,17 +624,20 @@ class EnactmentPassage(BaseModel):
             text=self.text, start=start, end=end
         )
         new_selection = self.selection & limit_selector
-        self._selection = new_selection
+        self.selection = new_selection
         return None
 
     def select_more_text_at_current_node(
         self, added_selection: TextPositionSet
     ) -> None:
         """Select more text at this Enactment's node, not in child nodes."""
-        new_selection = self.selection + added_selection
-        self._selection = new_selection
+        new_selection = self.enactment.limit_selection_to_current_node(added_selection)
+        self.selection = self.selection + new_selection
+        return None
 
-    def _update_text_at_included_node(self, other: Enactment) -> Tuple[bool, bool]:
+    def _update_text_at_included_node(
+        self, other: EnactmentPassage
+    ) -> Tuple[bool, bool]:
         """Recursively search child nodes for one that can be updated by `other`."""
         if self.node == other.node:
             found_node = True
@@ -647,8 +656,14 @@ class EnactmentPassage(BaseModel):
                 return child._update_text_at_included_node(other)
         return False, False
 
-    def _add_enactment_at_included_node(self, other: Enactment) -> Enactment:
+    def _add_enactment_at_included_node(
+        self, other: Union[Enactment, EnactmentPassage]
+    ) -> EnactmentPassage:
         """Add a selection of text at the same citation or at a child of self's citation."""
+
+        if not isinstance(other, EnactmentPassage):
+            other = other.select_all()
+
         if self >= other:
             return self
 
@@ -679,7 +694,7 @@ class EnactmentPassage(BaseModel):
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
 
-    def __add__(self, other: Enactment):
+    def __add__(self, other: Union[Enactment, EnactmentPassage]) -> EnactmentPassage:
 
         if not isinstance(other, self.__class__):
             copy_of_self = deepcopy(self)
@@ -822,10 +837,11 @@ class EnactmentPassage(BaseModel):
 
     def select_more_text_in_current_branch(
         self, added_selection: TextPositionSet
-    ) -> TextPositionSet:
+    ) -> None:
         """Select more text within this Enactment's tree_selection, including child nodes."""
-        new_selection = self.tree_selection() + added_selection
-        return self.select_from_text_positions(new_selection)
+        new_selection = self.enactment.tree_selection() + added_selection
+        self.selection = new_selection
+        return None
 
     def means(self, other: EnactmentPassage) -> bool:
         r"""

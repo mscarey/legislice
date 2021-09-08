@@ -657,57 +657,59 @@ class TestAddEnactments:
         """Test that adding an included Enactment returns the same Enactment."""
         greater = test_client.read_from_json(section_8["children"][1])
         lesser = test_client.read_from_json(section_8["children"][1]["children"][0])
-        left = greater.select_all()
-        right = lesser.select_all()
 
-        combined = left + right
-        assert combined.means(greater)
+        greater_passage = greater.select_all()
+        lesser_passage = lesser.select_all()
+
+        combined = greater_passage + lesser_passage
+
+        assert combined.means(greater_passage)
+
+        assert combined.means(greater_passage)
 
     @pytest.mark.vcr
     def test_add_superset_nested_enactment(self, section_8, test_client):
         """Test that adding an included Enactment returns the same Enactment."""
         greater = test_client.read_from_json(section_8["children"][1])
         lesser = test_client.read_from_json(section_8["children"][1]["children"][0])
-        combined = lesser + greater
-        assert combined.means(greater)
+        greater_passage = greater.select_all()
+        lesser_passage = lesser.select_all()
+
+        combined = lesser_passage + greater_passage
+
+        assert combined.means(greater_passage)
 
     def test_add_shorter_plus_longer(self, fourth_a):
-        search_clause = fourth_a.copy()
-        search_clause["selection"] = [{"suffix": ", and no Warrants"}]
+        fourth_a = Enactment(**fourth_a)
+        selector = TextQuoteSelector(suffix=", and no Warrants")
+        amendment = fourth_a.select_all()
+        search_clause = fourth_a.select(selector)
 
-        schema = ExpandableEnactmentSchema()
+        greater_plus_lesser = amendment + search_clause
 
-        fourth_a = schema.load(fourth_a)
-        fourth_a.select_all()
-        search_clause = schema.load(search_clause)
+        assert greater_plus_lesser.text == amendment.text
+        assert greater_plus_lesser.means(amendment)
 
-        greater_plus_lesser = search_clause + fourth_a
-
-        assert greater_plus_lesser.text == fourth_a.text
-        assert greater_plus_lesser.means(fourth_a)
-
-        lesser_plus_greater = fourth_a + search_clause
-        assert lesser_plus_greater.text == fourth_a.text
-        assert lesser_plus_greater.means(fourth_a)
+        lesser_plus_greater = search_clause + amendment
+        assert lesser_plus_greater.text == amendment.text
+        assert lesser_plus_greater.means(amendment)
 
     def test_add_overlapping_text_selection(self, fourth_a):
-        schema = ExpandableEnactmentSchema()
-        search = schema.load(fourth_a)
-        warrant = schema.load(fourth_a)
-        search.select(TextQuoteSelector(suffix=", and no Warrants"))
-        warrant.select(
+        enactment = Enactment(**fourth_a)
+        passage = enactment.select(TextQuoteSelector(suffix=", and no Warrants"))
+        new = enactment.make_selection(
             TextQuoteSelector(
                 exact="shall not be violated, and no Warrants shall issue,"
             )
         )
-        search.select_more_text_at_current_node(warrant.selection)
+        passage.select_more_text_at_current_node(new)
 
-        passage = (
+        expected = (
             "against unreasonable searches and seizures, "
             + "shall not be violated, "
             + "and no Warrants shall issue,"
         )
-        assert passage in search.selected_text()
+        assert expected in passage.selected_text()
 
     def test_non_overlapping_text_selection(self, fourth_a):
         schema = ExpandableEnactmentSchema()
