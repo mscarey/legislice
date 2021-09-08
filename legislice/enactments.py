@@ -692,6 +692,12 @@ class EnactmentPassage(BaseModel):
         """
         return self.implies(other)
 
+    def __gt__(self, other) -> bool:
+        """Test whether ``self`` implies ``other`` without having same meaning."""
+        if self.means(other):
+            return False
+        return self.implies(other)
+
     def select(
         self,
         selection: Union[
