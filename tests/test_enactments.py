@@ -573,13 +573,12 @@ class TestCompareEnactment:
     def test_enactment_subset(self, section_11_together):
         schema = EnactmentSchema()
         combined = schema.load(section_11_together)
-        combined.select_all()
-        limited = schema.load(section_11_together)
+        passage = combined.select_all()
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
-        limited.select(selector)
-        assert not combined.means(limited)
+        limited = combined.select(selector)
+        assert not passage.means(limited)
         assert combined > limited
 
     @pytest.mark.vcr
@@ -590,9 +589,9 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
-        amend_5.select(selector)
-        amend_14.select(selector)
-        assert amend_5.means(amend_14)
+        left = amend_5.select(selector)
+        right = amend_14.select(selector)
+        assert left.means(right)
 
     @pytest.mark.vcr
     def test_same_phrase_different_provisions_implication(self, test_client):
@@ -601,9 +600,9 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
-        amend_5.select(selector)
-        amend_14.select(selector)
-        assert amend_5 >= amend_14
+        left = amend_5.select(selector)
+        right = amend_14.select(selector)
+        assert left >= right
 
     @pytest.mark.vcr
     def test_same_phrase_selected_in_nested_provision_same_meaning(self, test_client):
@@ -613,9 +612,9 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
-        amend_5.select(selector)
-        amend_14.select(selector)
-        assert amend_5.means(amend_14)
+        left = amend_5.select(selector)
+        right = amend_14.select(selector)
+        assert left.means(right)
 
     @pytest.mark.vcr
     def test_same_phrase_selected_in_nested_provision_implication(self, test_client):
@@ -625,9 +624,9 @@ class TestCompareEnactment:
         selector = TextQuoteSelector(
             exact="life, liberty, or property, without due process of law"
         )
-        amend_5.select(selector)
-        amend_14.select(selector)
-        assert amend_5 >= amend_14
+        left = amend_5.select(selector)
+        right = amend_14.select(selector)
+        assert left >= right
 
     def test_fail_to_check_enactment_implies_textsequence(self, section_11_subdivided):
         schema = EnactmentSchema()
@@ -658,7 +657,10 @@ class TestAddEnactments:
         """Test that adding an included Enactment returns the same Enactment."""
         greater = test_client.read_from_json(section_8["children"][1])
         lesser = test_client.read_from_json(section_8["children"][1]["children"][0])
-        combined = greater + lesser
+        left = greater.select_all()
+        right = lesser.select_all()
+
+        combined = left + right
         assert combined.means(greater)
 
     @pytest.mark.vcr

@@ -293,7 +293,7 @@ class Enactment(BaseModel):
         """Create a TextPositionSet from a different selection method."""
         if selection is True:
             return TextPositionSet(
-                selectors=TextPositionSelector(start=0, end=len(self.content) + 1)
+                selectors=TextPositionSelector(start=0, end=len(self.text))
             )
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
@@ -319,7 +319,7 @@ class Enactment(BaseModel):
         return selection & limit_selector
 
     def text_sequence(self, include_nones=True) -> TextSequence:
-        selection = self.make_selection(True)
+        selection = self.tree_selection()
         return selection.as_text_sequence(text=self.text, include_nones=include_nones)
 
     def means(self, other: Union[Enactment, EnactmentPassage]) -> bool:
@@ -452,6 +452,36 @@ class Enactment(BaseModel):
             if selector.start > len(self.text) + 1:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
+    def make_selection_of_this_node(self) -> TextPositionSet:
+        """Return a TextPositionSet of the text at this node, not child nodes."""
+        if not self.content:
+            return TextPositionSet()
+        return TextPositionSet(
+            selectors=TextPositionSelector(start=0, end=len(self.content))
+        )
+
+    def _tree_selection(
+        self, selector_set: TextPositionSet, tree_length: int
+    ) -> Tuple[TextPositionSet, int]:
+        selectors_at_node = self.make_selection_of_this_node()
+        selectors_at_node_with_offset = selectors_at_node + tree_length
+        new_tree_length = tree_length + self.padded_length
+        new_selector_set = selector_set + selectors_at_node_with_offset
+
+        for child in self.nested_children:
+            new_selector_set, new_tree_length = child._tree_selection(
+                selector_set=new_selector_set, tree_length=new_tree_length
+            )
+
+        return new_selector_set, new_tree_length
+
+    def tree_selection(self) -> TextPositionSet:
+        """Return set of selectors for selected text in this provision and its children."""
+        new_selector_set, new_tree_length = self._tree_selection(
+            selector_set=TextPositionSet(), tree_length=0
+        )
+        return new_selector_set
+
     def csl_json(self) -> str:
         """
         Serialize a citation to this provision in Citation Style Language JSON.
@@ -488,7 +518,7 @@ class Enactment(BaseModel):
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
 
-    def __ge__(self, other: Enactment) -> bool:
+    def __ge__(self, other: Union[Enactment, EnactmentPassage]) -> bool:
         """
         Test whether ``self`` implies ``other``.
 
@@ -561,6 +591,11 @@ class EnactmentPassage(BaseModel):
     def end_date(self):
         return self.enactment.end_date
 
+    @property
+    def node(self):
+        """Get the node that this Enactment is from."""
+        return self.enactment.node
+
     def __str__(self):
         text_sequence = self.text_sequence()
         return f'"{text_sequence}" ({self.enactment.node} {self.start_date})'
@@ -585,28 +620,6 @@ class EnactmentPassage(BaseModel):
         new_selection = self.selection & limit_selector
         self._selection = new_selection
         return None
-
-    def _tree_selection(
-        self, selector_set: TextPositionSet, tree_length: int
-    ) -> Tuple[TextPositionSet, int]:
-        selectors_at_node = self.selection
-        selectors_at_node_with_offset = selectors_at_node + tree_length
-        new_tree_length = tree_length + self.padded_length
-        new_selector_set = selector_set + selectors_at_node_with_offset
-
-        for child in self.nested_children:
-            new_selector_set, new_tree_length = child._tree_selection(
-                selector_set=new_selector_set, tree_length=new_tree_length
-            )
-
-        return new_selector_set, new_tree_length
-
-    def tree_selection(self) -> TextPositionSet:
-        """Return set of selectors for selected text in this provision and its children."""
-        new_selector_set, new_tree_length = self._tree_selection(
-            selector_set=TextPositionSet(), tree_length=0
-        )
-        return new_selector_set
 
     def select_more_text_at_current_node(
         self, added_selection: TextPositionSet
