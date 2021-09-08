@@ -271,7 +271,7 @@ class Enactment(BaseModel):
             result += child.cross_references()
         return result
 
-    def get_passage(
+    def get_string(
         self,
         selection: Union[
             bool,
