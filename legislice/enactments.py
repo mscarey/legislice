@@ -324,9 +324,9 @@ class Enactment(BaseModel):
         )
         return selection & limit_selector
 
-    def text_sequence(self) -> TextSequence:
+    def text_sequence(self, include_nones=True) -> TextSequence:
         selection = self.make_selection(True)
-        return selection.as_text_sequence(text=self.text)
+        return selection.as_text_sequence(text=self.text, include_nones=include_nones)
 
     def means(self, other: Union[Enactment, EnactmentPassage]) -> bool:
         if not isinstance(other, (EnactmentPassage, Enactment)):
@@ -478,9 +478,9 @@ class Enactment(BaseModel):
         joined = " ".join(text_parts)
         return joined.strip()
 
-    def implies(self, other: Enactment) -> bool:
+    def implies(self, other: Union[Enactment, EnactmentPassage]) -> bool:
         """Test whether ``self`` has all the text passages of ``other``."""
-        if not isinstance(other, self.__class__):
+        if not isinstance(other, (Enactment, EnactmentPassage)):
             raise TypeError(
                 f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
             )
@@ -656,6 +656,16 @@ class EnactmentPassage(BaseModel):
             )
         return copy_of_self
 
+    def implies(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+        """Test whether ``self`` has all the text passages of ``other``."""
+        if not isinstance(other, (Enactment, EnactmentPassage)):
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for implication."
+            )
+        self_selected_passages = self.text_sequence(include_nones=False)
+        other_selected_passages = other.text_sequence(include_nones=False)
+        return self_selected_passages >= other_selected_passages
+
     def __add__(self, other: Enactment):
 
         if not isinstance(other, self.__class__):
@@ -672,6 +682,15 @@ class EnactmentPassage(BaseModel):
             "Can't add selected text from two different Enactments "
             "when neither is a descendant of the other."
         )
+
+    def __ge__(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+        """
+        Test whether ``self`` implies ``other``.
+
+        :returns:
+            Whether ``self`` contains at least all the same text as ``other``.
+        """
+        return self.implies(other)
 
     def select(
         self,
