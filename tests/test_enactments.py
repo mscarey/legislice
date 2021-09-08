@@ -328,8 +328,8 @@ class TestSelectFromEnactment:
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
-        combined.select(selector)
-        sequence = combined.text_sequence()
+        passage = combined.select(selector)
+        sequence = passage.text_sequence()
         assert str(sequence).strip("…").startswith("barbers")
 
     def test_get_passage(self, section_11_subdivided):
@@ -340,11 +340,10 @@ class TestSelectFromEnactment:
         """
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
-        section.select(TextPositionSelector(start=61, end=73))
-        assert section.selected_text() == "…hairdressers…"
-        passage = section.get_passage(TextPositionSelector(start=112, end=127))
-        assert passage == "…as they see fit…"
-        assert section.selected_text() == "…hairdressers…"
+        passage = section.select(TextPositionSelector(start=61, end=73))
+        assert passage.selected_text() == "…hairdressers…"
+        fit_passage = section.get_string(TextPositionSelector(start=112, end=127))
+        assert fit_passage == "…as they see fit…"
 
     def test_select_nested_text_with_positions(self, section_11_subdivided):
         phrases = TextPositionSet(
@@ -356,8 +355,8 @@ class TestSelectFromEnactment:
         )
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
-        section.select(phrases)
-        text_sequence = section.text_sequence()
+        passage = section.select(phrases)
+        text_sequence = passage.text_sequence()
         assert str(text_sequence) == (
             "The Department of Beards may issue licenses to "
             "such…hairdressers…as they see fit…"
@@ -368,42 +367,40 @@ class TestSelectFromEnactment:
         selector = TextQuoteSelector(
             prefix="and", exact="the persons or things", suffix="to be seized."
         )
-        result.select(selector)
-        assert result.selected_text().endswith("or things…")
+        passage = result.select(selector)
+        assert passage.selected_text().endswith("or things…")
 
     def test_select_none(self, section_11_subdivided):
         schema = EnactmentSchema()
         combined = schema.load(section_11_subdivided)
-        combined.select(False)
-        assert combined.selected_text() == ""
+        passage = combined.select(False)
+        assert passage.selected_text() == ""
 
     def test_select_none_with_None(self, section_11_subdivided):
         schema = EnactmentSchema()
         combined = schema.load(section_11_subdivided)
-        combined.select(None)
-        assert combined.selected_text() == ""
+        passage = combined.select(None)
+        assert passage.selected_text() == ""
 
     def test_select_all(self, section_11_subdivided):
         """Clear selected text, and then select one subsection."""
         schema = EnactmentSchema()
         combined = schema.load(section_11_subdivided)
-        combined.select(None)
-        combined.children[3].select()
+        passage = combined.select(None)
+        assert passage.enactment.node == "/test/acts/47/11"
+        sub_passage = passage.enactment.children[3].select()
         assert (
-            combined.selected_text()
-            == "…as they see fit to purchase a beardcoin from a customer…"
-        )
-        assert (
-            combined.children[3].selected_text()
+            sub_passage.selected_text()
             == "as they see fit to purchase a beardcoin from a customer"
         )
+        assert sub_passage.enactment.node == "/test/acts/47/11/iii-con"
 
     def test_select_all_nested(self, section_11_subdivided):
         """Clear selected text, and then select one subsection."""
         schema = EnactmentSchema()
         combined = schema.load(section_11_subdivided)
-        combined.select()
-        assert combined.selected_text().startswith("The Department of Beards")
+        passage = combined.select()
+        assert passage.selected_text().startswith("The Department of Beards")
 
     def test_error_for_unusable_selector(self, section_11_subdivided):
         schema = EnactmentSchema()
@@ -442,8 +439,8 @@ class TestSelectFromEnactment:
 
         amend_14 = test_client.read(query="/us/const/amendment/XIV")
         selector = TextQuoteSelector(exact="life, liberty, or property")
-        amend_14.select(selector)
-        selected_list = amend_14.text_sequence()
+        passage = amend_14.select(selector)
+        selected_list = passage.text_sequence()
 
         assert len(selected_list) == 3
         assert selected_list[0] is None
@@ -453,8 +450,8 @@ class TestSelectFromEnactment:
     def test_select_with_position_selector(self, section_11_together):
         schema = EnactmentSchema()
         section = schema.load(section_11_together)
-        section.select(TextPositionSelector(start=29, end=43))
-        assert section.selected_text() == "…issue licenses…"
+        passage = section.select(TextPositionSelector(start=29, end=43))
+        assert passage.selected_text() == "…issue licenses…"
 
     def test_invalid_selector_text(self, section_11_subdivided):
         section_11_subdivided["selection"] = [
