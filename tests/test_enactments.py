@@ -244,40 +244,41 @@ class TestSelectText:
         assert not selection > sub_selection
         assert not selection.text_sequence() > sub_selection.text_sequence()
 
-    def test_select_text_with_bool(self):
+    def test_select_text_of_parent_section(self):
         subsection = Enactment(
             heading="",
-            content="The beardcoin shall be a cryptocurrency token…",
+            text_version="The beardcoin shall be a cryptocurrency token…",
             node="/test/acts/47/6C/1",
             start_date=date(2013, 7, 18),
-            selection=False,
         )
 
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted",
+            text_version="Where an exemption is granted",
             node="/test/acts/47/6C",
             children=[subsection],
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.selected_text() == "Where an exemption is granted…"
-        assert "cryptocurrency" not in section.selected_text()
+        selection = section.select(section.content)
+        assert selection.selected_text() == "Where an exemption is granted…"
+        assert "cryptocurrency" not in selection.selected_text()
 
     def test_text_sequence_selected_with_bool(self):
         section = Enactment(
             heading="Issuance of beardcoin",
-            content="Where an exemption is granted…",
+            text_version="Where an exemption is granted…",
             node="/test/acts/47/6C",
             children=[],
             end_date=None,
             start_date=date(1935, 4, 1),
         )
-        assert section.text_sequence()[0].text == "Where an exemption is granted…"
+        selection = section.select(section.text_version.content)
+        assert selection.text_sequence()[0].text == "Where an exemption is granted…"
 
     def test_select_with_list_of_strings(self, test_client, section_8):
         section = test_client.read_from_json(section_8)
-        section.select(
+        selection = section.select(
             [
                 "Where an officer of the",
                 "state or territorial police",
@@ -285,7 +286,7 @@ class TestSelectText:
                 "that officer shall in the first instance issue such person a notice to remedy.",
             ]
         )
-        selected_text = section.selected_text()
+        selected_text = selection.selected_text()
         assert selected_text.startswith(
             "Where an officer of the…state or territorial police…finds"
         )

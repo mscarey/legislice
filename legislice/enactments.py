@@ -122,7 +122,7 @@ class Enactment(BaseModel):
     :param heading:
         full heading of the provision
 
-    :param content:
+    :param text_version:
         full text content at this node, even if not all of it is cited
 
     :param start_date:
@@ -418,6 +418,14 @@ class Enactment(BaseModel):
         unused_selectors = self.select_from_text_positions_without_nesting(selection)
         self.raise_error_for_extra_selector(unused_selectors)
 
+    def make_selection_of_all_text(self) -> TextPositionSet:
+        """Return a TextPositionSet of all text in this Enactment."""
+        if self.text:
+            return TextPositionSet(
+                selectors=TextPositionSelector(start=0, end=len(self.text))
+            )
+        return TextPositionSet()
+
     def make_selection(
         self,
         selection: Union[
@@ -437,9 +445,7 @@ class Enactment(BaseModel):
         if selection is False or selection is None:
             return TextPositionSet()
         elif selection is True:
-            return TextPositionSet(
-                selectors=TextPositionSelector(start=0, end=len(self.text))
-            )
+            return self.make_selection_of_all_text()
         else:
             if not isinstance(selection, TextPositionSet):
                 selection = self.convert_selection_to_set(selection)
