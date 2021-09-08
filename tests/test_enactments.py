@@ -232,17 +232,17 @@ class TestSelectText:
         self, test_client, section_11_subdivided
     ):
         section = test_client.read_from_json(section_11_subdivided)
-        section.select(
+        selection = section.select(
             TextQuoteSelector(exact="as they see fit to purchase a beardcoin")
         )
         subsection = test_client.read_from_json(section_11_subdivided["children"][3])
-        subsection.select(
+        sub_selection = subsection.select(
             TextQuoteSelector(exact="as they see fit to purchase a beardcoin")
         )
-        assert subsection.means(section)
-        assert section >= subsection
-        assert not section > subsection
-        assert not section.text_sequence() > subsection.text_sequence()
+        assert sub_selection.means(selection)
+        assert selection >= sub_selection
+        assert not selection > sub_selection
+        assert not selection.text_sequence() > sub_selection.text_sequence()
 
     def test_select_text_with_bool(self):
         subsection = Enactment(

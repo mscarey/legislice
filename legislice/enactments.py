@@ -324,6 +324,19 @@ class Enactment(BaseModel):
         )
         return selection & limit_selector
 
+    def text_sequence(self) -> TextSequence:
+        selection = self.make_selection(True)
+        return selection.as_text_sequence(text=self.text)
+
+    def means(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+        if not isinstance(other, (EnactmentPassage, Enactment)):
+            raise TypeError(
+                f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for same meaning."
+            )
+        self_selected_passages = self.text_sequence()
+        other_selected_passages = other.text_sequence()
+        return self_selected_passages.means(other_selected_passages)
+
     def select(
         self,
         selection: Union[
@@ -433,10 +446,10 @@ class Enactment(BaseModel):
             self.raise_error_for_extra_selector(selection)
         return self.limit_selection(selection=selection, start=start, end=end)
 
-    def raise_error_for_extra_selector(self, unused_selectors: TextPositionSet) -> None:
+    def raise_error_for_extra_selector(self, selection: TextPositionSet) -> None:
         """Raise an error if any passed selectors begin after the end of the text passage."""
-        for selector in unused_selectors.selectors:
-            if selector.start > len(self.content) + 1:
+        for selector in selection.selectors:
+            if selector.start > len(self.text) + 1:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
     def csl_json(self) -> str:
@@ -779,7 +792,7 @@ class EnactmentPassage(BaseModel):
         new_selection = self.tree_selection() + added_selection
         return self.select_from_text_positions(new_selection)
 
-    def means(self, other: Enactment) -> bool:
+    def means(self, other: EnactmentPassage) -> bool:
         r"""
         Find whether meaning of ``self`` is equivalent to that of ``other``.
 
@@ -790,7 +803,7 @@ class EnactmentPassage(BaseModel):
             issued by the same sovereign in the same level of
             :class:`Enactment`\.
         """
-        if not isinstance(other, self.__class__):
+        if not isinstance(other, (EnactmentPassage, Enactment)):
             raise TypeError(
                 f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for same meaning."
             )
