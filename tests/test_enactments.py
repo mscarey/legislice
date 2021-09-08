@@ -39,7 +39,7 @@ class TestMakeEnactment:
         )
         assert s1.end_date is None
         assert s1.nested_children == []
-        assert 'Enactment(node="/test/acts/47/1"' in repr(s1)
+        assert "Enactment(node='/test/acts/47/1'" in repr(s1)
 
     def test_init_enactment_with_nesting(self):
         subsection = Enactment(
@@ -501,18 +501,15 @@ class TestCompareEnactment:
     @pytest.mark.vcr
     def test_unequal_enactment_text(self, fourth_a):
 
-        search_clause = fourth_a.copy()
-        search_clause["selection"] = [{"suffix": ", and no Warrants"}]
+        enactment = Enactment(**fourth_a)
+        selector = TextQuoteSelector(suffix=", and no Warrants")
+        search_clause = enactment.select(selector)
 
-        schema = ExpandableEnactmentSchema()
+        whole_provision = enactment.select_all()
 
-        fourth_a = schema.load(fourth_a)
-        fourth_a.select_all()
-        search_clause = schema.load(search_clause)
-
-        assert fourth_a != search_clause
-        assert not fourth_a.means(search_clause)
-        assert fourth_a >= search_clause
+        assert whole_provision != search_clause
+        assert not whole_provision.means(search_clause)
+        assert whole_provision >= search_clause
 
     @pytest.mark.vcr
     def test_not_gt_if_equal(self, test_client):
@@ -523,9 +520,10 @@ class TestCompareEnactment:
         would have been accepted.
         """
         enactment = test_client.read(query="/test/acts/47/1", date="1999-01-01")
-        assert enactment == enactment
-        assert not enactment > enactment
-        assert enactment >= enactment
+        passage = enactment.select_all()
+        assert passage == passage
+        assert not passage > passage
+        assert passage >= passage
 
     @pytest.mark.vcr
     def test_not_gt_if_equal_with_selection(self, test_client):
@@ -552,14 +550,13 @@ class TestCompareEnactment:
     def test_combined_section_implies_subdivided_section(
         self, section_11_together, section_11_subdivided
     ):
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_together)
-        combined.select_all()
-        subdivided = schema.load(section_11_subdivided)
-        subdivided.select_all()
-        assert combined >= subdivided
-        assert combined > subdivided
-        assert combined.text_sequence() > subdivided.text_sequence()
+        combined = Enactment(**section_11_together)
+        passage = combined.select_all()
+        subdivided = Enactment(**section_11_subdivided)
+        divided_passage = subdivided.select_all()
+        assert passage >= divided_passage
+        assert not passage > divided_passage
+        assert passage.text_sequence() >= divided_passage.text_sequence()
 
     @pytest.mark.vcr
     def test_more_provisions_implies_fewer(self, test_client, section_8):

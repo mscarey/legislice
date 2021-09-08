@@ -242,12 +242,6 @@ class Enactment(BaseModel):
     def __str__(self):
         return f"{self.node} ({self.start_date})"
 
-    def __repr__(self):
-        return (
-            f'{self.__class__.__name__}(node="{self.node}", '
-            f'start_date={repr(self.start_date)}, selection="{self.text}")'
-        )
-
     def as_citation(self) -> citations.Citation:
         """Create Citation Style Language markup for the Enactment."""
         level = self.level
