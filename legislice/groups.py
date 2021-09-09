@@ -5,7 +5,7 @@ from __future__ import annotations
 import textwrap
 from typing import List, Optional, Sequence, Tuple, Union
 
-from legislice.enactments import Enactment, consolidate_enactments
+from legislice.enactments import Enactment, EnactmentPassage, consolidate_enactments
 
 
 class EnactmentGroup:
@@ -27,7 +27,7 @@ class EnactmentGroup:
         else:
             self.sequence = [enactments]
         for enactment in self.sequence:
-            if not isinstance(enactment, Enactment):
+            if not isinstance(enactment, (Enactment, EnactmentPassage)):
                 raise TypeError(
                     f'Object "{enactment} could not be included in '
                     f"{self.__class__.__name__} because it is "

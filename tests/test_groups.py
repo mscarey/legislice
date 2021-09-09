@@ -14,15 +14,14 @@ class TestEnactmentGroups:
         assert isinstance(EnactmentGroup(group), EnactmentGroup)
 
     def test_consolidate_adjacent_passages(self, copyright_clause, copyright_statute):
-        copyright_clause.select(None)
-        securing_for_authors = copyright_clause + (
+
+        passage = copyright_clause.select(None)
+        securing_for_authors = passage + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        and_inventors = copyright_clause + "and Inventors"
-        right_to_writings = (
-            copyright_clause + "the exclusive Right to their respective Writings"
-        )
+        and_inventors = passage + "and Inventors"
+        right_to_writings = passage + "the exclusive Right to their respective Writings"
         left = EnactmentGroup([and_inventors, copyright_statute])
         right = EnactmentGroup([securing_for_authors, right_to_writings])
 
@@ -45,24 +44,24 @@ class TestEnactmentGroups:
 class TestImplies:
     def test_no_implication_of_group(self, copyright_clause, copyright_statute):
         extra = deepcopy(copyright_clause)
-        extra.select(None)
-        securing_for_authors = extra + (
+        passage = extra.select(None)
+        securing_for_authors = passage + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        and_inventors = extra + "and Inventors"
+        and_inventors = passage + "and Inventors"
         left = EnactmentGroup(copyright_clause)
         right = EnactmentGroup([securing_for_authors, and_inventors, copyright_statute])
         assert not left.implies(right)
 
     def test_implication_of_group(self, copyright_clause, copyright_statute):
         extra = deepcopy(copyright_clause)
-        extra.select(None)
-        securing_for_authors = extra + (
+        passage = extra.select(None)
+        securing_for_authors = passage + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        and_inventors = extra + "and Inventors"
+        and_inventors = passage + "and Inventors"
         left = EnactmentGroup([copyright_clause, copyright_statute])
         right = EnactmentGroup([securing_for_authors, and_inventors])
         assert left.implies(right)
@@ -70,8 +69,8 @@ class TestImplies:
 
     def test_implication_of_enactment(self, copyright_clause, copyright_statute):
         extra = deepcopy(copyright_clause)
-        extra.select(None)
-        securing_for_authors = extra + (
+        passage = extra.select(None)
+        securing_for_authors = passage + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )

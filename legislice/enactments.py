@@ -897,7 +897,9 @@ class AnchoredEnactmentPassage(BaseModel):
         return anchors
 
 
-def consolidate_enactments(enactments: Sequence[Enactment]) -> List[Enactment]:
+def consolidate_enactments(
+    enactments: Sequence[Union[Enactment, EnactmentPassage]]
+) -> List[Enactment]:
     r"""
     Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.
 
@@ -909,7 +911,10 @@ def consolidate_enactments(enactments: Sequence[Enactment]) -> List[Enactment]:
         a list of :class:`Enactment`\s without overlapping text
     """
     consolidated: List[Enactment] = []
-    enactments = list(enactments)
+    enactments = [
+        item.select_all() if isinstance(item, Enactment) else item
+        for item in enactments
+    ]
     while enactments:
         match_made = False
         left = enactments.pop()
@@ -920,7 +925,7 @@ def consolidate_enactments(enactments: Sequence[Enactment]) -> List[Enactment]:
                 enactments.append(combined)
                 match_made = True
                 break
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
         if not match_made:
             consolidated.append(left)
