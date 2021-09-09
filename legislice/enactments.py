@@ -925,7 +925,7 @@ def consolidate_enactments(
                 enactments.append(combined)
                 match_made = True
                 break
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, TextSelectionError):
                 pass
         if not match_made:
             consolidated.append(left)

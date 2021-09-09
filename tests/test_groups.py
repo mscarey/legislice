@@ -80,15 +80,13 @@ class TestImplies:
 
 class TestAdd:
     def test_add_enactment_to_group(self, copyright_clause):
-        copyright_clause.select(None)
-        securing_for_authors = copyright_clause + (
+        passage = copyright_clause.select(None)
+        securing_for_authors = passage + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        and_inventors = copyright_clause + "and Inventors"
-        right_to_writings = (
-            copyright_clause + "the exclusive Right to their respective Writings"
-        )
+        and_inventors = passage + "and Inventors"
+        right_to_writings = passage + "the exclusive Right to their respective Writings"
         left = EnactmentGroup([securing_for_authors, and_inventors])
         right = right_to_writings
         result = left + right
@@ -98,12 +96,12 @@ class TestAdd:
         assert "1788-09-13" in str(result[:])
 
     def test_add_empty_group(self, copyright_clause, copyright_statute):
-        copyright_clause.select(None)
-        securing_for_authors = copyright_clause + (
+        passage = copyright_clause.select(None)
+        securing_for_authors = passage + (
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        writings = copyright_clause + "their respective Writings"
+        writings = passage + "their respective Writings"
         left = EnactmentGroup([securing_for_authors, writings, copyright_statute])
         assert len(left) == 2
         right = EnactmentGroup(None)
@@ -111,23 +109,19 @@ class TestAdd:
         assert len(result) == 2
 
     def test_enactments_ordered_after_adding_groups(self, first_a, second_a, third_a):
-        establishment_clause = deepcopy(first_a)
-        establishment_clause.select(
+        establishment_clause = first_a.select(
             "Congress shall make no law respecting an establishment of religion"
         )
-        speech_clause = deepcopy(first_a)
-        speech_clause.select(
+        speech_clause = first_a.select(
             ["Congress shall make no law", "abridging the freedom of speech"]
         )
 
-        arms_clause = deepcopy(second_a)
-        arms_clause.select(
+        arms_clause = second_a.select(
             "the right of the people to keep and bear arms, shall not be infringed."
         )
-        third_amendment = deepcopy(third_a)
 
         left = EnactmentGroup([establishment_clause, arms_clause])
-        right = EnactmentGroup([third_amendment, speech_clause])
+        right = EnactmentGroup([third_a, speech_clause])
 
         combined = left + right
         assert len(combined) == 3
@@ -138,7 +132,7 @@ class TestAdd:
             node="/us/cfr/t37/s202.1",
             heading="",
             start_date=date(1992, 2, 21),
-            content="The following are examples of works not subject to copyright",
+            text_version="The following are examples of works not subject to copyright",
         )
         group = EnactmentGroup([regulation, copyright_clause, copyright_statute])
         assert group[-1].node == "/us/cfr/t37/s202.1"
@@ -148,12 +142,12 @@ class TestAdd:
             node="/us/cfr/t37/s202.1",
             heading="",
             start_date=date(1992, 2, 21),
-            content="The following are examples of works not subject to copyright",
+            text_version="The following are examples of works not subject to copyright",
         )
         ca_statute = Enactment(
             node="/us-ca/code/evid/s351",
             start_date=date(1966, 1, 1),
-            content="Except as otherwise provided by statute, all relevant evidence is admissible.",
+            text_version="Except as otherwise provided by statute, all relevant evidence is admissible.",
             heading="",
         )
         group = EnactmentGroup(
