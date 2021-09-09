@@ -818,41 +818,41 @@ class TestAddEnactments:
             section_8["children"][1]["children"][3]
         )
 
-        parent_version.select(
+        parent_passage = parent_version.select(
             "Any such person issued a notice to remedy under subsection 1 must"
         )
-        child_version.select("remove the beard with a laser")
+        child_passage = child_version.select("remove the beard with a laser")
 
-        combined = child_version + parent_version
+        combined = child_passage + parent_passage
         assert combined.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
             "remove the beard with a laser…"
         )
         # original Enactments should be unchanged
         assert (
-            parent_version.selected_text()
+            parent_passage.selected_text()
             == "Any such person issued a notice to remedy under subsection 1 must…"
         )
-        assert child_version.selected_text() == "remove the beard with a laser…"
+        assert child_passage.selected_text() == "remove the beard with a laser…"
 
     def test_fail_to_add_repeated_text_from_changed_version(
         self, section_8, old_section_8, test_client
     ):
         """Fail to place selection because "Department of Beards" occurs twice in this scope."""
         new_version = test_client.read_from_json(section_8)
-        new_version.select(
+        new_passage = new_version.select(
             TextQuoteSelector(
                 prefix="Department of Beards, ", exact="Australian Federal Police"
             )
         )
 
         old_version = test_client.read_from_json(old_section_8)
-        old_version.select(
+        old_passage = old_version.select(
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
 
         with pytest.raises(ValueError):
-            _ = new_version + old_version
+            new_passage + old_passage
 
     @pytest.mark.vcr
     def test_fail_to_add_non_parent_or_child_enactment(self, test_client):
