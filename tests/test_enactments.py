@@ -712,11 +712,9 @@ class TestAddEnactments:
         assert expected in passage.selected_text()
 
     def test_non_overlapping_text_selection(self, fourth_a):
-        schema = ExpandableEnactmentSchema()
-        left = schema.load(fourth_a)
-        right = schema.load(fourth_a)
-        left.select("The right of the people to be secure in their persons")
-        right.select("shall not be violated")
+        enactment = Enactment(**fourth_a)
+        left = enactment.select("The right of the people to be secure in their persons")
+        right = enactment.select("shall not be violated")
         left.select_more_text_at_current_node(right.selection)
         assert left.selected_text() == (
             "The right of the people to be secure in their persons…"
@@ -724,8 +722,7 @@ class TestAddEnactments:
         )
 
     def test_select_unavailable_text(self, fourth_a):
-        schema = ExpandableEnactmentSchema()
-        fourth = schema.load(fourth_a)
+        fourth = Enactment(**fourth_a)
         with pytest.raises(TextSelectionError):
             fourth.select("right to privacy")
 
@@ -733,10 +730,10 @@ class TestAddEnactments:
     def test_add_selection_from_changed_section(self, test_client):
         old_version = test_client.read("/test/acts/47/6D/1", date="1935-04-01")
         new_version = test_client.read("/test/acts/47/6D/1", date="2013-07-18")
-        old_version.select("bona fide religious")
-        new_version.select("reasons.")
-        new_version.select_more_text_from_changed_version(old_version)
-        assert new_version.selected_text() == "…bona fide religious…reasons."
+        old = old_version.select("bona fide religious")
+        new = new_version.select("reasons.")
+        new.select_more_text_from_changed_version(old)
+        assert new.selected_text() == "…bona fide religious…reasons."
 
     def test_add_selection_from_changed_node_and_subnode(
         self, old_section_8, section_8, test_client

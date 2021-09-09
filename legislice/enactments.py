@@ -763,7 +763,7 @@ class EnactmentPassage(BaseModel):
         for child in self._children:
             child.select_none()
 
-    def select_more_text_from_changed_version(self, other: Enactment) -> None:
+    def select_more_text_from_changed_version(self, other: EnactmentPassage) -> None:
         """
         Select more text from a different text version at the same citation path.
 
@@ -777,8 +777,7 @@ class EnactmentPassage(BaseModel):
             or for `other` to have the same node attribute as an ancestor of self.
         """
         incoming_quote_selectors = [
-            selector.as_quote_selector(other.text)
-            for selector in other.tree_selection().selectors
+            phrase.as_quote_selector(other.text) for phrase in other.selection.selectors
         ]
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:
@@ -839,9 +838,13 @@ class EnactmentPassage(BaseModel):
         self, added_selection: TextPositionSet
     ) -> None:
         """Select more text within this Enactment's tree_selection, including child nodes."""
-        new_selection = self.enactment.tree_selection() + added_selection
+        new_selection = self.selection + added_selection
         self.selection = new_selection
         return None
+
+    def tree_selection(self) -> TextPositionSet:
+        """Get selection of all text in Enactment's tree, not limited by the selection attribute."""
+        return self.enactment.tree_selection()
 
     def means(self, other: EnactmentPassage) -> bool:
         r"""
