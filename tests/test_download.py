@@ -121,15 +121,15 @@ class TestDownloadAndLoad:
         """
 
         result = test_client.read_from_json(fourth_a)
-        assert result.selected_text().endswith("persons or things to be seized.")
+        assert result.text.endswith("persons or things to be seized.")
         assert result.known_revision_date is True
 
     @pytest.mark.vcr()
     def test_make_enactment_from_selector_without_code(self, test_client):
         selection = TextQuoteSelector(suffix=", shall be vested")
         art_3 = test_client.read(query="/us/const/article/III/1")
-        art_3.select(selection)
-        text = art_3.selected_text()
+        passage = art_3.select(selection)
+        text = passage.selected_text()
 
         assert text.startswith("The judicial Power")
         assert text.endswith("the United States…")
@@ -163,14 +163,14 @@ class TestDownloadAndLoad:
         """
         Test that the selected_text includes the text of subsections.
 
-        known_revision_date should be available on the subsection as well as
+        known_revision_date is not available on the subsection as well as
         the section.
         """
         definition = test_client.read(query="/test/acts/47/4")
         sequence = definition.text_sequence()
         assert str(sequence.strip()).endswith("below the nose.")
         assert definition.known_revision_date is True
-        assert definition.children[0].known_revision_date is True
+        assert definition.children[0].known_revision_date is False
 
     @pytest.mark.vcr()
     def test_unknown_revision_date(self, test_client):
@@ -208,7 +208,7 @@ class TestReadJSON:
             reference_text="Section 6D",
         )
         cited = test_client.read(ref, date="1950-01-01")
-        assert "bona fide religious or cultural reasons." in str(cited)
+        assert "bona fide religious or cultural reasons." in cited.text
 
     @pytest.mark.vcr()
     def test_read_enactment_without_version_url(self, test_client):
