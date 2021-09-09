@@ -73,6 +73,6 @@ class TestSerializeCitation:
         doesn't distinguish between citations below the section level.
         """
         section = test_client.read_from_json(section_11_subdivided)
-        cite_json = section.csl_json()
-        subsection_cite_json = section.children[0].csl_json()
-        assert cite_json == subsection_cite_json
+        cite_json = section.as_citation().csl_dict()
+        subsection_cite_json = section.children[0].as_citation().csl_dict()
+        assert cite_json["section"] == subsection_cite_json["section"]
