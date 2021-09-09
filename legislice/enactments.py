@@ -602,6 +602,13 @@ class EnactmentPassage(BaseModel):
         """Get the node that this Enactment is from."""
         return self.enactment.node
 
+    def as_quote_selectors(self) -> List[TextQuoteSelector]:
+        """Return quote selectors for the selected text."""
+        return [
+            phrase.as_quote_selector(self.enactment.text)
+            for phrase in self.selection.selectors
+        ]
+
     def __str__(self):
         text_sequence = self.text_sequence()
         return f'"{text_sequence}" ({self.enactment.node} {self.start_date})'
@@ -651,9 +658,8 @@ class EnactmentPassage(BaseModel):
                 except ValueError:
                     updated_selection = False
             return found_node, updated_selection
-        for child in self.children:
-            if other.node.startswith(child.node):
-                return child._update_text_at_included_node(other)
+        for selector in other.as_quote_selectors():
+            self.select_more(selector)
         return False, False
 
     def _add_enactment_at_included_node(
@@ -668,20 +674,7 @@ class EnactmentPassage(BaseModel):
             return self
 
         copy_of_self = deepcopy(self)
-        found_node, updated_selection = copy_of_self._update_text_at_included_node(
-            other
-        )
-        if not found_node:
-            raise ValueError(
-                f"Unable to find node {other.node} (dated {other.start_date}) "
-                f"among the descendants of node {self.node} (dated {self.start_date})."
-            )
-        if not updated_selection:
-            raise ValueError(
-                f'Unable to find the selected text "{other.selected_text()}" '
-                f"(dated {other.start_date}) "
-                f"at the citation {other.node} (dated {self.start_date})."
-            )
+        copy_of_self._update_text_at_included_node(other)
         return copy_of_self
 
     def implies(self, other: Union[Enactment, EnactmentPassage]) -> bool:
@@ -776,9 +769,7 @@ class EnactmentPassage(BaseModel):
             attribute with the same node attribute,
             or for `other` to have the same node attribute as an ancestor of self.
         """
-        incoming_quote_selectors = [
-            phrase.as_quote_selector(other.text) for phrase in other.selection.selectors
-        ]
+        incoming_quote_selectors = other.as_quote_selectors()
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:
             position = quote_selector.as_position(self.text)

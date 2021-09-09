@@ -751,11 +751,9 @@ class TestAddEnactments:
         assert "obtain a beardcoin" not in new_selection.selected_text()
 
     def test_add_overlapping_enactments(self, fourth_a):
-        schema = EnactmentSchema()
-        search = schema.load(fourth_a)
-        warrant = schema.load(fourth_a)
-        search.select(TextQuoteSelector(suffix=", and no Warrants"))
-        warrant.select(
+        enactment = Enactment(**fourth_a)
+        search = enactment.select(TextQuoteSelector(suffix=", and no Warrants"))
+        warrant = enactment.select(
             TextQuoteSelector(
                 exact="shall not be violated, and no Warrants shall issue,"
             )
@@ -776,17 +774,17 @@ class TestAddEnactments:
         selector = TextPositionSet(
             selectors=TextPositionSelector(start=0, end=65),
         )
-        version.select(selector)
-        version.children[4].select("obtain a beardcoin from the Department of Beards")
-        selector_set = version.tree_selection()
-        ranges = selector_set.ranges()
+        passage = version.select(selector)
+        passage.select_more("obtain a beardcoin from the Department of Beards")
+
+        ranges = passage.selection.ranges()
         assert ranges[0].start == 0
         assert ranges[0].end == 65
 
         assert ranges[1].start == 218
         assert ranges[1].end == 266
 
-        as_quotes = selector_set.as_quotes(version.text)
+        as_quotes = passage.selection.as_quotes(version.text)
         assert as_quotes[1].exact == "obtain a beardcoin from the Department of Beards"
 
     def test_add_selection_from_child_node(self, section_8, test_client):
@@ -794,11 +792,9 @@ class TestAddEnactments:
         parent_selector = TextPositionSet(
             selectors=TextPositionSelector(start=0, end=65),
         )
-        parent_version.select(parent_selector)
-        parent_version.children[4].select(
-            "obtain a beardcoin from the Department of Beards"
-        )
-        assert parent_version.selected_text() == (
+        passage = parent_version.select(parent_selector)
+        passage.select_more("obtain a beardcoin from the Department of Beards")
+        assert passage.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
             "obtain a beardcoin from the Department of Beards…"
         )
@@ -806,9 +802,9 @@ class TestAddEnactments:
         child_version = test_client.read_from_json(
             section_8["children"][1]["children"][3]
         )
-        child_version.select()
+        child_passage = child_version.select()
 
-        combined = parent_version + child_version
+        combined = passage + child_passage
 
         assert combined.selected_text() == (
             "Any such person issued a notice to remedy under subsection 1 must…"
