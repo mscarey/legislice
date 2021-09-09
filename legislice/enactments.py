@@ -139,8 +139,13 @@ class Enactment(BaseModel):
     :param end_date:
         date when the text was removed from the cited location
 
-    :param selection:
-        identifier for the parts of the provision being cited
+    :param first_published:
+        date when this Enactment's code was first published.
+
+    :param earliest_in_db:
+        date of the earliest version of this Enactment in the database.
+        Used to determine whether the start_date of the Enactment is
+        a date when the Enactment was amended or first published.
 
     :param anchors:
         a list of selectors representing the part of some other document
@@ -156,9 +161,10 @@ class Enactment(BaseModel):
     node: str
     heading: str
     start_date: date
-    known_revision_date: bool = True
     text_version: Optional[TextVersion] = None
     end_date: Optional[date] = None
+    first_published: Optional[date] = None
+    earliest_in_db: Optional[date] = None
     anchors: Union[
         TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
     ] = []
@@ -238,6 +244,21 @@ class Enactment(BaseModel):
         if self.content:
             return len(self.content) + 1
         return 0
+
+    @property
+    def known_revision_date(self) -> bool:
+        r"""
+        Determine if Enactment's start_date reflects its last revision date.
+
+        If not, then the `start_date` merely reflects the earliest date that versions
+        of the :class:`Enactment`\'s code exist in the database.
+        """
+        if self.earliest_in_db:
+            if self.earliest_in_db < self.start_date:
+                return True
+            elif self.first_published and self.earliest_in_db <= self.first_published:
+                return True
+        return False
 
     def __str__(self):
         return f"{self.node} ({self.start_date})"
