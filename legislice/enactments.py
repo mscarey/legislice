@@ -510,7 +510,7 @@ class Enactment(BaseModel):
 
         for child in self.nested_children:
             if child.text:
-                text_parts.append(child.content)
+                text_parts.append(child.text)
         joined = " ".join(text_parts)
         return joined.strip()
 

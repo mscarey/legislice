@@ -741,14 +741,14 @@ class TestAddEnactments:
         """Test that text that has changed subsections can still be added."""
         old_version = test_client.read_from_json(old_section_8)
         new_version = test_client.read_from_json(section_8)
-        new_version.select(
+        new_selection = new_version.select(
             "Any such person issued a notice to remedy under subsection 1 must"
         )
-        old_version.select("obtain a beardcoin")
-        combined = new_version + old_version
+        old_selection = old_version.select("obtain a beardcoin")
+        combined = new_selection + old_selection
         assert combined.selected_text().endswith("must…obtain a beardcoin…")
         # Test that original Enactments unchanged
-        assert "obtain a beardcoin" not in new_version.selected_text()
+        assert "obtain a beardcoin" not in new_selection.selected_text()
 
     def test_add_overlapping_enactments(self, fourth_a):
         schema = EnactmentSchema()
