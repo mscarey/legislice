@@ -82,7 +82,7 @@ class EnactmentGroup:
         """Test whether ``self`` implies ``other`` and ``self`` != ``other``."""
         return bool(self.implies(other))
 
-    def _implies_enactment(self, other: Enactment) -> bool:
+    def _implies_enactment(self, other: Union[Enactment, EnactmentPassage]) -> bool:
         return any(self_enactment.implies(other) for self_enactment in self)
 
     def _implies(self, other: EnactmentGroup) -> bool:
@@ -90,7 +90,7 @@ class EnactmentGroup:
 
     def implies(self, other: Union[Enactment, EnactmentGroup]) -> bool:
         """Determine whether self includes all the text of another Enactment or EnactmentGroup."""
-        if isinstance(other, Enactment):
+        if isinstance(other, (Enactment, EnactmentPassage)):
             return self._implies_enactment(other)
         return self._implies(other)
 
