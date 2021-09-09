@@ -920,47 +920,23 @@ class TestAddEnactments:
         with pytest.raises(TypeError):
             new_version.select(date(2000, 1, 1))
 
-    def test_able_to_add_subsection_with_text_repeated_elsewhere(
-        self, old_section_8, section_8, test_client
-    ):
-        old_version = test_client.read_from_json(old_section_8)
-        new_version = test_client.read_from_json(section_8)
-        new_version.select(
-            TextQuoteSelector(
-                prefix="Department of Beards, ", exact="Australian Federal Police"
-            )
-        )
-
-        old_version.select(
-            TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
-        )
-
-        new_version.children[0].select_more_text_from_changed_version(
-            old_version.children[0]
-        )
-
-        assert (
-            new_version.selected_text()
-            == "…Department of Beards, Australian Federal Police…"
-        )
-
     def test_unable_to_add_subsection_with_new_text(
         self, old_section_8, section_8, test_client
     ):
         old_version = test_client.read_from_json(old_section_8)
         new_version = test_client.read_from_json(section_8)
-        old_version.select(
+        old_passage = old_version.select(
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
-        new_version.select("remove the beard with electrolysis")
+        new_passage = new_version.select("remove the beard with electrolysis")
         with pytest.raises(TextSelectionError):
-            old_version.select_more_text_from_changed_version(new_version)
+            old_passage + new_passage
 
     def test_add_string_as_selector(self, section_11_subdivided):
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
-        section.select("The Department of Beards may issue licenses to such")
-        more = section + "hairdressers"
+        passage = section.select("The Department of Beards may issue licenses to such")
+        more = passage + "hairdressers"
         assert (
             more.selected_text()
             == "The Department of Beards may issue licenses to such…hairdressers…"
@@ -971,31 +947,27 @@ class TestAddEnactments:
         section = schema.load(section_11_subdivided)
         cite = section.as_citation()
         with pytest.raises(ValidationError):
-            section.select_more(cite)
+            section.select(cite)
 
 
 class TestConsolidateEnactments:
     """Test function for combining a list of Enactments."""
 
     def test_consolidate_enactments(self, fourth_a):
-        search_clause = fourth_a.copy()
-        search_clause["selection"] = [{"suffix": ", and no Warrants"}]
+        enactment = Enactment(**fourth_a)
+        search_selector = TextQuoteSelector(suffix=", and no Warrants")
+        search_clause = enactment.select(search_selector)
 
-        warrants_clause = fourth_a.copy()
-        warrants_clause["selection"] = [{"prefix": "shall not be violated,"}]
+        warrants_selector = TextQuoteSelector(prefix="shall not be violated,")
+        warrants_clause = enactment.select(warrants_selector)
 
-        schema = ExpandableEnactmentSchema()
+        fourth_amendment = enactment.select_all()
 
-        search = schema.load(search_clause)
-        warrants = schema.load(warrants_clause)
-
-        fourth_amendment = fourth_a.copy()
-        fourth_amendment["selection"] = True
-        fourth = schema.load(fourth_amendment)
-
-        consolidated = consolidate_enactments([fourth, search, warrants])
+        consolidated = consolidate_enactments(
+            [fourth_amendment, search_clause, warrants_clause]
+        )
         assert len(consolidated) == 1
-        assert consolidated[0].means(fourth)
+        assert consolidated[0].means(fourth_amendment)
 
     @pytest.mark.vcr()
     def test_consolidate_adjacent_passages(self, test_client):
