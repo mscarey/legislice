@@ -851,15 +851,17 @@ class TestAddEnactments:
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
 
-        with pytest.raises(ValueError):
+        with pytest.raises(TextSelectionError):
             new_passage + old_passage
 
     @pytest.mark.vcr
     def test_fail_to_add_non_parent_or_child_enactment(self, test_client):
         left = test_client.read("/test/acts/47/1")
         right = test_client.read("/test/acts/47/2")
+        left_passage = left.select()
+        right_passage = right.select()
         with pytest.raises(ValueError):
-            _ = left + right
+            _ = left_passage + right_passage
 
     def test_fail_to_add_text_not_in_this_version(
         self, old_section_8, section_8, test_client
@@ -868,17 +870,12 @@ class TestAddEnactments:
         old_version = test_client.read_from_json(old_section_8)
         new_version = test_client.read_from_json(section_8)
 
-        new_version.select(
-            TextQuoteSelector(
-                prefix="Department of Beards, ", exact="Australian Federal Police"
-            )
-        )
-        old_version.select(
+        old_passage = old_version.select(
             "Any such person issued a notice to remedy under subsection 1 must"
         )
-        new_version.select("remove the beard with a laser")
+        new_passage = new_version.select("remove the beard with a laser")
         with pytest.raises(TextSelectionError):
-            _ = old_version + new_version
+            old_passage + new_passage
 
     def test_fail_to_add_node_not_in_this_version(
         self, old_section_8, section_8, test_client
@@ -888,8 +885,10 @@ class TestAddEnactments:
         new_version = test_client.read_from_json(
             section_8["children"][1]["children"][3]
         )
-        with pytest.raises(ValueError):
-            _ = old_version + new_version
+        old_passage = old_version.select()
+        new_passage = new_version.select()
+        with pytest.raises(TextSelectionError):
+            old_passage + new_passage
 
     @pytest.mark.xfail()
     def test_locate_anchor_by_remembering_prefix(
@@ -919,7 +918,7 @@ class TestAddEnactments:
     def test_error_for_using_wrong_type_to_select_text(self, section_8, test_client):
         new_version = test_client.read_from_json(section_8)
         with pytest.raises(TypeError):
-            new_version.select_more(date(2000, 1, 1))
+            new_version.select(date(2000, 1, 1))
 
     def test_able_to_add_subsection_with_text_repeated_elsewhere(
         self, old_section_8, section_8, test_client

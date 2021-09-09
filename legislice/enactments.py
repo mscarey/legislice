@@ -10,7 +10,7 @@ from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.schemas import TextPositionSetFactory
-from anchorpoint.textselectors import TextPositionSet
+from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from anchorpoint.textsequences import TextSequence
 
 from legislice import citations
@@ -650,14 +650,9 @@ class EnactmentPassage(BaseModel):
             found_node = True
             if self.text == other.text:
                 self.select_more_text_in_current_branch(other.selection)
-                updated_selection = True
             else:
-                try:
-                    self.select_more_text_from_changed_version(other)
-                    updated_selection = True
-                except ValueError:
-                    updated_selection = False
-            return found_node, updated_selection
+                self.select_more_text_from_changed_version(other)
+            return found_node, True
         for selector in other.as_quote_selectors():
             self.select_more(selector)
         return False, False
@@ -772,14 +767,9 @@ class EnactmentPassage(BaseModel):
         incoming_quote_selectors = other.as_quote_selectors()
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:
-            position = quote_selector.as_position(self.text)
+            position = quote_selector.as_unique_position(self.text)
             if position:
                 incoming_position_selectors.append(position)
-            if not quote_selector.is_unique_in(self.text):
-                raise ValueError(
-                    f"Incoming text selection {quote_selector} cannot be placed because it "
-                    f"is not unique in the provision text."
-                )
         self.select_more_text_in_current_branch(
             TextPositionSet(selectors=incoming_position_selectors)
         )
