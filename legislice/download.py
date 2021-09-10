@@ -342,8 +342,10 @@ class Client:
     ) -> Mapping[str, RawEnactment]:
         """Fill in missing fields in every entry in an :class:`~legislice.name_index.EnactmentIndex`."""
         for key, value in enactment_index.items():
-            if enactment_needs_api_update(value):
-                enactment_index[key] = self.update_enactment_from_api(value)
+            if enactment_needs_api_update(value["enactment"]):
+                enactment_index[key]["enactment"] = self.update_enactment_from_api(
+                    value["enactment"]
+                )
         return enactment_index
 
     def _fetch_from_url(self, url: str) -> requests.Response:

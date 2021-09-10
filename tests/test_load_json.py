@@ -34,18 +34,19 @@ class TestUpdateEnactments:
     def test_update_entry_without_date(self, test_client):
         enactment_index = {
             "person clause": {
-                "node": "/us/const/amendment/XIV/3",
-                "start": 3,
-                "end": 15,
+                "enactment": {"node": "/us/const/amendment/XIV/3"},
+                "selection": {
+                    "positions": [{"start": 3, "end": 15}],
+                },
             }
         }
         client = test_client
         updated_index = client.update_entries_in_enactment_index(enactment_index)
-        updated_enactment = updated_index["person clause"]
-        assert updated_enactment["heading"].startswith("Loyalty as a qualification")
-        loaded_enactment = client.read_from_json(
-            updated_enactment, use_text_expansion=True
+        updated_passage = updated_index["person clause"]
+        assert updated_passage["enactment"]["heading"].startswith(
+            "Loyalty as a qualification"
         )
+        loaded_enactment = client.read_passage_from_json(updated_passage)
         assert loaded_enactment.selected_text() == "…person shall…"
 
     @pytest.mark.vcr
@@ -82,10 +83,9 @@ class TestUpdateEnactments:
     @pytest.mark.vcr()
     def test_text_in_updated_enactment_is_selected_by_default(self, test_client):
         client = test_client
-        enactment = client.read_passage_from_json(
+        passage = client.read_passage_from_json(
             data={"enactment": {"node": "/us/const/amendment/IV"}}
         )
-        passage = EnactmentPassage(enactment=enactment)
         assert passage.selected_text().startswith("The right")
 
 
