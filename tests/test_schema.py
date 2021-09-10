@@ -141,11 +141,13 @@ class TestLoadEnactment:
     def test_enactment_does_not_fail_for_excess_selector(self, section_11_subdivided):
         """Test selector that extends into the text of a subnode."""
         exact = "The Department of Beards may issue licenses to such barbers"
-        section_11_subdivided["exact"] = exact
-        schema = ExpandableEnactmentSchema(many=False)
-        enactment = schema.load(section_11_subdivided)
+        data = {
+            "enactment": section_11_subdivided,
+            "selection": {"quotes": {"exact": exact}},
+        }
+        passage = EnactmentPassage(**data)
 
-        assert enactment.selected_text() == exact + "…"
+        assert passage.selected_text() == exact + "…"
 
     def test_load_enactment_missing_textversion_field(self, fourth_a_no_text_version):
         schema = ExpandableEnactmentSchema(many=False)
@@ -189,9 +191,8 @@ class TestLoadEnactment:
                 }
             ],
         }
-        schema = EnactmentSchema(many=False)
-        enactment = schema.load(data)
-        assert len(enactment._cross_references) == 1
+        enactment = Enactment(**data)
+        assert len(enactment.cross_references()) == 1
 
     def test_load_enactment_with_nested_cross_reference(self):
         data = {
@@ -225,7 +226,7 @@ class TestLoadEnactment:
         }
         schema = EnactmentSchema(many=False)
         enactment = schema.load(data)
-        refs = enactment.children[0]._cross_references
+        refs = enactment.children[0].cross_references()
         assert len(refs) == 1
 
 
@@ -267,13 +268,11 @@ class TestDumpEnactment:
     @pytest.mark.vcr()
     def test_dump_enactment_with_selector_to_dict(self, test_client):
         copyright_clause = test_client.read("/us/const/article/I/8/8")
-        copyright_clause.select("Science and useful Arts")
+        passage = copyright_clause.select("Science and useful Arts")
 
-        schema = EnactmentSchema()
-        dumped = schema.dump(copyright_clause)
-        selection = dumped["selection"][0]
-        quote = dumped["text_version"]["content"][selection["start"] : selection["end"]]
-        assert quote == "Science and useful Arts"
+        dumped = passage.dict()
+        selection = dumped["selection"]["positions"][0]
+        assert selection["end"] - selection["start"] == len("Science and useful Arts")
 
     @pytest.mark.vcr()
     def test_serialize_enactment_after_adding(self, fourth_a):
