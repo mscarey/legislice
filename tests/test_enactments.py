@@ -12,6 +12,7 @@ from legislice.download import Client
 from legislice.enactments import (
     CitingProvisionLocation,
     Enactment,
+    EnactmentPassage,
     InboundReference,
     TextVersion,
     consolidate_enactments,
@@ -61,11 +62,10 @@ class TestMakeEnactment:
         assert section.children[0].content.startswith("The beardcoin shall")
 
     def test_create_TextPositionSet_on_init(self, section_11_subdivided):
-        schema = EnactmentPassageSchema()
         len_s11 = len(section_11_subdivided["text_version"]["content"])
         data = {
             "enactment": section_11_subdivided,
-            "selection": {"selectors": [{"start": 0, "end": len_s11}]},
+            "selection": {"positions": [{"start": 0, "end": len_s11}]},
         }
         start_point = len_s11 + len(
             section_11_subdivided["children"][0]["text_version"]["content"]
@@ -73,10 +73,10 @@ class TestMakeEnactment:
 
         margin = 2
         expected = "hairdressers"
-        data["selection"]["selectors"].append(
+        data["selection"]["positions"].append(
             {"start": start_point + margin, "end": start_point + margin + len(expected)}
         )
-        result = schema.load(data)
+        result = EnactmentPassage(**data)
         assert isinstance(result.selection, TextPositionSet)
         assert (
             result.selected_text()
@@ -347,14 +347,13 @@ class TestSelectFromEnactment:
 
     def test_select_nested_text_with_positions(self, section_11_subdivided):
         phrases = TextPositionSet(
-            selectors=[
+            positions=[
                 TextPositionSelector(start=0, end=51),
                 TextPositionSelector(start=61, end=73),
                 TextPositionSelector(start=112, end=127),
             ],
         )
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         passage = section.select(phrases)
         text_sequence = passage.text_sequence()
         assert str(text_sequence) == (
@@ -384,11 +383,10 @@ class TestSelectFromEnactment:
 
     def test_select_all(self, section_11_subdivided):
         """Clear selected text, and then select one subsection."""
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_subdivided)
+        combined = Enactment(**section_11_subdivided)
         passage = combined.select(None)
         assert passage.enactment.node == "/test/acts/47/11"
-        sub_passage = passage.enactment.children[3].select()
+        sub_passage = passage.enactment.children[3].select_all()
         assert (
             sub_passage.selected_text()
             == "as they see fit to purchase a beardcoin from a customer"
@@ -406,7 +404,7 @@ class TestSelectFromEnactment:
         schema = EnactmentSchema()
         section = schema.load(section_11_subdivided)
         selection = TextPositionSet(
-            selectors=[
+            positions=[
                 TextPositionSelector(start=0, end=10),
                 TextPositionSelector(start=1000, end=1010),
             ]
@@ -427,7 +425,7 @@ class TestSelectFromEnactment:
         ]
         positions = section.convert_quotes_to_position(quotes)
         assert positions == TextPositionSet(
-            selectors=[
+            positions=[
                 TextPositionSelector(start=0, end=51),
                 TextPositionSelector(start=61, end=73),
                 TextPositionSelector(start=112, end=127),
@@ -469,7 +467,7 @@ class TestSelectFromEnactment:
     def test_select_method_clears_previous_selection(self, test_client, section_8):
         old_version = test_client.read_from_json(section_8["children"][1])
         old_selector = TextPositionSet(
-            selectors=TextPositionSelector(start=0, end=65),
+            positions=TextPositionSelector(start=0, end=65),
         )
         passage = old_version.select(old_selector)
         assert passage.selected_text() == (
@@ -772,7 +770,7 @@ class TestAddEnactments:
     def test_get_recursive_selection(self, section_8, test_client):
         version = test_client.read_from_json(section_8["children"][1])
         selector = TextPositionSet(
-            selectors=TextPositionSelector(start=0, end=65),
+            positions=TextPositionSelector(start=0, end=65),
         )
         passage = version.select(selector)
         passage.select_more("obtain a beardcoin from the Department of Beards")
@@ -790,7 +788,7 @@ class TestAddEnactments:
     def test_add_selection_from_child_node(self, section_8, test_client):
         parent_version = test_client.read_from_json(section_8["children"][1])
         parent_selector = TextPositionSet(
-            selectors=TextPositionSelector(start=0, end=65),
+            positions=TextPositionSelector(start=0, end=65),
         )
         passage = parent_version.select(parent_selector)
         passage.select_more("obtain a beardcoin from the Department of Beards")

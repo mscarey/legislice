@@ -1,5 +1,6 @@
 from copy import deepcopy
 import json
+from legislice.enactments import Enactment, EnactmentPassage
 
 import os
 
@@ -90,19 +91,21 @@ class TestLoadEnactment:
     client = Client(api_token=TOKEN)
 
     def test_load_nested_enactment(self, section6d):
-        schema = EnactmentSchema()
-        result = schema.load(section6d)
+        result = Enactment(**section6d)
         assert result.heading.startswith("Waiver")
 
     def test_enactment_with_nested_selectors(self, section_11_subdivided):
-        schema = ExpandableEnactmentSchema()
-        section_11_subdivided["selection"] = [{"start": 0}]
-        for child in section_11_subdivided["children"]:
-            child["selection"] = []
-        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
-        result = schema.load(section_11_subdivided)
+        length = len(section_11_subdivided["text_version"]["content"])
+        data = {
+            "selection": {
+                "selectors": [{"start": 0, "end": length}, {"exact": "hairdressers"}]
+            },
+            "enactment": section_11_subdivided,
+        }
+        passage = EnactmentPassage(**data)
+
         answer = "The Department of Beards may issue licenses to such…hairdressers…"
-        assert result.selected_text() == answer
+        assert passage.selected_text() == answer
 
     def test_enactment_with_True_as_selector(self, section_11_subdivided):
         schema = ExpandableEnactmentSchema()
@@ -281,38 +284,27 @@ class TestDumpEnactment:
 
     @pytest.mark.vcr()
     def test_serialize_enactment_after_adding(self, fourth_a):
-        schema = ExpandableEnactmentSchema()
-        search = schema.load(fourth_a)
-        warrant = deepcopy(search)
-
-        search.select(TextQuoteSelector(suffix=", and no Warrants"))
-        warrant.select(
+        enactment = Enactment(**fourth_a)
+        search = enactment.select(TextQuoteSelector(suffix=", and no Warrants"))
+        warrant = enactment.select(
             TextQuoteSelector(
                 exact="shall not be violated, and no Warrants shall issue,"
             )
         )
+
         combined_enactment = search + warrant
 
-        # search.select_more_text_at_current_node(warrant.selection)
+        dumped = combined_enactment.dict()
 
-        dumped = schema.dump(combined_enactment)
-
-        assert dumped["text_version"]["content"].startswith("The right")
-        assert dumped["text_version"].get("uri") is None
+        assert dumped["enactment"]["text_version"]["content"].startswith("The right")
+        assert dumped["enactment"]["text_version"].get("uri") is None
 
     @pytest.mark.vcr()
     def test_fields_ordered_with_children_last(self, test_client):
         s103 = test_client.read(query="/us/usc/t17/s103", date="2020-01-01")
-        schema = EnactmentSchema()
-        dumped = schema.dump(s103)
-        key_names = list(dumped["children"][0]["selection"][0].keys())
-        assert "start" in key_names
-        assert "end" in key_names
-        as_json = json.dumps(dumped)
-        # Start field comes before end field in selector
-        assert '"selection": [{"start":' in as_json
-        # "Children" field is last, since it's hard to read otherwise
-        assert list(dumped.keys())[-1] == "children"
+        passage = s103.select_all()
+        as_json = passage.json()
+        assert '"selectors": [{"start": 0' in as_json
 
 
 class TestLoadInboundReferences:

@@ -314,7 +314,7 @@ class Enactment(BaseModel):
         """Create a TextPositionSet from a different selection method."""
         if selection is True:
             return TextPositionSet(
-                selectors=TextPositionSelector(start=0, end=len(self.text))
+                positions=TextPositionSelector(start=0, end=len(self.text))
             )
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
@@ -378,7 +378,7 @@ class Enactment(BaseModel):
     def select_all(self) -> EnactmentPassage:
         """Return a passage for this Enactment, including all subnodes."""
         selection = TextPositionSet(
-            selectors=TextPositionSelector(start=0, end=len(self.text))
+            positions=TextPositionSelector(start=0, end=len(self.text))
         )
         return EnactmentPassage(enactment=self, selection=selection)
 
@@ -418,9 +418,9 @@ class Enactment(BaseModel):
                     selections.appendleft(
                         TextPositionSelector(start=self.padded_length, end=current.end)
                     )
-        selection_as_set = TextPositionSet(selectors=self_selection)
+        selection_as_set = TextPositionSet(positions=self_selection)
         self._selection = selection_as_set.add_margin(text=self.content, margin_width=4)
-        return TextPositionSet(selectors=selections)
+        return TextPositionSet(positions=selections)
 
     def select_without_children(
         self,
@@ -443,7 +443,7 @@ class Enactment(BaseModel):
         """Return a TextPositionSet of all text in this Enactment."""
         if self.text:
             return TextPositionSet(
-                selectors=TextPositionSelector(start=0, end=len(self.text))
+                positions=TextPositionSelector(start=0, end=len(self.text))
             )
         return TextPositionSet()
 
@@ -475,7 +475,7 @@ class Enactment(BaseModel):
 
     def raise_error_for_extra_selector(self, selection: TextPositionSet) -> None:
         """Raise an error if any passed selectors begin after the end of the text passage."""
-        for selector in selection.selectors:
+        for selector in selection.positions:
             if selector.start > len(self.text) + 1:
                 raise ValueError(f'Selector "{selector}" was not used.')
 
@@ -484,7 +484,7 @@ class Enactment(BaseModel):
         if not self.content:
             return TextPositionSet()
         return TextPositionSet(
-            selectors=TextPositionSelector(start=0, end=len(self.content))
+            positions=TextPositionSelector(start=0, end=len(self.content))
         )
 
     def _tree_selection(
@@ -627,7 +627,7 @@ class EnactmentPassage(BaseModel):
         """Return quote selectors for the selected text."""
         return [
             phrase.as_quote_selector(self.enactment.text)
-            for phrase in self.selection.selectors
+            for phrase in self.selection.positions
         ]
 
     def __str__(self):
@@ -638,7 +638,7 @@ class EnactmentPassage(BaseModel):
         """Select all text of Enactment."""
         text = self.enactment.text
         self.selection = TextPositionSet(
-            selectors=[TextPositionSelector(start=0, end=len(text))]
+            positions=[TextPositionSelector(start=0, end=len(text))]
         )
 
     def limit_selection(
@@ -792,7 +792,7 @@ class EnactmentPassage(BaseModel):
             if position:
                 incoming_position_selectors.append(position)
         self.select_more_text_in_current_branch(
-            TextPositionSet(selectors=incoming_position_selectors)
+            TextPositionSet(positions=incoming_position_selectors)
         )
 
     def selected_text(self) -> str:
@@ -893,7 +893,7 @@ class AnchoredEnactmentPassage(BaseModel):
         if anchors and all(
             isinstance(anchor, TextPositionSelector) for anchor in anchors
         ):
-            return TextPositionSet(selectors=anchors)
+            return TextPositionSet(positions=anchors)
         return anchors
 
 
