@@ -508,6 +508,7 @@ class TestCompareEnactment:
         assert whole_provision != search_clause
         assert not whole_provision.means(search_clause)
         assert whole_provision >= search_clause
+        assert whole_provision > search_clause
 
     @pytest.mark.vcr
     def test_not_gt_if_equal(self, test_client):
@@ -555,6 +556,16 @@ class TestCompareEnactment:
         assert passage >= divided_passage
         assert not passage > divided_passage
         assert passage.text_sequence() >= divided_passage.text_sequence()
+
+    def test_passage_does_not_imply_text_sequence(
+        self, section_11_together, section_11_subdivided
+    ):
+        combined = Enactment(**section_11_together)
+        passage = combined.select_all()
+        subdivided = Enactment(**section_11_subdivided)
+        divided_passage = subdivided.select_all()
+        with pytest.raises(TypeError):
+            passage >= divided_passage.text_sequence()
 
     @pytest.mark.vcr
     def test_more_provisions_implies_fewer(self, test_client, section_8):
@@ -682,6 +693,21 @@ class TestAddEnactments:
         combined = lesser_passage + greater_passage
 
         assert combined.means(greater_passage)
+
+    @pytest.mark.vcr
+    def test_add_enactment_to_passage(self, section_8, test_client):
+        """Test that adding an included Enactment returns the same Enactment."""
+        greater = test_client.read_from_json(section_8["children"][1])
+        passage = greater.select(
+            "Any such person issued a notice to remedy under subsection 1 must"
+        )
+        lesser = test_client.read_from_json(section_8["children"][1]["children"][0])
+
+        combined = passage + lesser
+
+        selected_text = combined.selected_text()
+        assert "Any such person" in selected_text
+        assert "must…shave" in selected_text
 
     def test_add_shorter_plus_longer(self, fourth_a):
         fourth_a = Enactment(**fourth_a)
@@ -951,6 +977,12 @@ class TestAddEnactments:
         passage = section.select_all()
         passage.clear_selection()
         assert passage.selected_text() == ""
+
+    def test_select_from_passage(self, section_8):
+        section = Enactment(**section_8)
+        passage = section.select_all()
+        passage.select("Australian Defence Force")
+        assert passage.selected_text() == "…Australian Defence Force…"
 
     def test_cannot_select_text_with_citation(self, section_11_subdivided):
         schema = EnactmentSchema()

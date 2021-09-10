@@ -678,13 +678,10 @@ class EnactmentPassage(BaseModel):
             self.select_more(selector)
         return False, False
 
-    def _add_enactment_at_included_node(
-        self, other: Union[Enactment, EnactmentPassage]
+    def _add_passage_at_included_node(
+        self, other: EnactmentPassage
     ) -> EnactmentPassage:
         """Add a selection of text at the same citation or at a child of self's citation."""
-
-        if not isinstance(other, EnactmentPassage):
-            other = other.select_all()
 
         if self >= other:
             return self
@@ -705,15 +702,18 @@ class EnactmentPassage(BaseModel):
 
     def __add__(self, other: Union[Enactment, EnactmentPassage]) -> EnactmentPassage:
 
+        if isinstance(other, Enactment):
+            other = other.select_all()
+
         if not isinstance(other, self.__class__):
             copy_of_self = deepcopy(self)
             copy_of_self.select_more(other)
             return copy_of_self
 
         if other.node.startswith(self.node):
-            return self._add_enactment_at_included_node(other)
+            return self._add_passage_at_included_node(other)
         elif self.node.startswith(other.node):
-            return other._add_enactment_at_included_node(self)
+            return other._add_passage_at_included_node(self)
 
         raise ValueError(
             "Can't add selected text from two different Enactments "
