@@ -116,19 +116,6 @@ class Citation(BaseModel):
             value = "sec. " + value.lstrip("s")
         return value
 
-    def revision_date_parts(self) -> List[List[Union[str, int]]]:
-        """Return date as three numbers in "date-parts" field."""
-        if not self.revision_date:
-            return []
-
-        return [
-            [
-                str(self.revision_date.year),
-                self.revision_date.month,
-                self.revision_date.day,
-            ]
-        ]
-
     def __str__(self):
         name = f"{self.volume} {self.code} {self.section}"
         if self.revision_date:

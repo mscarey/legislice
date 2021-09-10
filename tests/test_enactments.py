@@ -579,6 +579,12 @@ class TestCompareEnactment:
         assert not passage.means(limited)
         assert combined > limited
 
+    def test_cannot_compare_passage_with_text_version(self, test_client):
+        old_version = test_client.read(query="/test/acts/47/6A", date=date(1999, 1, 1))
+        passage = old_version.select_all()
+        with pytest.raises(TypeError):
+            passage.means(old_version.text_version)
+
     @pytest.mark.vcr
     def test_same_phrase_different_provisions_same_meaning(self, test_client):
 
@@ -939,6 +945,12 @@ class TestAddEnactments:
             more.selected_text()
             == "The Department of Beards may issue licenses to such…hairdressers…"
         )
+
+    def test_clear_selection(self, section_8):
+        section = Enactment(**section_8)
+        passage = section.select_all()
+        passage.clear_selection()
+        assert passage.selected_text() == ""
 
     def test_cannot_select_text_with_citation(self, section_11_subdivided):
         schema = EnactmentSchema()

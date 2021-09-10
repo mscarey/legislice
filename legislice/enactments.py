@@ -766,11 +766,9 @@ class EnactmentPassage(BaseModel):
             )
         return selections_after_this_node
 
-    def select_none(self) -> None:
+    def clear_selection(self) -> None:
         """Deselect any Enactment text, including in child nodes."""
-        self._selection = TextPositionSet()
-        for child in self._children:
-            child.select_none()
+        self.selection = TextPositionSet()
 
     def select_more_text_from_changed_version(self, other: EnactmentPassage) -> None:
         """
@@ -843,10 +841,6 @@ class EnactmentPassage(BaseModel):
         new_selection = self.selection + added_selection
         self.selection = new_selection
         return None
-
-    def tree_selection(self) -> TextPositionSet:
-        """Get selection of all text in Enactment's tree, not limited by the selection attribute."""
-        return self.enactment.tree_selection()
 
     def means(self, other: EnactmentPassage) -> bool:
         r"""
