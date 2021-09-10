@@ -755,17 +755,6 @@ class EnactmentPassage(BaseModel):
         self.selection = selection_set
         return None
 
-    def select_from_text_positions(self, selection: TextPositionSet) -> TextPositionSet:
-        """Select text using position selectors and return any unused position selectors."""
-        selection_set = self.select_from_text_positions_without_nesting(selection)
-
-        selections_after_this_node = selection_set - self.padded_length
-        for child in self.nested_children:
-            selections_after_this_node = child.select_from_text_positions(
-                selections_after_this_node
-            )
-        return selections_after_this_node
-
     def clear_selection(self) -> None:
         """Deselect any Enactment text, including in child nodes."""
         self.selection = TextPositionSet()
