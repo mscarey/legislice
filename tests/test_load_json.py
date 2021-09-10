@@ -1,5 +1,6 @@
 from datetime import date
 
+from anchorpoint import TextQuoteSelector
 import pytest
 from legislice.download import Client
 from legislice.enactments import EnactmentPassage
@@ -156,7 +157,9 @@ class TestLoadAndSelect:
 
     def test_select_text_with_end_param(self):
         law = self.client.read_from_json(self.response)
-        passage = law.select(end="or a felony under State law")
+        passage = law.select(
+            TextQuoteSelector(suffix=", whether or not the defendant knew")
+        )
         assert passage.selected_text().endswith("or a felony under State law…")
 
     def test_end_param_has_no_effect_when_nothing_selected(self):
