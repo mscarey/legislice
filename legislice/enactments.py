@@ -881,20 +881,7 @@ class AnchoredEnactmentPassage(BaseModel):
     """
 
     passage: EnactmentPassage
-    anchors: Union[TextPositionSet, List[TextQuoteSelector]]
-
-    @validator("anchors")
-    def anchors_to_set(
-        cls, anchors
-    ) -> Optional[
-        Union[TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]]
-    ]:
-        """Convert a list of anchors to a TextPositionSet."""
-        if anchors and all(
-            isinstance(anchor, TextPositionSelector) for anchor in anchors
-        ):
-            return TextPositionSet(positions=anchors)
-        return anchors
+    anchors: TextPositionSet
 
 
 def consolidate_enactments(

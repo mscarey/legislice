@@ -233,7 +233,7 @@ class AnchoredEnactmentPassageSchema(Schema):
 
     __model__ = AnchoredEnactmentPassage
     passage = fields.Nested(EnactmentPassageSchema)
-    anchors = anchors = fields.Method(
+    anchors = fields.Method(
         "get_anchors", deserialize="load_anchors", required=False, missing=None
     )
 

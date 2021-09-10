@@ -615,10 +615,20 @@ def fourteenth_dp():
 @pytest.fixture(scope="module")
 def provision_with_text_anchor():
     return {
-        "node": "/us/usc/t17/s102/a",
-        "exact": "Copyright protection subsists, in accordance with this title, in original works of authorship fixed in any tangible medium of expression, now known or later developed, from which they can be perceived, reproduced, or otherwise communicated, either directly or with the aid of a machine or device.",
-        "name": "copyright protection provision",
-        "anchors": "qualify for copyright protection. |17 U.S.C. § 102(a)|.",
+        "passage": {
+            "enactment": {
+                "node": "/us/usc/t17/s102/a",
+                "name": "copyright protection provision",
+            },
+            "selection": {
+                "quotes": {
+                    "exact": "Copyright protection subsists, in accordance with this title, in original works of authorship fixed in any tangible medium of expression, now known or later developed, from which they can be perceived, reproduced, or otherwise communicated, either directly or with the aid of a machine or device."
+                }
+            },
+        },
+        "anchors": {
+            "quotes": "qualify for copyright protection. |17 U.S.C. § 102(a)|."
+        },
     }
 
 

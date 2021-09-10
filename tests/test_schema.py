@@ -12,6 +12,7 @@ from anchorpoint.textselectors import (
 from dotenv import load_dotenv
 import pytest
 
+from legislice.enactments import AnchoredEnactmentPassage
 from legislice.download import Client
 
 from legislice.schemas import (
@@ -19,6 +20,7 @@ from legislice.schemas import (
     EnactmentSchema,
     InboundReferenceSchema,
     LinkedEnactmentSchema,
+    EnactmentPassageSchema,
     CitingProvisionLocationSchema,
     enactment_needs_api_update,
 )
@@ -98,7 +100,8 @@ class TestLoadEnactment:
         length = len(section_11_subdivided["text_version"]["content"])
         data = {
             "selection": {
-                "selectors": [{"start": 0, "end": length}, {"exact": "hairdressers"}]
+                "positions": {"start": 0, "end": length},
+                "quotes": {"exact": "hairdressers"},
             },
             "enactment": section_11_subdivided,
         }
@@ -107,42 +110,33 @@ class TestLoadEnactment:
         answer = "The Department of Beards may issue licenses to such…hairdressers…"
         assert passage.selected_text() == answer
 
-    def test_enactment_with_True_as_selector(self, section_11_subdivided):
-        schema = ExpandableEnactmentSchema()
-        section_11_subdivided["selection"] = True
-        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
-        result = schema.load(section_11_subdivided)
-        answer = "The Department of Beards may issue licenses to such…hairdressers…"
-        assert result.selected_text() == answer
-
-    def test_enactment_with_False_as_selector(self, section_11_subdivided):
-        schema = ExpandableEnactmentSchema()
-        section_11_subdivided["selection"] = False
-        section_11_subdivided["children"][1]["selection"] = [{"start": 0, "end": 12}]
-        result = schema.load(section_11_subdivided)
-        answer = "…hairdressers…"
-        assert result.selected_text() == answer
-
     def test_selector_not_wrapped_in_list(self, section_11_together):
-        schema = ExpandableEnactmentSchema()
-        section_11_together["selection"] = {"start": 4, "end": 24}
-        result = schema.load(section_11_together)
+        data = {
+            "selection": {"positions": {"start": 4, "end": 24}},
+            "enactment": section_11_together,
+        }
+        result = EnactmentPassage(**data)
         assert result.selected_text() == "…Department of Beards…"
 
     def test_load_with_text_quote_selector(self, section_11_together):
-        schema = ExpandableEnactmentSchema()
-        section_11_together["selection"] = [{"exact": "Department of Beards"}]
-        result = schema.load(section_11_together)
+        data = {
+            "selection": {"quotes": {"exact": "Department of Beards"}},
+            "enactment": section_11_together,
+        }
+        result = EnactmentPassage(**data)
         assert result.selected_text() == "…Department of Beards…"
 
     @pytest.mark.vcr()
     def test_load_enactment_with_text_anchor(
         self, provision_with_text_anchor, test_client
     ):
-        schema = ExpandableEnactmentSchema()
-        record = test_client.update_enactment_from_api(provision_with_text_anchor)
-        result = schema.load(record)
-        assert result.anchors[0].exact == "17 U.S.C. § 102(a)"
+        provision_with_text_anchor["passage"][
+            "enactment"
+        ] = test_client.update_enactment_from_api(
+            provision_with_text_anchor["passage"]["enactment"]
+        )
+        result = AnchoredEnactmentPassage(**provision_with_text_anchor)
+        assert result.anchors.quotes[0].exact == "17 U.S.C. § 102(a)"
 
     def test_enactment_does_not_fail_for_excess_selector(self, section_11_subdivided):
         """Test selector that extends into the text of a subnode."""
