@@ -9,6 +9,7 @@ from legislice.enactments import (
     Enactment,
     CrossReference,
     CitingProvisionLocation,
+    EnactmentPassage,
     InboundReference,
 )
 
@@ -257,6 +258,39 @@ class Client:
         schema = InboundReferenceSchema(many=True)
         return schema.load(json_citations)
 
+    def update_data_from_api_if_needed(self, data: RawEnactment) -> RawEnactment:
+        """
+        Update data from API with data from API coverage.
+
+        :param data:
+            a dict representing the data from the API
+
+        :returns:
+            a dict representing the data from the API with updated data from API coverage
+        """
+        if enactment_needs_api_update(data):
+            data = self.update_enactment_from_api(data)
+
+        # update client's data about the database's coverage
+        code_uri = self.get_db_coverage(data["node"])
+        if self.coverage.get(code_uri):
+            data["earliest_in_db"] = self.coverage[code_uri]["earliest_in_db"]
+            data["first_published"] = self.coverage[code_uri]["first_published"]
+        return data
+
+    def read_passage_from_json(self, data: RawEnactment) -> EnactmentPassage:
+        r"""
+        Create a new :class:`EnactmentPassage` object using imported JSON data.
+
+        If fields are missing from the JSON, they will be fetched using the API key.
+        """
+
+        data["enactment"] = self.update_data_from_api_if_needed(data=data["enactment"])
+        if not data.get("selection"):
+            data["selection"] = {"positions": [{"start": 0, "end": None}]}
+
+        return EnactmentPassage(**data)
+
     def read_from_json(
         self, data: RawEnactment, use_text_expansion: bool = True
     ) -> Enactment:
@@ -266,14 +300,7 @@ class Client:
         If fields are missing from the JSON, they will be fetched using the API key.
         """
 
-        if enactment_needs_api_update(data):
-            data = self.update_enactment_from_api(data)
-
-        # update client's data about the database's coverage
-        code_uri = self.get_db_coverage(data["node"])
-        if self.coverage.get(code_uri):
-            data["earliest_in_db"] = self.coverage[code_uri]["earliest_in_db"]
-            data["first_published"] = self.coverage[code_uri]["first_published"]
+        data = self.update_data_from_api_if_needed(data=data)
 
         return Enactment(**data)
 

@@ -12,11 +12,13 @@ from marshmallow import fields, post_load, pre_load, EXCLUDE
 
 from legislice.enactments import (
     Enactment,
+    EnactmentPassage,
     RawEnactment,
 )
 
 from legislice.schemas import (
     CrossReferenceSchema,
+    TextPositionSetSchema,
     TextVersionSchema,
     LinkedEnactmentSchema,
     EnactmentSchema,
@@ -110,6 +112,20 @@ class ExpandableEnactmentSchema(ExpandableLinkedEnactmentSchema):
     __model__ = Enactment
     children = fields.List(fields.Nested(lambda: ExpandableEnactmentSchema()))
     heading = fields.Str(missing="")
+
+    class Meta:
+        """Exclude unknown fields from schema."""
+
+        unknown = EXCLUDE
+        ordered = True
+
+
+class EnactmentPassageSchema(EnactmentSchema):
+    """Schema for passages from legislation."""
+
+    __model__ = EnactmentPassage
+    enactment = fields.Nested(ExpandableEnactmentSchema)
+    selection = fields.Nested(TextPositionSetSchema)
 
     class Meta:
         """Exclude unknown fields from schema."""

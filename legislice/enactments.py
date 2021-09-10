@@ -159,8 +159,8 @@ class Enactment(BaseModel):
     """
 
     node: str
-    heading: str
     start_date: date
+    heading: str = ""
     text_version: Optional[TextVersion] = None
     end_date: Optional[date] = None
     first_published: Optional[date] = None

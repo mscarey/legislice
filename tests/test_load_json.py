@@ -3,6 +3,7 @@ from datetime import date
 import pytest
 from legislice.download import Client
 from legislice.enactments import EnactmentPassage
+from legislice.schemas import EnactmentPassageSchema
 
 
 class TestUpdateEnactments:
@@ -50,13 +51,20 @@ class TestUpdateEnactments:
     @pytest.mark.vcr
     def test_read_enactment_with_suffix_field(self, test_client):
         raw_enactment = {
-            "name": "search clause",
-            "node": "/us/const/amendment/IV",
-            "suffix": ", and no Warrants shall issue",
-            "start_date": "1791-12-15",
+            "enactment": {
+                "name": "search clause",
+                "node": "/us/const/amendment/IV",
+                "start_date": "1791-12-15",
+            },
+            "selection": {
+                "quotes": {
+                    "suffix": ", and no Warrants shall issue",
+                }
+            },
         }
-        enactment = test_client.read_from_json(raw_enactment, use_text_expansion=True)
-        assert enactment.selected_text().endswith("shall not be violated…")
+
+        passage = test_client.read_passage_from_json(raw_enactment)
+        assert passage.selected_text().endswith("shall not be violated…")
 
     @pytest.mark.vcr()
     def test_update_linked_enactment(self, test_client):
@@ -74,7 +82,9 @@ class TestUpdateEnactments:
     @pytest.mark.vcr()
     def test_text_in_updated_enactment_is_selected_by_default(self, test_client):
         client = test_client
-        enactment = client.read_from_json(data={"node": "/us/const/amendment/IV"})
+        enactment = client.read_passage_from_json(
+            data={"enactment": {"node": "/us/const/amendment/IV"}}
+        )
         passage = EnactmentPassage(enactment=enactment)
         assert passage.selected_text().startswith("The right")
 

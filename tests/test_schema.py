@@ -259,14 +259,13 @@ class TestLoadLinkedEnactment:
 
     @pytest.mark.vcr
     def test_text_sequence_for_linked_enactment(self, test_client):
-        schema = LinkedEnactmentSchema()
         enactment = test_client.read(query="/test", date="2020-01-01")
         assert "for documentation." in enactment.text_sequence()[0].text
-        assert "for documentation." in enactment.selected_text()
-        enactment.select("for documentation.")
-        assert enactment.selected_text() == "…for documentation."
-        dumped = schema.dump(enactment)
-        loaded = schema.load(dumped)
+        assert "for documentation." in enactment.text
+        passage = enactment.select("for documentation.")
+        assert passage.selected_text() == "…for documentation."
+        dumped = passage.dict()
+        loaded = EnactmentPassage(**dumped)
         assert loaded.selected_text() == "…for documentation."
 
 
@@ -304,7 +303,7 @@ class TestDumpEnactment:
         s103 = test_client.read(query="/us/usc/t17/s103", date="2020-01-01")
         passage = s103.select_all()
         as_json = passage.json()
-        assert '"selectors": [{"start": 0' in as_json
+        assert '"positions": [{"start": 0' in as_json
 
 
 class TestLoadInboundReferences:
