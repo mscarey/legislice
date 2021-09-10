@@ -20,16 +20,20 @@ class TestUpdateEnactments:
     def test_update_entries_in_enactment_index(self, test_client):
         enactment_index = {
             "security": {
-                "node": "/us/const/amendment/IV",
-                "start_date": "1791-12-15",
-                "exact": "right of the people to be secure",
+                "enactment": {
+                    "node": "/us/const/amendment/IV",
+                    "start_date": "1791-12-15",
+                },
+                "selection": {
+                    "quotes": [{"exact": "right of the people to be secure"}]
+                },
             }
         }
         client = test_client
         updated_index = client.update_entries_in_enactment_index(enactment_index)
         updated_enactment = updated_index["security"]
-        assert updated_enactment["heading"] == "AMENDMENT IV."
-        assert updated_enactment["url"].startswith("https")
+        assert updated_enactment["enactment"]["heading"] == "AMENDMENT IV."
+        assert updated_enactment["enactment"]["url"].startswith("https")
 
     @pytest.mark.vcr
     def test_update_entry_without_date(self, test_client):
