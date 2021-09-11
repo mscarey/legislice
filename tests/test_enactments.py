@@ -135,7 +135,7 @@ class TestEnactmentDetails:
         )
         new = enactment.select(selection)
         assert new.level == CodeLevel.CONSTITUTION
-        assert new.start_date == date(1791, 12, 15)
+        assert new.start_date() == date(1791, 12, 15)
         assert "secure in their persons…" in str(new)
         assert enactment.node in str(new)
         assert "1791-12-15" in str(new)
@@ -974,8 +974,8 @@ class TestAddEnactments:
         old_version = test_client.read_from_json(old_section_8)
         result = old_version.rangedict()
         memo = result[3]
-        assert memo["content"].startswith("Where an officer")
-        assert memo["start_date"] == date(1935, 4, 1)
+        assert memo.content.startswith("Where an officer")
+        assert memo.start_date == date(1935, 4, 1)
 
     def test_repealed_passage_end_date_is_latest_amendment(
         self, old_section_8, test_client
