@@ -12,6 +12,7 @@ from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.schemas import TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from anchorpoint.textsequences import TextSequence
+from anchorpoint.utils.ranges import Range, RangeDict
 
 from legislice import citations
 
@@ -108,6 +109,20 @@ class TextVersion(BaseModel):
                 "TextVersion should not be created with an empty string for content."
             )
         return content
+
+
+class EnactmentMemo(BaseModel):
+
+    """
+    Info about an Enactment, to be linked to its text position in a parent Enactment.
+
+    Used when recursively searching the parent Enactment.
+    """
+
+    node: str
+    start_date: date
+    content: str
+    end_date: Optional[date] = None
 
 
 class Enactment(BaseModel):
@@ -430,6 +445,33 @@ class Enactment(BaseModel):
             positions=TextPositionSelector(start=0, end=len(self.content))
         )
 
+    def _rangedict(
+        self, range_dict: RangeDict, tree_length: int
+    ) -> Tuple[RangeDict, int]:
+        if self.content:
+            span = Range(start=tree_length, end=tree_length + len(self.content))
+            range_dict[span] = EnactmentMemo(
+                node=self.node,
+                start_date=self.start_date,
+                content=self.content,
+                end_date=self.end_date,
+            )
+        new_tree_length = tree_length + self.padded_length
+
+        for child in self.nested_children:
+            range_dict, new_tree_length = child._rangedict(
+                range_dict=range_dict, tree_length=new_tree_length
+            )
+
+        return range_dict, new_tree_length
+
+    def rangedict(self) -> RangeDict:
+        """Return a RangeDict matching text spans to Enactment attributes."""
+        new_range_dict, new_tree_length = self._rangedict(
+            range_dict=RangeDict(), tree_length=0
+        )
+        return new_range_dict
+
     def _tree_selection(
         self, selector_set: TextPositionSet, tree_length: int
     ) -> Tuple[TextPositionSet, int]:
@@ -553,9 +595,14 @@ class EnactmentPassage(BaseModel):
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
         return self.enactment.level
 
-    @property
     def start_date(self):
-        return self.enactment.start_date
+        current = self.enactment.start_date
+        ranges = self.enactment.rangedict()
+        for span in ranges:
+            if self.selection.rangeset & span:
+                if ranges[span].start_date > current:
+                    current = ranges[span].start_date
+        return current
 
     @property
     def end_date(self):

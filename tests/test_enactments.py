@@ -970,6 +970,13 @@ class TestAddEnactments:
         with pytest.raises(TypeError):
             new_version.select(date(2000, 1, 1))
 
+    def test_get_rangedict(self, old_section_8, test_client):
+        old_version = test_client.read_from_json(old_section_8)
+        result = old_version.rangedict()
+        memo = result[3]
+        assert memo["content"].startswith("Where an officer")
+        assert memo["start_date"] == date(1935, 4, 1)
+
     def test_passage_start_date_is_latest_amendment(
         self, old_section_8, section_8, test_client
     ):
@@ -979,9 +986,10 @@ class TestAddEnactments:
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
         new_passage = new_version.select("remove the beard with electrolysis")
-        assert old_passage.start_date == date(1935, 4, 1)
-        assert old_passage.end_date == date(2013, 7, 18)
-        assert new_passage.start_date == date(2013, 7, 18)
+        assert old_passage.start_date() == date(1935, 4, 1)
+        assert old_passage.end_date() == date(2013, 7, 18)
+        assert new_passage.start_date() == date(2013, 7, 18)
+        assert new_passage.end_date() is None
 
     def test_unable_to_add_subsection_with_new_text(
         self, old_section_8, section_8, test_client
