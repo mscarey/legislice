@@ -382,63 +382,6 @@ class Enactment(BaseModel):
         )
         return EnactmentPassage(enactment=self, selection=selection)
 
-    def select_from_text_positions_without_nesting(
-        self, selections: Union[List[TextPositionSelector], TextPositionSet]
-    ) -> TextPositionSet:
-        r"""
-        Move selectors from `selection` to `self._selection` and return any that can't be used.
-
-        Replaces any preexisting _selection attribute on this Enactment object.
-
-        :param selection:
-            A TextPositionSet of TextPositionSelectors to apply to this Enactment.
-
-        :returns:
-            Any unused selections (beyond the end of the node content)
-        """
-        self_selection: List[TextPositionSelector] = []
-
-        if isinstance(selections, TextPositionSet):
-            selections = selections.selectors
-        selections = deque(selections)
-
-        while (
-            selections
-            and (selections[0].end is not None)
-            and (selections[0].start < len(self.content))
-        ):
-            current = selections.popleft()
-            if current.end < len(self.content):
-                self_selection.append(current)
-            else:
-                self_selection.append(
-                    TextPositionSelector(start=current.start, end=len(self.content))
-                )
-                if current.end > self.padded_length:
-                    selections.appendleft(
-                        TextPositionSelector(start=self.padded_length, end=current.end)
-                    )
-        selection_as_set = TextPositionSet(positions=self_selection)
-        self._selection = selection_as_set.add_margin(text=self.content, margin_width=4)
-        return TextPositionSet(positions=selections)
-
-    def select_without_children(
-        self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
-    ) -> None:
-        """Add new text selection, replacing any prior selection."""
-        if not isinstance(selection, TextPositionSet):
-            selection = self.convert_selection_to_set(selection)
-        unused_selectors = self.select_from_text_positions_without_nesting(selection)
-        self.raise_error_for_extra_selector(unused_selectors)
-
     def make_selection_of_all_text(self) -> TextPositionSet:
         """Return a TextPositionSet of all text in this Enactment."""
         if self.text:
@@ -640,6 +583,7 @@ class EnactmentPassage(BaseModel):
         self.selection = TextPositionSet(
             positions=[TextPositionSelector(start=0, end=len(text))]
         )
+        return None
 
     def limit_selection(
         self,

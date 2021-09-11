@@ -751,6 +751,26 @@ class TestAddEnactments:
             "shall not be violated…"
         )
 
+    def test_limit_selected_text(self, fourth_a):
+        enactment = Enactment(**fourth_a)
+        passage = enactment.select(
+            "The right of the people to be secure in their persons"
+        )
+        passage.select_more("shall not be violated")
+        assert passage.selected_text() == (
+            "The right of the people to be secure in their persons…"
+            "shall not be violated…"
+        )
+        passage.limit_selection(start=40)
+        assert passage.selected_text() == "…their persons…shall not be violated…"
+
+    def test_change_selection_to_all(self, fourth_a):
+        enactment = Enactment(**fourth_a)
+        passage = enactment.select("right of the people")
+        assert passage.selected_text() == ("…right of the people…")
+        passage.select_all()
+        assert passage.selected_text().startswith("The right of the people to")
+
     def test_select_unavailable_text(self, fourth_a):
         fourth = Enactment(**fourth_a)
         with pytest.raises(TextSelectionError):
@@ -949,6 +969,19 @@ class TestAddEnactments:
         new_version = test_client.read_from_json(section_8)
         with pytest.raises(TypeError):
             new_version.select(date(2000, 1, 1))
+
+    def test_passage_start_date_is_latest_amendment(
+        self, old_section_8, section_8, test_client
+    ):
+        old_version = test_client.read_from_json(old_section_8)
+        new_version = test_client.read_from_json(section_8)
+        old_passage = old_version.select(
+            TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
+        )
+        new_passage = new_version.select("remove the beard with electrolysis")
+        assert old_passage.start_date == date(1935, 4, 1)
+        assert old_passage.end_date == date(2013, 7, 18)
+        assert new_passage.start_date == date(2013, 7, 18)
 
     def test_unable_to_add_subsection_with_new_text(
         self, old_section_8, section_8, test_client
