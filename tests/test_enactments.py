@@ -977,17 +977,20 @@ class TestAddEnactments:
         assert memo["content"].startswith("Where an officer")
         assert memo["start_date"] == date(1935, 4, 1)
 
-    def test_passage_start_date_is_latest_amendment(
-        self, old_section_8, section_8, test_client
+    def test_repealed_passage_end_date_is_latest_amendment(
+        self, old_section_8, test_client
     ):
         old_version = test_client.read_from_json(old_section_8)
-        new_version = test_client.read_from_json(section_8)
         old_passage = old_version.select(
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
-        new_passage = new_version.select("remove the beard with electrolysis")
+        old_passage.select_more("obtain a beardcoin from the Department of Beards")
         assert old_passage.start_date() == date(1935, 4, 1)
         assert old_passage.end_date() == date(2013, 7, 18)
+
+    def test_passage_start_date_is_latest_amendment(self, section_8, test_client):
+        new_version = test_client.read_from_json(section_8)
+        new_passage = new_version.select("remove the beard with electrolysis")
         assert new_passage.start_date() == date(2013, 7, 18)
         assert new_passage.end_date() is None
 

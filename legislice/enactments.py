@@ -598,15 +598,22 @@ class EnactmentPassage(BaseModel):
     def start_date(self):
         current = self.enactment.start_date
         ranges = self.enactment.rangedict()
-        for span in ranges:
-            if self.selection.rangeset & span:
-                if ranges[span].start_date > current:
-                    current = ranges[span].start_date
+        for span, memo in ranges.items():
+            if self.selection.rangeset() & span[0]:
+                if memo.start_date > current:
+                    current = memo.start_date
         return current
 
-    @property
     def end_date(self):
-        return self.enactment.end_date
+        current = self.enactment.end_date
+        ranges = self.enactment.rangedict()
+        for span, memo in ranges.items():
+            if self.selection.rangeset() & span[0]:
+                if not current:
+                    current = memo.end_date
+                elif memo.end_date and memo.end_date < current:
+                    current = memo.end_date
+        return current
 
     @property
     def node(self):
@@ -622,7 +629,7 @@ class EnactmentPassage(BaseModel):
 
     def __str__(self):
         text_sequence = self.text_sequence()
-        return f'"{text_sequence}" ({self.enactment.node} {self.start_date})'
+        return f'"{text_sequence}" ({self.enactment.node} {self.start_date()})'
 
     def select_all(self) -> None:
         """Select all text of Enactment."""
