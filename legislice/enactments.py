@@ -472,6 +472,13 @@ class Enactment(BaseModel):
         )
         return new_range_dict
 
+    @property
+    def span_length(self) -> int:
+        """Return the length of the span of this Enactment."""
+        return self.padded_length + sum(
+            child.span_length for child in self.nested_children
+        )
+
     def _tree_selection(
         self, selector_set: TextPositionSet, tree_length: int
     ) -> Tuple[TextPositionSet, int]:
@@ -594,6 +601,21 @@ class EnactmentPassage(BaseModel):
     def level(self) -> str:
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
         return self.enactment.level
+
+    @property
+    def child_passages(self) -> List[EnactmentPassage]:
+        """Return a list of EnactmentPassages for this Enactment's children."""
+        result: List[EnactmentPassage] = []
+        tree_length = self.enactment.padded_length
+        for child in self.enactment.nested_children:
+            selection = self.selection & TextPositionSelector(
+                start=tree_length, end=tree_length + child.span_length
+            )
+            result.append(
+                EnactmentPassage(enactment=child, selection=selection - tree_length)
+            )
+            tree_length += child.span_length
+        return result
 
     def start_date(self):
         current = self.enactment.start_date

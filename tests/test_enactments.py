@@ -2,7 +2,7 @@ from datetime import date
 import os
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.textselectors import TextPositionSet, TextSelectionError
+from anchorpoint.textselectors import TextPositionSet, TextSelectionError, Range
 from dotenv import load_dotenv
 from pydantic import ValidationError
 import pytest
@@ -344,6 +344,30 @@ class TestSelectFromEnactment:
         assert passage.selected_text() == "…hairdressers…"
         fit_passage = section.get_string(TextPositionSelector(start=112, end=127))
         assert fit_passage == "…as they see fit…"
+
+    def test_get_child_passage(self, section_11_subdivided):
+        """
+        Use selector to get passage from child of Enactment.
+        """
+        schema = EnactmentSchema()
+        section = schema.load(section_11_subdivided)
+        passage = section.select(
+            [
+                TextQuoteSelector(
+                    exact="The Department of Beards may issue licenses to"
+                ),
+                TextQuoteSelector(exact="professionals"),
+            ]
+        )
+        assert passage.selected_text().endswith("licenses to…professionals…")
+        assert len(passage.selection.ranges()) == 2
+        assert passage.selection.ranges()[0] == Range(start=0, end=46)
+        assert passage.selection.ranges()[1] == Range(start=98, end=111)
+
+        child_passage = passage.child_passages[2]
+        assert len(child_passage.selection.ranges()) == 1
+        assert child_passage.selected_text() == "…professionals"
+        assert child_passage.selection.ranges()[0] == Range(start=20, end=33)
 
     def test_select_nested_text_with_positions(self, section_11_subdivided):
         phrases = TextPositionSet(
