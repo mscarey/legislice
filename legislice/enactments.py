@@ -328,9 +328,7 @@ class Enactment(BaseModel):
     ) -> TextPositionSet:
         """Create a TextPositionSet from a different selection method."""
         if selection is True:
-            return TextPositionSet(
-                positions=TextPositionSelector(start=0, end=len(self.text))
-            )
+            return self.make_selection_of_all_text()
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
 
@@ -421,13 +419,12 @@ class Enactment(BaseModel):
         """
         if selection is False or selection is None:
             return TextPositionSet()
-        elif selection is True:
-            return self.make_selection_of_all_text()
-        else:
-            if not isinstance(selection, TextPositionSet):
-                selection = self.convert_selection_to_set(selection)
-            self.raise_error_for_extra_selector(selection)
-        return self.limit_selection(selection=selection, start=start, end=end)
+        elif not isinstance(selection, TextPositionSet):
+            selection = self.convert_selection_to_set(selection)
+
+        limited = self.limit_selection(selection=selection, start=start, end=end)
+        self.raise_error_for_extra_selector(limited)
+        return limited
 
     def raise_error_for_extra_selector(self, selection: TextPositionSet) -> None:
         """Raise an error if any passed selectors begin after the end of the text passage."""
