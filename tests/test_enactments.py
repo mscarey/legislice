@@ -115,6 +115,7 @@ class TestLinkedEnactment:
                 start_date=date(2001, 1, 1),
             )
 
+    @pytest.mark.vcr
     def test_csl_cite_for_usc(self, test_client):
         enactment = test_client.read(query="/us/usc", date="2020-01-01")
         assert '"container-title": "U.S. Code"' in enactment.csl_json()
@@ -635,11 +636,11 @@ class TestCompareEnactment:
         assert not passage.means(limited)
         assert combined > limited
 
-    def test_cannot_compare_passage_with_text_version(self, test_client):
-        old_version = test_client.read(query="/test/acts/47/6A", date=date(1999, 1, 1))
-        passage = old_version.select_all()
+    def test_cannot_compare_passage_with_text_version(self, section_8):
+        enactment = Enactment(**section_8)
+        passage = enactment.select_all()
         with pytest.raises(TypeError):
-            passage.means(old_version.text_version)
+            passage.means(enactment.text_version)
 
     @pytest.mark.vcr
     def test_same_phrase_different_provisions_same_meaning(self, test_client):
