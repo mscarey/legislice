@@ -272,6 +272,8 @@ class TestSelectText:
         selection = section.select(section.content)
         assert selection.selected_text() == "Where an exemption is granted…"
         assert "cryptocurrency" not in selection.selected_text()
+        assert str(section) == "/test/acts/47/6C (1935-04-01)"
+        assert str(subsection) == "/test/acts/47/6C/1 (2013-07-18)"
 
     def test_text_sequence_selected_with_bool(self):
         section = Enactment(
@@ -404,7 +406,10 @@ class TestSelectFromEnactment:
 
     def test_select_all_of_empty_enactment(self):
         empty = Enactment(
-            node="/us/usc/t1/s101", heading="No text", start_date=date(1935, 4, 1)
+            node="/us/usc/t1/s101",
+            heading="No text",
+            text_version="",
+            start_date=date(1935, 4, 1),
         )
         passage = empty.select_all()
         assert passage.selected_text() == ""
@@ -1017,7 +1022,13 @@ class TestAddEnactments:
         assert memo.content.startswith("Where an officer")
         assert memo.start_date == date(1935, 4, 1)
 
-    def test_repealed_passage_end_date_is_latest_amendment(
+    def test_passage_start_date_is_latest_amendment(self, section_8, test_client):
+        new_version = test_client.read_from_json(section_8)
+        new_passage = new_version.select("remove the beard with electrolysis")
+        assert new_passage.start_date() == date(2013, 7, 18)
+        assert new_passage.end_date() is None
+
+    def test_repealed_passage_end_date_is_earliest_found(
         self, old_section_8, test_client
     ):
         old_version = test_client.read_from_json(old_section_8)
@@ -1025,14 +1036,11 @@ class TestAddEnactments:
             TextQuoteSelector(prefix="officer of the ", exact="Department of Beards")
         )
         old_passage.select_more("obtain a beardcoin from the Department of Beards")
+        # adding an earlier end date
+        old_passage.enactment.children[1].children[2].end_date = date(2001, 1, 1)
+        old_passage.select_more("within 14 days of such notice")
         assert old_passage.start_date() == date(1935, 4, 1)
-        assert old_passage.end_date() == date(2013, 7, 18)
-
-    def test_passage_start_date_is_latest_amendment(self, section_8, test_client):
-        new_version = test_client.read_from_json(section_8)
-        new_passage = new_version.select("remove the beard with electrolysis")
-        assert new_passage.start_date() == date(2013, 7, 18)
-        assert new_passage.end_date() is None
+        assert old_passage.end_date() == date(2001, 1, 1)
 
     def test_unable_to_add_subsection_with_new_text(
         self, old_section_8, section_8, test_client
