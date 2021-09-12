@@ -392,9 +392,7 @@ class Enactment(BaseModel):
 
     def select_all(self) -> EnactmentPassage:
         """Return a passage for this Enactment, including all subnodes."""
-        selection = TextPositionSet(
-            positions=TextPositionSelector(start=0, end=len(self.text))
-        )
+        selection = self.make_selection_of_all_text()
         return EnactmentPassage(enactment=self, selection=selection)
 
     def make_selection_of_all_text(self) -> TextPositionSet:
@@ -570,7 +568,7 @@ class EnactmentPassage(BaseModel):
     @property
     def sovereign(self):
         """Get "sovereign" part of node identifier."""
-        return self.get_identifier_part(1)
+        return self.enactment.sovereign
 
     @property
     def jurisdiction(self):

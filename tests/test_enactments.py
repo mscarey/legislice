@@ -140,6 +140,15 @@ class TestEnactmentDetails:
         assert enactment.node in str(new)
         assert "1791-12-15" in str(new)
 
+    def test_node_parts(self, section_11_subdivided):
+        enactment = Enactment(**section_11_subdivided)
+        passage = enactment.select_all()
+        assert passage.section == "11"
+        assert passage.title == "47"
+        assert passage.code == "acts"
+        assert passage.jurisdiction == "test"
+        assert passage.sovereign == "test"
+
     def test_csl_json_fields(self, test_client, section_11_subdivided):
         section = test_client.read_from_json(section_11_subdivided)
         cite_json = section.csl_json()
@@ -392,6 +401,13 @@ class TestSelectFromEnactment:
         )
         passage = result.select(selector)
         assert passage.selected_text().endswith("or things…")
+
+    def test_select_all_of_empty_enactment(self):
+        empty = Enactment(
+            node="/us/usc/t1/s101", heading="No text", start_date=date(1935, 4, 1)
+        )
+        passage = empty.select_all()
+        assert passage.selected_text() == ""
 
     def test_select_none(self, section_11_subdivided):
         schema = EnactmentSchema()
