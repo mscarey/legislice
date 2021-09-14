@@ -8,7 +8,7 @@ objects or API responses, but they allow more abbreviations and omissions.
 from typing import Dict, Type, Union
 
 from anchorpoint.schemas import SelectorSchema
-from marshmallow import fields, post_load, pre_load, EXCLUDE
+from marshmallow import fields, post_load, pre_load, EXCLUDE, Schema
 
 from legislice.enactments import (
     Enactment,
@@ -114,7 +114,7 @@ class ExpandableEnactmentSchema(ExpandableLinkedEnactmentSchema):
         ordered = True
 
 
-class EnactmentPassageSchema(EnactmentSchema):
+class ExpandablePassageSchema(Schema):
     """Schema for passages from legislation."""
 
     __model__ = EnactmentPassage
