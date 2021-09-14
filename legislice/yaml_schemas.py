@@ -7,7 +7,7 @@ objects or API responses, but they allow more abbreviations and omissions.
 
 from typing import Dict, Type, Union
 
-from anchorpoint.schemas import SelectorSchema
+from anchorpoint.schemas import TextPositionSetSchema
 from marshmallow import fields, post_load, pre_load, EXCLUDE, Schema
 
 from legislice.enactments import (
@@ -18,7 +18,6 @@ from legislice.enactments import (
 
 from legislice.schemas import (
     CrossReferenceSchema,
-    TextPositionSetSchema,
     TextVersionSchema,
     LinkedEnactmentSchema,
     EnactmentSchema,
@@ -52,26 +51,6 @@ class ExpandableLinkedEnactmentSchema(LinkedEnactmentSchema):
             data[many_element] = [data[many_element]]
         return data
 
-    def move_selector_fields(self, data: RawEnactment, **kwargs):
-        """
-        Nest fields used for :class:`SelectorSchema` model.
-
-        If the fields are already nested, they need not to be moved.
-
-        The fields can only be moved into a "selector" field with a dict
-        value, not a "selectors" field with a list value.
-        """
-
-        selector_field_names = ["text", "exact", "prefix", "suffix", "start", "end"]
-        new_selector = {}
-        for name in selector_field_names:
-            if data.get(name):
-                new_selector[name] = data[name]
-                del data[name]
-        if new_selector:
-            data["selection"].append(new_selector)
-        return data
-
     def nest_content_in_textversion(self, data):
         """Correct user-generated data omitting a layer of nesting."""
         if data.get("content"):
@@ -86,7 +65,6 @@ class ExpandableLinkedEnactmentSchema(LinkedEnactmentSchema):
         """Prepare Enactment to load."""
         data = self.nest_content_in_textversion(data)
         data = self.wrap_single_element_in_list(data, "selection")
-        data = self.move_selector_fields(data)
         data = self.wrap_single_element_in_list(data, "anchors")
         data = self.is_revision_date_known(data)
         return data

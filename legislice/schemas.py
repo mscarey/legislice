@@ -3,7 +3,7 @@
 import datetime
 from typing import Dict, Type, Union
 
-from anchorpoint.schemas import SelectorSchema
+from anchorpoint.schemas import QuoteSchema, PositionSchema, TextPositionSetSchema
 from anchorpoint.textselectors import TextPositionSet
 from marshmallow import Schema, fields, post_load, pre_load, EXCLUDE
 
@@ -201,13 +201,6 @@ class EnactmentSchema(LinkedEnactmentSchema):
         """Prepare Enactment to load."""
         data = self.is_revision_date_known(data)
         return data
-
-
-class TextPositionSetSchema(Schema):
-    """Schema for a set of positions in a text."""
-
-    __model__ = TextPositionSet
-    selectors = fields.Nested(SelectorSchema, many=True)
 
 
 class EnactmentPassageSchema(Schema):
