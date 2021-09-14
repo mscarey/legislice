@@ -1,5 +1,7 @@
 from copy import deepcopy
 import json
+
+
 from legislice.enactments import Enactment, EnactmentPassage
 
 import os
