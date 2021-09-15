@@ -118,6 +118,15 @@ class TextVersionSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
+    @pre_load
+    def format_data_to_load(
+        self, data: Union[str, Dict[str, str]], **kwargs
+    ) -> Dict[str, str]:
+        """Get content field from nested "text_version" model."""
+        if isinstance(data, str):
+            data = {"content": data}
+        return data
+
     @post_load
     def make_object(self, data, **kwargs):
         r"""Load data as a :class:`~legislice.enactments.TextVersion`\."""

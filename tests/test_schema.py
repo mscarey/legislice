@@ -22,13 +22,13 @@ from legislice.schemas import (
     EnactmentSchema,
     InboundReferenceSchema,
     LinkedEnactmentSchema,
-    EnactmentPassageSchema,
     CitingProvisionLocationSchema,
     enactment_needs_api_update,
 )
 
 from legislice.yaml_schemas import (
     ExpandableEnactmentSchema,
+    ExpandableLinkedEnactmentSchema,
     get_schema_for_node,
 )
 
@@ -196,24 +196,24 @@ class TestLoadEnactment:
 
 class TestLoadLinkedEnactment:
     client = Client(api_token=TOKEN)
+    data = {
+        "type": "Enactment",
+        "children": [
+            "https://authorityspoke.com/api/v1/us/const/",
+            "https://authorityspoke.com/api/v1/us/usc/",
+        ],
+        "content": "",
+        "end_date": None,
+        "heading": "United States Legislation",
+        "node": "/us",
+        "parent": None,
+        "start_date": "1776-07-04",
+        "url": "https://authorityspoke.com/api/v1/us/const/",
+    }
 
     def test_load_linked_enactment(self):
         schema = LinkedEnactmentSchema()
-        data = {
-            "type": "Enactment",
-            "children": [
-                "https://authorityspoke.com/api/v1/us/const/",
-                "https://authorityspoke.com/api/v1/us/usc/",
-            ],
-            "content": "",
-            "end_date": None,
-            "heading": "United States Legislation",
-            "node": "/us",
-            "parent": None,
-            "start_date": "1776-07-04",
-            "url": "https://authorityspoke.com/api/v1/us/const/",
-        }
-        result = schema.load(data)
+        result = schema.load(self.data)
         assert result.children[0] == "https://authorityspoke.com/api/v1/us/const/"
 
     @pytest.mark.vcr
@@ -226,6 +226,17 @@ class TestLoadLinkedEnactment:
         dumped = passage.dict()
         loaded = EnactmentPassage(**dumped)
         assert loaded.selected_text() == "…for documentation."
+
+    @pytest.mark.vcr(
+        "TestLoadLinkedEnactment.test_text_sequence_for_linked_enactment.yaml"
+    )
+    def test_text_version_as_string(self, test_client):
+        schema = ExpandableLinkedEnactmentSchema()
+        data = self.data
+        data["text_version"] = "My favorite text"
+        data.pop("content")
+        result = schema.load(data)
+        assert result.text_version.content == "My favorite text"
 
 
 class TestDumpEnactment:
