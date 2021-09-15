@@ -555,7 +555,9 @@ class EnactmentPassage(BaseModel):
     """An Enactment with selectors indicating which text is being referenced."""
 
     enactment: Enactment
-    selection: TextPositionSet
+    selection: TextPositionSet = TextPositionSet(
+        positions=TextPositionSelector(start=0, end=None)
+    )
 
     @property
     def text(self):

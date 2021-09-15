@@ -6,12 +6,10 @@ from legislice.enactments import Enactment, EnactmentPassage
 
 import os
 
-from anchorpoint.textselectors import (
-    TextPositionSelector,
-    TextQuoteSelector,
-    TextSelectionError,
-)
+from anchorpoint.textselectors import TextQuoteSelector
+
 from dotenv import load_dotenv
+from marshmallow import ValidationError
 import pytest
 
 from legislice.enactments import AnchoredEnactmentPassage
@@ -24,6 +22,7 @@ from legislice.schemas import (
     LinkedEnactmentSchema,
     CitingProvisionLocationSchema,
     enactment_needs_api_update,
+    TextVersionSchema,
 )
 
 from legislice.yaml_schemas import (
@@ -202,7 +201,7 @@ class TestLoadLinkedEnactment:
             "https://authorityspoke.com/api/v1/us/const/",
             "https://authorityspoke.com/api/v1/us/usc/",
         ],
-        "content": "",
+        "text_version": None,
         "end_date": None,
         "heading": "United States Legislation",
         "node": "/us",
@@ -227,6 +226,12 @@ class TestLoadLinkedEnactment:
         loaded = EnactmentPassage(**dumped)
         assert loaded.selected_text() == "…for documentation."
 
+    def test_load_enactment_passage_without_selection(self, test_client):
+        data = {"enactment": self.data}
+        data["enactment"]["text_version"] = "Best text"
+        loaded = EnactmentPassage(**data)
+        assert loaded.selected_text() == "Best text"
+
     @pytest.mark.vcr(
         "TestLoadLinkedEnactment.test_text_sequence_for_linked_enactment.yaml"
     )
@@ -234,7 +239,6 @@ class TestLoadLinkedEnactment:
         schema = ExpandableLinkedEnactmentSchema()
         data = self.data
         data["text_version"] = "My favorite text"
-        data.pop("content")
         result = schema.load(data)
         assert result.text_version.content == "My favorite text"
 
@@ -323,3 +327,10 @@ class TestLoadInboundReferences:
         loaded = schema.load(data)
         assert loaded.target_uri == "/us/usc/t17/s501"
         assert loaded.reference_text == "section 501 of this title"
+
+
+class TestTextVersion:
+    def test_cannot_pass_empty_string_to_schema(self):
+        schema = TextVersionSchema()
+        with pytest.raises(ValidationError):
+            schema.load("")

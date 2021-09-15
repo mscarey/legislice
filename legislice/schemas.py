@@ -123,7 +123,7 @@ class TextVersionSchema(Schema):
         self, data: Union[str, Dict[str, str]], **kwargs
     ) -> Dict[str, str]:
         """Get content field from nested "text_version" model."""
-        if isinstance(data, str):
+        if data and isinstance(data, str):
             data = {"content": data}
         return data
 

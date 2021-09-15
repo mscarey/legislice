@@ -2,9 +2,10 @@ Changelog
 =========
 dev
 ------------------
+- add EnactmentPassage class
 - select_from_text_positions_without_nesting doesn't accept RangeSet
 - Enactment.limit_selection.start must be an int
-- No separate LinkedEnactment class for Enactments with URL links as children
+- no separate LinkedEnactment class for Enactments with URL links as children
 
 0.5.2 (2021-05-20)
 ------------------
