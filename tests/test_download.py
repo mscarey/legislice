@@ -11,6 +11,7 @@ from legislice.download import (
     Client,
     LegislicePathError,
     LegisliceTokenError,
+    enactment_needs_api_update,
 )
 from legislice.enactments import InboundReference
 
@@ -348,3 +349,15 @@ class TestInboundCitations:
         )
         enactment = test_client.read(location)
         assert enactment.content.startswith("Any person who distributes")
+
+    def test_node_field_needed_to_update_enactment(self):
+        barbers_without_node = {
+            "heading": "",
+            "content": "barbers,",
+            "children": [],
+            "end_date": None,
+            "start_date": "2013-07-18",
+            "url": "https://authorityspoke.com/api/v1/test/acts/47/11/i@2020-01-01",
+        }
+        with pytest.raises(ValueError):
+            _ = enactment_needs_api_update(barbers_without_node)

@@ -17,9 +17,6 @@ from legislice.enactments import (
     TextVersion,
     consolidate_enactments,
 )
-from legislice.schemas import EnactmentSchema, EnactmentPassageSchema
-from legislice.yaml_schemas import ExpandableEnactmentSchema
-
 
 load_dotenv()
 
@@ -335,8 +332,7 @@ class TestSelectText:
 
 class TestSelectFromEnactment:
     def test_text_of_enactment_subset(self, section_11_together):
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_together)
+        combined = Enactment(**section_11_together)
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
         )
@@ -350,8 +346,7 @@ class TestSelectFromEnactment:
 
         Checks that `.selected_text()` is the same before and after `.get_passage()`.
         """
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         passage = section.select(TextPositionSelector(start=61, end=73))
         assert passage.selected_text() == "…hairdressers…"
         fit_passage = section.get_string(TextPositionSelector(start=112, end=127))
@@ -361,8 +356,7 @@ class TestSelectFromEnactment:
         """
         Use selector to get passage from child of Enactment.
         """
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         passage = section.select(
             [
                 TextQuoteSelector(
@@ -416,14 +410,12 @@ class TestSelectFromEnactment:
         assert passage.selected_text() == ""
 
     def test_select_none(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_subdivided)
+        combined = Enactment(**section_11_subdivided)
         passage = combined.select(False)
         assert passage.selected_text() == ""
 
     def test_select_none_with_None(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_subdivided)
+        combined = Enactment(**section_11_subdivided)
         passage = combined.select(None)
         assert passage.selected_text() == ""
 
@@ -441,14 +433,12 @@ class TestSelectFromEnactment:
 
     def test_select_all_nested(self, section_11_subdivided):
         """Clear selected text, and then select one subsection."""
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_subdivided)
-        passage = combined.select()
+        section = Enactment(**section_11_subdivided)
+        passage = section.select()
         assert passage.selected_text().startswith("The Department of Beards")
 
     def test_error_for_unusable_selector(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         selection = TextPositionSet(
             positions=[
                 TextPositionSelector(start=0, end=10),
@@ -460,8 +450,7 @@ class TestSelectFromEnactment:
 
     @pytest.mark.vcr
     def test_get_positions_from_quotes(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         quotes = [
             TextQuoteSelector(
                 exact="The Department of Beards may issue licenses to such"
@@ -492,8 +481,7 @@ class TestSelectFromEnactment:
         assert selected_list[2] is None
 
     def test_select_with_position_selector(self, section_11_together):
-        schema = EnactmentSchema()
-        section = schema.load(section_11_together)
+        section = Enactment(**section_11_together)
         passage = section.select(TextPositionSelector(start=29, end=43))
         assert passage.selected_text() == "…issue licenses…"
 
@@ -505,9 +493,8 @@ class TestSelectFromEnactment:
             enactment.select(selector)
 
     def test_select_text_with_string(self, fourth_a):
-        schema = EnactmentSchema()
-        fourth_a = schema.load(fourth_a)
-        passage = fourth_a.select("The right of the people")
+        section = Enactment(**fourth_a)
+        passage = section.select("The right of the people")
         assert passage.selected_text() == "The right of the people…"
 
     def test_select_method_clears_previous_selection(self, test_client, section_8):
@@ -626,8 +613,7 @@ class TestCompareEnactment:
 
     @pytest.mark.vcr
     def test_enactment_subset(self, section_11_together):
-        schema = EnactmentSchema()
-        combined = schema.load(section_11_together)
+        combined = Enactment(**section_11_together)
         passage = combined.select_all()
         selector = TextQuoteSelector(
             exact="barbers, hairdressers, or other male grooming professionals"
@@ -690,23 +676,20 @@ class TestCompareEnactment:
         assert left >= right
 
     def test_fail_to_check_enactment_implies_textsequence(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        subdivided = schema.load(section_11_subdivided)
+        subdivided = Enactment(**section_11_subdivided)
         text = subdivided.text_sequence()
         with pytest.raises(TypeError):
             _ = subdivided >= text
 
     def test_fail_to_check_if_enactment_means_textpassage(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        subdivided = schema.load(section_11_subdivided)
+        subdivided = Enactment(**section_11_subdivided)
         subdivided.select_all()
         text = subdivided.text_sequence()
         with pytest.raises(TypeError):
             _ = subdivided.means(text.passages[0])
 
     def test_fail_to_check_if_textpassage_means_enactment(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        subdivided = schema.load(section_11_subdivided)
+        subdivided = Enactment(**section_11_subdivided)
         subdivided.select_all()
         text = subdivided.text_sequence()
         with pytest.raises(TypeError):
@@ -1056,8 +1039,7 @@ class TestAddEnactments:
             old_passage + new_passage
 
     def test_add_string_as_selector(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         passage = section.select("The Department of Beards may issue licenses to such")
         more = passage + "hairdressers"
         assert (
@@ -1078,8 +1060,7 @@ class TestAddEnactments:
         assert passage.selected_text() == "…Australian Defence Force…"
 
     def test_cannot_select_text_with_citation(self, section_11_subdivided):
-        schema = EnactmentSchema()
-        section = schema.load(section_11_subdivided)
+        section = Enactment(**section_11_subdivided)
         cite = section.as_citation()
         with pytest.raises(ValidationError):
             section.select(cite)
@@ -1133,10 +1114,9 @@ class TestConsolidateEnactments:
         )
 
     def test_do_not_consolidate_from_different_sections(self, fifth_a, fourteenth_dp):
-        schema = EnactmentSchema()
 
-        due_process_5 = schema.load(fifth_a)
-        due_process_14 = schema.load(fourteenth_dp)
+        due_process_5 = Enactment(**fifth_a)
+        due_process_14 = Enactment(**fourteenth_dp)
 
         passage = "life, liberty, or property, without due process of law"
         quote_5 = due_process_5.select(passage)

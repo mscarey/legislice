@@ -94,6 +94,20 @@ class InboundReference(BaseModel):
         """Get most recent location where the citing text has been enacted."""
         return max(self.locations)
 
+    @root_validator(pre=True)
+    def search_citations_for_reference_text(
+        cls, values: Dict[str, Union[Dict[str, str], str]]
+    ) -> Dict:
+        """Get reference_text field from nested "citations" model."""
+        if not values.get("reference_text"):
+            reference_text = ""
+            for citation in values["citations"]:
+                if citation["target_uri"] == values["target_uri"]:
+                    reference_text = citation["reference_text"]
+            values["reference_text"] = reference_text
+
+        return values
+
 
 class TextVersion(BaseModel):
     """Version of legislative text, enacted at one or more times and locations."""

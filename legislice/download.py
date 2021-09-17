@@ -13,13 +13,23 @@ from legislice.enactments import (
     InboundReference,
 )
 
-from legislice.schemas import (
-    InboundReferenceSchema,
-    enactment_needs_api_update,
-)
-from legislice.yaml_schemas import get_schema_for_node
 
 RawEnactment = Dict[str, Any]
+
+
+def enactment_needs_api_update(data: RawEnactment) -> bool:
+    """Determine if JSON representation of Enactment needs to be supplemented from API."""
+    if not data.get("node"):
+        raise ValueError(
+            '"data" must contain a "node" field '
+            "with a citation path to a legislative provision, "
+            'for example "/us/const/amendment/IV"'
+        )
+    if data.get("heading") is None or data.get("start_date") is None:
+        return True
+    if data.get("content") is None and data.get("text_version") is None:
+        return False
+    return False
 
 
 class LegislicePathError(Exception):
@@ -255,8 +265,7 @@ class Client:
         json_citations = self.fetch_citations_to(target_uri)
         for entry in json_citations:
             entry["target_uri"] = target_uri
-        schema = InboundReferenceSchema(many=True)
-        return schema.load(json_citations)
+        return [InboundReference(**data) for data in json_citations]
 
     def update_data_from_api_if_needed(self, data: RawEnactment) -> RawEnactment:
         """

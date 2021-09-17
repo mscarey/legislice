@@ -5,9 +5,8 @@ from enum import IntEnum
 import json
 from typing import Dict, List, Optional, Tuple, Union
 
-from marshmallow import Schema, fields
 from pydantic.class_validators import validator, root_validator
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CodeLevel(IntEnum):
@@ -18,18 +17,18 @@ class CodeLevel(IntEnum):
 
 
 # Path parts known to indicate the level of law they refer to.
-KNOWN_CODES = {
-    "test": {"acts": ["Test Acts", CodeLevel.STATUTE]},
+KNOWN_CODES: Dict[str, Dict[str, Tuple[str, CodeLevel]]] = {
+    "test": {"acts": ("Test Acts", CodeLevel.STATUTE)},
     "us": {
-        "const": ["U.S. Const.", CodeLevel.CONSTITUTION],
-        "usc": ["U.S. Code", CodeLevel.STATUTE],
-        "cfr": ["CFR", CodeLevel.REGULATION],
+        "const": ("U.S. Const.", CodeLevel.CONSTITUTION),
+        "usc": ("U.S. Code", CodeLevel.STATUTE),
+        "cfr": ("CFR", CodeLevel.REGULATION),
     },
     "us-ca": {
-        "const": ["Cal. Const.", CodeLevel.CONSTITUTION],
-        "code": ["Cal. Codes", CodeLevel.STATUTE],
-        "ccr": ["Cal. Code Regs.", CodeLevel.REGULATION],
-        "roc": ["Cal. Rules of Court", CodeLevel.COURT_RULE],
+        "const": ("Cal. Const.", CodeLevel.CONSTITUTION),
+        "code": ("Cal. Codes", CodeLevel.STATUTE),
+        "ccr": ("Cal. Code Regs.", CodeLevel.REGULATION),
+        "roc": ("Cal. Rules of Court", CodeLevel.COURT_RULE),
     },
 }
 
@@ -49,38 +48,6 @@ def identify_code(jurisdiction: str, code: str) -> Tuple[str, str]:
     return code_name, code_level
 
 
-class CitationSchema(Schema):
-    """Schema for legislative citations."""
-
-    document_type = fields.Str(data_key="type", default="legislation", dump_only=True)
-    jurisdiction = fields.Str(required=True)
-    code = fields.Str(data_key="container-title", required=False)
-    volume = fields.Str(required=False)
-    section = fields.Str(required=False)
-    revision_date = fields.Date(default=None, load_only=True)
-    event_date = fields.Method(
-        data_key="event-date", serialize="dump_event_date", dump_only=True
-    )
-
-    class Meta:
-        ordered = True
-
-    def dump_event_date(self, obj) -> Optional[Dict[str, List[List[Union[str, int]]]]]:
-        """Serialize date as three numbers in "date-parts" field."""
-        if not obj.revision_date:
-            return None
-
-        return {
-            "date-parts": [
-                [
-                    str(obj.revision_date.year),
-                    obj.revision_date.month,
-                    obj.revision_date.day,
-                ]
-            ]
-        }
-
-
 class Citation(BaseModel):
     r"""
     A citation style for referring to an :class:`~legislice.enactments.Enactment` in written text.
@@ -95,6 +62,7 @@ class Citation(BaseModel):
     volume: Optional[str] = None
     section: Optional[str] = None
     revision_date: Optional[date] = None
+    type: str = Field("legislation", const=True)
 
     @root_validator(pre=True)
     def validate_code(cls, obj):
@@ -116,6 +84,19 @@ class Citation(BaseModel):
             value = "sec. " + value.lstrip("s")
         return value
 
+    @staticmethod
+    def csl_date_format(revision_date: date) -> Dict[str, List[List[Union[str, int]]]]:
+        """Convert event date to Citation Style Language format."""
+        return {
+            "date-parts": [
+                [
+                    str(revision_date.year),
+                    revision_date.month,
+                    revision_date.day,
+                ]
+            ]
+        }
+
     def __str__(self):
         name = f"{self.volume} {self.code} {self.section}"
         if self.revision_date:
@@ -124,8 +105,13 @@ class Citation(BaseModel):
 
     def csl_dict(self) -> Dict[str, Union[str, int, List[List[Union[str, int]]]]]:
         """Return citation as a Citation Style Language object."""
-        schema = CitationSchema()
-        return schema.dump(self)
+        result = self.dict()
+        result["container-title"] = result.pop("code", None)
+        event_date = result.pop("revision_date", None)
+        if event_date:
+            result["event-date"] = self.csl_date_format(event_date)
+
+        return result
 
     def csl_json(self) -> str:
         """Return citation as Citation Style Language JSON."""

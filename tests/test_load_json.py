@@ -3,8 +3,6 @@ from datetime import date
 from anchorpoint import TextQuoteSelector
 import pytest
 from legislice.download import Client
-from legislice.enactments import EnactmentPassage
-from legislice.schemas import EnactmentPassageSchema
 
 
 class TestUpdateEnactments:
