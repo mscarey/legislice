@@ -1,6 +1,7 @@
 from copy import deepcopy
 from datetime import date
 
+from pydantic import ValidationError
 import pytest
 
 from legislice.enactments import Enactment
@@ -37,7 +38,7 @@ class TestEnactmentGroups:
     def test_wrong_type_in_group(self, section6d, test_client):
         section = test_client.read_from_json(section6d)
         cite = section.as_citation()
-        with pytest.raises(TypeError):
+        with pytest.raises(ValidationError):
             EnactmentGroup(passages=[cite])
 
 
