@@ -1,9 +1,3 @@
-from copy import deepcopy
-import json
-
-
-from legislice.enactments import Enactment, EnactmentPassage
-
 import os
 
 from anchorpoint.textselectors import TextQuoteSelector
@@ -12,7 +6,7 @@ from dotenv import load_dotenv
 from marshmallow import ValidationError
 import pytest
 
-from legislice.enactments import AnchoredEnactmentPassage
+from legislice.enactments import Enactment, EnactmentPassage, AnchoredEnactmentPassage
 from legislice.download import Client
 
 from legislice.schemas import (
@@ -23,6 +17,7 @@ from legislice.schemas import (
     CitingProvisionLocationSchema,
     enactment_needs_api_update,
     TextVersionSchema,
+    AnchoredEnactmentPassageSchema,
 )
 
 from legislice.yaml_schemas import (
@@ -276,6 +271,22 @@ class TestDumpEnactment:
         passage = s103.select_all()
         as_json = passage.json()
         assert '"positions": [{"start": 0' in as_json
+
+    def test_anchored_enactment(self, section_11_subdivided):
+        """Test selector that extends into the text of a subnode."""
+        exact = "The Department of Beards may issue licenses to such barbers"
+        passage = {
+            "enactment": section_11_subdivided,
+            "selection": {"quotes": {"exact": exact}},
+        }
+        data = {
+            "passage": passage,
+            "anchors": {"quotes": "some text to link the passage to"},
+        }
+        schema = AnchoredEnactmentPassageSchema()
+        passage = schema.load(data)
+
+        assert passage.anchors.quotes[0].exact == "some text to link the passage to"
 
 
 class TestLoadInboundReferences:

@@ -235,17 +235,8 @@ class AnchoredEnactmentPassageSchema(Schema):
 
     __model__ = AnchoredEnactmentPassage
     passage = fields.Nested(EnactmentPassageSchema)
-    anchors = fields.Method(
-        "get_anchors", deserialize="load_anchors", required=False, missing=None
-    )
+    anchors = fields.Nested(TextPositionSetSchema, required=False)
 
-    def get_anchors(self, obj: Enactment):
-        if not obj.anchors:
-            return None
-        if isinstance(obj.anchors, TextPositionSet):
-            return obj.anchors.dict()["selectors"]
-        return [anchor.dict() for anchor in obj.anchors]
-
-    def load_anchors(self, value):
-        schema = SelectorSchema(many=True)
-        return schema.load(value)
+    @post_load
+    def make_object(self, data, **kwargs):
+        return self.__model__(**data)
