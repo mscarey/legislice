@@ -6,64 +6,80 @@ import textwrap
 from typing import List, Optional, Sequence, Tuple, Union
 
 from legislice.enactments import Enactment, EnactmentPassage, consolidate_enactments
+from pydantic import BaseModel, validator
 
 
-class EnactmentGroup:
+def sort_passages(passages: List[EnactmentPassage]) -> List[EnactmentPassage]:
+    """
+    Sort EnactmentPassages in group, in place.
+
+    Sorts federal before state; constitutional before statute before regulation;
+    and then alphabetically
+    """
+    passages.sort(key=lambda x: x.node)
+    passages.sort(key=lambda x: x.level)
+    passages.sort(key=lambda x: x.is_federal, reverse=True)
+    return passages
+
+
+class EnactmentGroup(BaseModel):
     """Group of Enactments with comparison methods."""
 
-    def __init__(
-        self,
-        enactments: Optional[
-            Union[EnactmentGroup, Sequence[Enactment], Enactment]
-        ] = None,
-    ):
-        """Normalize ``factors`` as sequence attribute."""
-        if isinstance(enactments, EnactmentGroup):
-            self.sequence: List[Enactment] = enactments.sequence
-        elif isinstance(enactments, Sequence):
-            self.sequence = list(enactments)
-        elif enactments is None:
-            self.sequence = []
-        else:
-            self.sequence = [enactments]
-        for enactment in self.sequence:
-            if not isinstance(enactment, (Enactment, EnactmentPassage)):
-                raise TypeError(
-                    f'Object "{enactment} could not be included in '
-                    f"{self.__class__.__name__} because it is "
-                    f"type {enactment.__class__.__name__}, not type Enactment"
-                )
-        self.sequence = consolidate_enactments(self.sequence)
-        self.sort_members()
+    passages: List[EnactmentPassage] = []
 
-    def _at_index(self, key: int) -> Enactment:
-        return self.sequence[key]
+    @validator("passages", pre=True)
+    def consolidate_passages(
+        cls,
+        obj: Union[
+            EnactmentGroup,
+            Enactment,
+            EnactmentPassage,
+            List[Union[Enactment, EnactmentPassage]],
+        ],
+    ) -> List[EnactmentPassage]:
+        if isinstance(obj, EnactmentGroup):
+            return obj.passages
+        if not isinstance(obj, List):
+            obj = [obj]
+        consolidated: List[EnactmentPassage] = consolidate_enactments(obj)
+        return consolidated
 
-    def __getitem__(self, key: Union[int, slice]) -> Union[Enactment, EnactmentGroup]:
+    @validator("passages")
+    def sort_passages(cls, obj: List[EnactmentPassage]) -> List[EnactmentPassage]:
+        return sort_passages(obj)
+
+    def _at_index(self, key: int) -> EnactmentPassage:
+        return self.passages[key]
+
+    def __getitem__(
+        self, key: Union[int, slice]
+    ) -> Union[EnactmentPassage, EnactmentGroup]:
         if isinstance(key, slice):
             start, stop, step = key.indices(len(self))
-            return self.__class__([self._at_index(i) for i in range(start, stop, step)])
+            return self.__class__(
+                passages=[self._at_index(i) for i in range(start, stop, step)]
+            )
         return self._at_index(key)
 
     def __iter__(self):
-        yield from self.sequence
+        yield from self.passages
 
     def __len__(self):
-        return len(self.sequence)
+        return len(self.passages)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({repr(list(self.sequence))})"
+        return f"{self.__class__.__name__}({repr(list(self.passages))})"
 
     def __str__(self):
         result = "the group of Enactments:"
         indent = "  "
-        for factor in self.sequence:
+        for factor in self.passages:
             result += f"\n{textwrap.indent(str(factor), prefix=indent)}"
         return result
 
     def _add_group(self, other: EnactmentGroup) -> EnactmentGroup:
-        combined = self.sequence[:] + other.sequence[:]
-        return self.__class__(combined)
+        combined = self.passages[:] + other.passages[:]
+        return self.__class__(passages=combined)
 
     def __add__(
         self, other: Union[EnactmentGroup, Sequence[Enactment], Enactment]
@@ -71,14 +87,14 @@ class EnactmentGroup:
         """Combine two EnactmentGroups, consolidating any duplicate Enactments."""
         if isinstance(other, self.__class__):
             return self._add_group(other)
-        to_add = self.__class__(other)
+        to_add = self.__class__(passages=other)
         return self._add_group(to_add)
 
-    def __ge__(self, other: Union[Enactment, EnactmentGroup]) -> bool:
+    def __ge__(self, other: Union[Enactment, EnactmentPassage, EnactmentGroup]) -> bool:
         """Test whether ``self`` implies ``other`` and ``self`` != ``other``."""
         return bool(self.implies(other))
 
-    def __gt__(self, other: Union[Enactment, EnactmentGroup]) -> bool:
+    def __gt__(self, other: Union[Enactment, EnactmentPassage, EnactmentGroup]) -> bool:
         """Test whether ``self`` implies ``other`` and ``self`` != ``other``."""
         return bool(self.implies(other))
 
@@ -88,19 +104,10 @@ class EnactmentGroup:
     def _implies(self, other: EnactmentGroup) -> bool:
         return all(self._implies_enactment(other_law) for other_law in other)
 
-    def implies(self, other: Union[Enactment, EnactmentGroup]) -> bool:
+    def implies(
+        self, other: Union[Enactment, EnactmentPassage, EnactmentGroup]
+    ) -> bool:
         """Determine whether self includes all the text of another Enactment or EnactmentGroup."""
         if isinstance(other, (Enactment, EnactmentPassage)):
             return self._implies_enactment(other)
         return self._implies(other)
-
-    def sort_members(self) -> None:
-        """
-        Sort Enactments in group, in place.
-
-        Sorts federal before state; constitutional before statute before regulation;
-        and then alphabetically
-        """
-        self.sequence.sort(key=lambda x: x.node)
-        self.sequence.sort(key=lambda x: x.level)
-        self.sequence.sort(key=lambda x: x.is_federal, reverse=True)

@@ -900,7 +900,7 @@ class AnchoredEnactmentPassage(BaseModel):
 
 def consolidate_enactments(
     enactments: Sequence[Union[Enactment, EnactmentPassage]]
-) -> List[Enactment]:
+) -> List[EnactmentPassage]:
     r"""
     Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.
 

@@ -9,9 +9,9 @@ from legislice.groups import EnactmentGroup
 
 class TestEnactmentGroups:
     def test_make_group(self, copyright_clause, copyright_statute):
-        group = EnactmentGroup([copyright_clause, copyright_statute])
+        group = EnactmentGroup(passages=[copyright_clause, copyright_statute])
         assert len(group) == 2
-        assert isinstance(EnactmentGroup(group), EnactmentGroup)
+        assert isinstance(EnactmentGroup(passages=group), EnactmentGroup)
 
     def test_consolidate_adjacent_passages(self, copyright_clause, copyright_statute):
 
@@ -22,8 +22,8 @@ class TestEnactmentGroups:
         )
         and_inventors = passage + "and Inventors"
         right_to_writings = passage + "the exclusive Right to their respective Writings"
-        left = EnactmentGroup([and_inventors, copyright_statute])
-        right = EnactmentGroup([securing_for_authors, right_to_writings])
+        left = EnactmentGroup(passages=[and_inventors, copyright_statute])
+        right = EnactmentGroup(passages=[securing_for_authors, right_to_writings])
 
         combined = left + right
         assert len(combined) == 2
@@ -38,7 +38,7 @@ class TestEnactmentGroups:
         section = test_client.read_from_json(section6d)
         cite = section.as_citation()
         with pytest.raises(TypeError):
-            EnactmentGroup([cite])
+            EnactmentGroup(passages=[cite])
 
 
 class TestImplies:
@@ -50,8 +50,10 @@ class TestImplies:
             "useful Arts, by securing for limited Times to Authors"
         )
         and_inventors = passage + "and Inventors"
-        left = EnactmentGroup(copyright_clause)
-        right = EnactmentGroup([securing_for_authors, and_inventors, copyright_statute])
+        left = EnactmentGroup(passages=copyright_clause)
+        right = EnactmentGroup(
+            passages=[securing_for_authors, and_inventors, copyright_statute]
+        )
         assert not left.implies(right)
 
     def test_implication_of_group(self, copyright_clause, copyright_statute):
@@ -62,8 +64,8 @@ class TestImplies:
             "useful Arts, by securing for limited Times to Authors"
         )
         and_inventors = passage + "and Inventors"
-        left = EnactmentGroup([copyright_clause, copyright_statute])
-        right = EnactmentGroup([securing_for_authors, and_inventors])
+        left = EnactmentGroup(passages=[copyright_clause, copyright_statute])
+        right = EnactmentGroup(passages=[securing_for_authors, and_inventors])
         assert left.implies(right)
         assert left >= right
 
@@ -74,7 +76,7 @@ class TestImplies:
             "To promote the Progress of Science and "
             "useful Arts, by securing for limited Times to Authors"
         )
-        left = EnactmentGroup([copyright_clause, copyright_statute])
+        left = EnactmentGroup(passages=[copyright_clause, copyright_statute])
         assert left > securing_for_authors
 
 
@@ -87,7 +89,7 @@ class TestAdd:
         )
         and_inventors = passage + "and Inventors"
         right_to_writings = passage + "the exclusive Right to their respective Writings"
-        left = EnactmentGroup([securing_for_authors, and_inventors])
+        left = EnactmentGroup(passages=[securing_for_authors, and_inventors])
         right = right_to_writings
         result = left + right
         assert len(result) == 1
@@ -102,9 +104,11 @@ class TestAdd:
             "useful Arts, by securing for limited Times to Authors"
         )
         writings = passage + "their respective Writings"
-        left = EnactmentGroup([securing_for_authors, writings, copyright_statute])
+        left = EnactmentGroup(
+            passages=[securing_for_authors, writings, copyright_statute]
+        )
         assert len(left) == 2
-        right = EnactmentGroup(None)
+        right = EnactmentGroup()
         result = left + right
         assert len(result) == 2
 
@@ -120,8 +124,8 @@ class TestAdd:
             "the right of the people to keep and bear arms, shall not be infringed."
         )
 
-        left = EnactmentGroup([establishment_clause, arms_clause])
-        right = EnactmentGroup([third_a, speech_clause])
+        left = EnactmentGroup(passages=[establishment_clause, arms_clause])
+        right = EnactmentGroup(passages=[third_a, speech_clause])
 
         combined = left + right
         assert len(combined) == 3
@@ -134,7 +138,9 @@ class TestAdd:
             start_date=date(1992, 2, 21),
             text_version="The following are examples of works not subject to copyright",
         )
-        group = EnactmentGroup([regulation, copyright_clause, copyright_statute])
+        group = EnactmentGroup(
+            passages=[regulation, copyright_clause, copyright_statute]
+        )
         assert group[-1].node == "/us/cfr/t37/s202.1"
 
     def test_sort_state_enactment_in_group(self, copyright_clause, copyright_statute):
@@ -151,6 +157,6 @@ class TestAdd:
             heading="",
         )
         group = EnactmentGroup(
-            [regulation, ca_statute, copyright_clause, copyright_statute]
+            passages=[regulation, ca_statute, copyright_clause, copyright_statute]
         )
         assert group[-1].node == "/us-ca/code/evid/s351"
