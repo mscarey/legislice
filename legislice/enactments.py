@@ -9,8 +9,8 @@ from datetime import date
 from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.schemas import TextPositionSetFactory
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
+from anchorpoint.textselectors import TextPositionSetFactory
 from anchorpoint.textsequences import TextSequence
 from anchorpoint.utils.ranges import Range, RangeDict
 
@@ -653,11 +653,10 @@ class EnactmentPassage(BaseModel):
         """Get the node that this Enactment is from."""
         return self.enactment.node
 
-    def as_quote_selectors(self) -> List[TextQuoteSelector]:
+    def as_quotes(self) -> List[TextQuoteSelector]:
         """Return quote selectors for the selected text."""
         return [
-            phrase.as_quote_selector(self.enactment.text)
-            for phrase in self.selection.positions
+            phrase.as_quote(self.enactment.text) for phrase in self.selection.positions
         ]
 
     def __str__(self):
@@ -705,7 +704,7 @@ class EnactmentPassage(BaseModel):
             else:
                 self.select_more_text_from_changed_version(other)
             return found_node, True
-        for selector in other.as_quote_selectors():
+        for selector in other.as_quotes():
             self.select_more(selector)
         return False, False
 
@@ -803,7 +802,7 @@ class EnactmentPassage(BaseModel):
             attribute with the same node attribute,
             or for `other` to have the same node attribute as an ancestor of self.
         """
-        incoming_quote_selectors = other.as_quote_selectors()
+        incoming_quote_selectors = other.as_quotes()
         incoming_position_selectors = []
         for quote_selector in incoming_quote_selectors:
             position = quote_selector.as_unique_position(self.text)

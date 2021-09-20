@@ -1,13 +1,10 @@
 Enactments
 =======================================
 
-.. autoclass:: legislice.enactments.BaseEnactment
-    :members:
-
-.. autoclass:: legislice.enactments.LinkedEnactment
-    :members:
-
 .. autoclass:: legislice.enactments.Enactment
+    :members:
+
+.. autoclass:: legislice.enactments.EnactmentPassage
     :members:
 
 .. autoclass:: legislice.enactments.CrossReference

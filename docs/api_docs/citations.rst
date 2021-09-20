@@ -1,10 +1,10 @@
 Citations
 =======================================
 
-.. autoclass:: legislice.citations.Citation
+.. autoclass:: legislice.citations.CodeLevel
     :members:
 
-.. autoclass:: legislice.citations.CitationSchema
+.. autoclass:: legislice.citations.Citation
     :members:
 
 .. autofunction:: legislice.citations.identify_code
