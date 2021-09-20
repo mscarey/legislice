@@ -217,13 +217,7 @@ the URLs for the articles of the US Constitution.
 
     >>> articles = client.read(query="/us/const/article")
     >>> articles.children
-    ['https://authorityspoke.com/api/v1/us/const/article/I/',
-     'https://authorityspoke.com/api/v1/us/const/article/II/',
-     'https://authorityspoke.com/api/v1/us/const/article/III/',
-     'https://authorityspoke.com/api/v1/us/const/article/IV/',
-     'https://authorityspoke.com/api/v1/us/const/article/V/',
-     'https://authorityspoke.com/api/v1/us/const/article/VI/',
-     'https://authorityspoke.com/api/v1/us/const/article/VII/']
+    ['https://authorityspoke.com/api/v1/us/const/article/I/', 'https://authorityspoke.com/api/v1/us/const/article/II/', 'https://authorityspoke.com/api/v1/us/const/article/III/', 'https://authorityspoke.com/api/v1/us/const/article/IV/', 'https://authorityspoke.com/api/v1/us/const/article/V/', 'https://authorityspoke.com/api/v1/us/const/article/VI/', 'https://authorityspoke.com/api/v1/us/const/article/VII/']
 
 .. _downloading-enactments-from-cross-references:
 
@@ -243,10 +237,10 @@ the download client to get the referenced :class:`~legislice.enactments.Enactmen
     'Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18.'
 
     >>> len(infringement_provision.cross_references())
-    0
+    2
 
-    >>> infringement_provision.cross_references()[0]
-    CrossReference(target_uri="/us/usc/t17/s501", reference_text="section 501 of this title"
+    >>> str(infringement_provision.cross_references()[0])
+    'CrossReference(target_uri="/us/usc/t17/s501", reference_text="section 501 of this title")'
 
     >>> reference_to_title_18 = infringement_provision.cross_references()[1]
     >>> referenced_enactment = client.read(reference_to_title_18)
@@ -327,7 +321,7 @@ and two of the InboundReferences in this list have been enacted in three differe
 locations.
 
     >>> str(refs_to_definitions[0].locations[0])
-    '/us/usc/t2/s60c-5/a/2/A 2013-07-18'
+    '(/us/usc/t2/s60c-5/a/2/A 2013-07-18)'
 
 When we pass an InboundReference to :meth:`~legislice.download.Client.read`, the download client
 makes an :class:`~legislice.enactments.Enactment` from the most recent location where the citing

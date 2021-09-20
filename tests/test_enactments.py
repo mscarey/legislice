@@ -82,8 +82,6 @@ class TestMakeEnactment:
 
 
 class TestLinkedEnactment:
-    client = Client(api_token=TOKEN)
-
     @pytest.mark.vcr
     def test_text_sequence_for_linked_enactment(self, test_client):
         enactment = test_client.read(query="/test", date="2020-01-01")
@@ -235,6 +233,8 @@ class TestCrossReferences:
 
 
 class TestSelectText:
+    client = Client(api_token=TOKEN)
+
     def test_same_quotation_from_enactments_of_differing_depths(
         self, test_client, section_11_subdivided
     ):
@@ -331,6 +331,8 @@ class TestSelectText:
 
 
 class TestSelectFromEnactment:
+    client = Client(api_token=TOKEN)
+
     def test_text_of_enactment_subset(self, section_11_together):
         combined = Enactment(**section_11_together)
         selector = TextQuoteSelector(
@@ -365,6 +367,7 @@ class TestSelectFromEnactment:
                 TextQuoteSelector(exact="professionals"),
             ]
         )
+        assert passage.node == "/test/acts/47/11"
         assert passage.selected_text().endswith("licenses to…professionals…")
         assert len(passage.selection.ranges()) == 2
         assert passage.selection.ranges()[0] == Range(start=0, end=46)
@@ -374,6 +377,7 @@ class TestSelectFromEnactment:
         assert len(child_passage.selection.ranges()) == 1
         assert child_passage.selected_text() == "…professionals"
         assert child_passage.selection.ranges()[0] == Range(start=20, end=33)
+        assert child_passage.node == "/test/acts/47/11/iii"
 
     def test_select_nested_text_with_positions(self, section_11_subdivided):
         phrases = TextPositionSet(
@@ -514,11 +518,21 @@ class TestSelectFromEnactment:
         assert " …" not in passage.selected_text()
 
     @pytest.mark.vcr
-    def test_select_near_end_of_section(self, test_client):
-        amendment = test_client.read(query="/us/const/amendment/XIV")
+    def test_select_near_end_of_section(self):
+        amendment = self.client.read(query="/us/const/amendment/XIV")
         selector = TextPositionSelector(start=1920, end=1980)
         passage = amendment.select(selector)
         assert "The validity of the public debt" in passage.selected_text()
+        set_passage = amendment.select(
+            TextPositionSet(
+                positions=[
+                    TextPositionSelector(start=1921, end=1973),
+                    TextPositionSelector(start=2111, end=2135),
+                ]
+            )
+        )
+        expected = "…The validity of the public debt of the United States…shall not be questioned.…"
+        assert set_passage.selected_text() == expected
 
 
 class TestCompareEnactment:

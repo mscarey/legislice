@@ -92,8 +92,8 @@ method. It’s okay if the selection we pass in
 to :meth:`~legislice.enactments.EnactmentPassage.select_more` overlaps
 with text we've already selected.
 
-    >>> fourteenth_amendment.select_more("life, liberty, or property,")
-    >>> fourteenth_amendment.selected_text()
+    >>> passages.select_more("life, liberty, or property,")
+    >>> passages.selected_text()
     '…No State shall…deprive any person of life, liberty, or property, without due process of law…'
 
 If we need to select a passage that occurs more than once in the
@@ -109,44 +109,14 @@ age” in the Fourteenth Amendment.
     >>> age_passage.selected_text()
     '…twenty-one years of age…'
 
-We can also access the start and endpoints of the quoted passages, but
-there’s a potential source of confusion: the ``selection`` attribute
-only provides the selected parts of the current node, not of
-the child nodes. For the Fourteenth Amendment, that will return an empty
-set because all of the Fourteenth Amendment’s text is nested within
-numbered sections.
-
-    >>> fourteenth_amendment.selection
-    TextPositionSet{}
-
-To see the positions of the selected text in the child nodes as well,
-we need to use :meth:`~legislice.enactments.Enactment.tree_selection`.
-This is a method, not an attribute,
-so we need to include the parentheses at the end of the statement to
-make it work. In this example, the selected phrase “twenty-one years of
-age” starts on the 1254th character of the Fourteenth Amendment’s text.
-
-    >>> fourteenth_amendment.tree_selection()
-    TextPositionSet{TextPositionSelector[1254, 1277)}
-
-We could also look at the ``selection`` attributes of the child nodes
-to see the positions of their selected text. But note: if we access the
-``selection`` attribute on `section 2 of the Fourteenth
-Amendment <https://authorityspoke.com/legislice/us/const/amendment/XIV/2>`__, then
-the starting index of the selected passage is counted from the beginning
-of section 2, not from the beginning of the entire Fourteenth Amendment.
-
-    >>> fourteenth_amendment.children[1].selection
-    TextPositionSet{TextPositionSelector[786, 809)}
-
 If we happen to know the start and end indices of the passage we want,
 then we can use a :class:`~anchorpoint.textselectors.TextPositionSelector` or
 :class:`~anchorpoint.textselectors.TextPositionSet` to
 select it, instead of specifying the exact text.
 
     >>> from legislice.enactments import TextPositionSelector, TextPositionSet
-    >>> fourteenth_amendment.select(TextPositionSet([TextPositionSelector(1921, 1973), TextPositionSelector(2111, 2135)]))
-    >>> fourteenth_amendment.selected_text()
+    >>> amendment_passage = fourteenth_amendment.select(TextPositionSet(positions=[TextPositionSelector(start=1921, end=1973), TextPositionSelector(start=2111, end=2135)]))
+    >>> amendment_passage.selected_text()
     '…The validity of the public debt of the United States…shall not be questioned.…'
 
 .. _comparing-selected-text:
@@ -154,15 +124,14 @@ select it, instead of specifying the exact text.
 Comparing selected text
 --------------------------
 
-Legislice provides methods for comparing the selected text in
-Enactments. To get started, we’ll use Python’s :py:func:`copy.deepcopy` function to
-make a copy of the Enactment we were working on at the end of :ref:`selecting-text`.
-(If we used regular :py:func:`~copy.copy` instead of :py:func:`~copy.deepcopy`,
-then making changes to the copy could cause changes to the original,
-which would be confusing.)
+We can use the :method:`~legislice.enactments.EnactmentPassage.child_passages`
+to get a new :class:`~legislice.enactments.EnactmentPassage` with only the subsection
+of the Fourteenth Amendment that interests us. The text selector will still remain in
+place, so we can still get the same selected text.
 
-    >>> from copy import deepcopy
-    >>> public_debt_provision = deepcopy(fourteenth_amendment.children[3])
+    >>> public_debt_provision = amendment_passage.child_passages[3]
+    >>> public_debt_provision.node
+    '/us/const/amendment/XIV/4'
     >>> public_debt_provision.selected_text()
     'The validity of the public debt of the United States…shall not be questioned.…'
 
@@ -170,7 +139,7 @@ Next, we’ll change the selected text of the
 original :class:`~legislice.enactments.Enactment` to
 include all the text that was selected before, plus more.
 
-    >>> debt_passage = fourteenth_amendment.select(TextPositionSelector(1921, 2135))
+    >>> debt_passage = fourteenth_amendment.select(TextPositionSelector(start=1921, end=2135))
     >>> debt_passage.selected_text()
     '…The validity of the public debt of the United States, authorized by law, including debts incurred for payment of pensions and bounties for services in suppressing insurrection or rebellion, shall not be questioned.…'
 
@@ -303,8 +272,8 @@ Enactments instead of four.
     >>> second = client.read(query="/us/const/amendment/II")
     >>> arms_clause = second.select("the right of the people to keep and bear arms, shall not be infringed.")
     >>> third = client.read(query="/us/const/amendment/III")
-    >>> left = EnactmentGroup([establishment_clause, arms_clause])
-    >>> right = EnactmentGroup([third, speech_clause])
+    >>> left = EnactmentGroup(passages=[establishment_clause, arms_clause])
+    >>> right = EnactmentGroup(passages=[third, speech_clause])
     >>> combined = left + right
     >>> print(combined)
     the group of Enactments:
@@ -332,8 +301,8 @@ The schema's :meth:`~legislice.enactments.Enactment.json` method returns a JSON 
 while the :meth:`~legislice.enactments.Enactment.dict` method returns a
 Python dictionary.
 
-    >>> combined_enactment.json()
-    '{"node": "/us/usc/t17/s103", "heading": "Subject matter of copyright: Compilations and derivative works", "text_version": null, "start_date": "2013-07-18", "end_date": null, "selection": [], "anchors": [], "children": [{"node": "/us/usc/t17/s103/a", "heading": "", "text_version": {"content": "The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 0, "end": 277}], "anchors": [], "children": []}, {"node": "/us/usc/t17/s103/b", "heading": "", "text_version": {"content": "The copyright in a compilation or derivative work extends only to the material contributed by the author of such work, as distinguished from the preexisting material employed in the work, and does not imply any exclusive right in the preexisting material. The copyright in such work is independent of, and does not affect or enlarge the scope, duration, ownership, or subsistence of, any copyright protection in the preexisting material."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 256, "end": 300}, {"start": 384, "end": 437}], "anchors": [], "children": []}]}'
+    >>> combined.passages[0].json()
+    '{"enactment": {"node": "/us/const/amendment/I", "start_date": "1791-12-15", "heading": "AMENDMENT I.", "text_version": {"content": "Congress shall make no law respecting an establishment of religion, or prohibiting the free exercise thereof; or abridging the freedom of speech, or of the press; or the right of the people peaceably to assemble, and to petition the Government for a redress of grievances.", "url": "https://authorityspoke.com/api/v1/textversions/735703/", "id": 735703}, "end_date": null, "first_published": "1788-06-21", "earliest_in_db": "1788-06-21", "anchors": [], "citations": [], "name": "", "children": []}, "selection": {"positions": [{"start": 0, "end": 66}, {"start": 113, "end": 144}], "quotes": []}}'
 
 Formatting Citations (Experimental)
 --------------------------------------
