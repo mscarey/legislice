@@ -11,10 +11,8 @@ from legislice.enactments import (
     CitingProvisionLocation,
     EnactmentPassage,
     InboundReference,
+    RawEnactment,
 )
-
-
-RawEnactment = Dict[str, Any]
 
 
 def enactment_needs_api_update(data: RawEnactment) -> bool:

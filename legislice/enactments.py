@@ -14,7 +14,7 @@ from anchorpoint.textselectors import TextPositionSetFactory
 from anchorpoint.textsequences import TextSequence
 from anchorpoint.utils.ranges import Range, RangeDict
 
-from legislice import citations
+from legislice.citations import Citation, identify_code, CodeLevel
 
 from pydantic import BaseModel, validator, root_validator
 
@@ -264,7 +264,7 @@ class Enactment(BaseModel):
     @property
     def level(self) -> str:
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
-        code_name, code_level_name = citations.identify_code(self.sovereign, self.code)
+        code_name, code_level_name = identify_code(self.sovereign, self.code)
         return code_level_name
 
     @property
@@ -292,15 +292,15 @@ class Enactment(BaseModel):
     def __str__(self):
         return f"{self.node} ({self.start_date})"
 
-    def as_citation(self) -> citations.Citation:
+    def as_citation(self) -> Citation:
         """Create Citation Style Language markup for the Enactment."""
         level = self.level
-        if level != citations.CodeLevel.STATUTE:
+        if level != CodeLevel.STATUTE:
             raise NotImplementedError(
                 f"Citation serialization not implemented for '{level}' provisions."
             )
         revision_date = self.start_date if self.known_revision_date else None
-        return citations.Citation(
+        return Citation(
             jurisdiction=self.jurisdiction,
             code=self.code,
             volume=self.title,
@@ -373,10 +373,12 @@ class Enactment(BaseModel):
         return self.limit_selection(selection=selection, start=0, end=len(self.text))
 
     def text_sequence(self, include_nones=True) -> TextSequence:
+        """Get a sequence of text passages for this provision and its subnodes."""
         selection = self.tree_selection()
         return selection.as_text_sequence(text=self.text, include_nones=include_nones)
 
     def means(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+        """Determine if self and other have identical text."""
         if not isinstance(other, (EnactmentPassage, Enactment)):
             raise TypeError(
                 f"Cannot compare {self.__class__.__name__} and {other.__class__.__name__} for same meaning."

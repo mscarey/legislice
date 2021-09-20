@@ -271,6 +271,8 @@ class TestReadJSON:
 
 
 class TestInboundCitations:
+    client = Client(api_token=TOKEN, api_root=API_ROOT)
+
     @pytest.mark.vcr()
     def test_fetch_inbound_citations_to_node(self, test_client):
         infringement_statute = test_client.read(
@@ -349,6 +351,20 @@ class TestInboundCitations:
         )
         enactment = test_client.read(location)
         assert enactment.content.startswith("Any person who distributes")
+
+    @pytest.mark.vcr()
+    def test_enactment_downloaded_from_citing_location_has_text(self):
+
+        inbound_refs = self.client.citations_to("/us/usc/t17/s501")
+        assert str(inbound_refs[0]).startswith("InboundReference to /us/usc/t17/s501")
+        assert inbound_refs[0].content.startswith(
+            "Any person who distributes a phonorecord"
+        )
+        citing_enactment = self.client.read(inbound_refs[0])
+        assert citing_enactment.node == "/us/usc/t17/s109/b/4"
+        assert citing_enactment.text.startswith(
+            "Any person who distributes a phonorecord"
+        )
 
     def test_node_field_needed_to_update_enactment(self):
         barbers_without_node = {

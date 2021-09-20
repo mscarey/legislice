@@ -119,14 +119,10 @@ select it, instead of specifying the exact text.
     >>> amendment_passage.selected_text()
     '…The validity of the public debt of the United States…shall not be questioned.…'
 
-.. _comparing-selected-text:
-
-Comparing selected text
---------------------------
-
-We can use the method :meth:`~legislice.enactments.EnactmentPassage.child_passages`
+We can also use the method :meth:`~legislice.enactments.EnactmentPassage.child_passages`
 to get a new :class:`~legislice.enactments.EnactmentPassage` with only the subsection
-of the Fourteenth Amendment that interests us. The text selector will still remain in
+of the Fourteenth Amendment that interests us. The citation stored in the ``node`` attribute
+is now different, but the text selector still remains in
 place, so we can still get the same selected text.
 
     >>> public_debt_provision = amendment_passage.child_passages[3]
@@ -135,17 +131,23 @@ place, so we can still get the same selected text.
     >>> public_debt_provision.selected_text()
     'The validity of the public debt of the United States…shall not be questioned.…'
 
-Next, we’ll change the selected text of the
-original :class:`~legislice.enactments.Enactment` to
+.. _comparing-selected-text:
+
+Comparing Selected Text
+--------------------------
+
+Next, we’ll create a new :class:`~legislice.enactments.EnactmentPassage` to compare by
+changing the selected text of the original :class:`~legislice.enactments.Enactment` to
 include all the text that was selected before, plus more.
 
     >>> debt_passage = fourteenth_amendment.select(TextPositionSelector(start=1921, end=2135))
     >>> debt_passage.selected_text()
     '…The validity of the public debt of the United States, authorized by law, including debts incurred for payment of pensions and bounties for services in suppressing insurrection or rebellion, shall not be questioned.…'
 
-Now we can compare the text selections in these two Enactments. The
+Now we can compare the text selections in these
+two :class:`~legislice.enactments.EnactmentPassage`\s. The
 :meth:`~legislice.enactments.Enactment.implies` method checks whether the Enactment
-on the left has all thetext of the Enactment on the right.
+on the left has all the text of the Enactment on the right.
 The :meth:`~legislice.enactments.Enactment.means` method checks whether
 they both have the same text.
 

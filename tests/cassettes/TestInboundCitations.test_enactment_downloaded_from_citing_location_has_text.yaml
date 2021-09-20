@@ -1,0 +1,161 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.26.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/citations_to/us/usc/t17/s501/
+  response:
+    body:
+      string: '{"count":2,"next":null,"previous":null,"results":[{"content":"Any person
+        who distributes a phonorecord or a copy of a computer program (including any
+        tape, disk, or other medium embodying such program) in violation of paragraph
+        (1) is an infringer of copyright under section 501 of this title and is subject
+        to the remedies set forth in sections 502, 503, 504, and 505. Such violation
+        shall not be a criminal offense under section 506 or cause such person to
+        be subject to the criminal penalties set forth in section 2319 of title 18.","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s109/b/4"}],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501/","target_node":1252985,"reference_text":"section
+        501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"https://authorityspoke.com/api/v1/us/usc/t18/s2319/","target_node":1151186,"reference_text":"section
+        2319 of title 18"}],"url":"https://authorityspoke.com/api/v1/textversions/1030745/"},{"content":"The
+        relevant provisions of paragraphs (2) through (11) of section 34(d) of the
+        Trademark Act (15 U.S.C. 1116(d)(2) through (11)) shall extend to any impoundment
+        of records ordered under paragraph (1)(C) that is based upon an ex parte application,
+        notwithstanding the provisions of rule 65 of the Federal Rules of Civil Procedure.
+        Any references in paragraphs (2) through (11) of section 34(d) of the Trademark
+        Act to section 32 of such Act shall be read as references to section 501 of
+        this title, and references to use of a counterfeit mark in connection with
+        the sale, offering for sale, or distribution of goods or services shall be
+        read as references to infringement of a copyright.","locations":[{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s503/a/3"}],"citations":[{"target_uri":"/us/usc/t15/s1116/d/2","target_url":"https://authorityspoke.com/api/v1/us/usc/t15/s1116/d/2/","target_node":1080054,"reference_text":"15
+        U.S.C. 1116(d)(2)"},{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501/","target_node":1252985,"reference_text":"section
+        501 of this title"}],"url":"https://authorityspoke.com/api/v1/textversions/1031604/"}]}'
+    headers:
+      Allow:
+      - GET, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2239'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 20 Sep 2021 22:09:05 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.26.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18/
+  response:
+    body:
+      string: '{"heading":"","start_date":"2013-07-18","node":"/us/usc/t17/s109/b/4","text_version":{"id":1030745,"url":"https://authorityspoke.com/api/v1/textversions/1030745/","content":"Any
+        person who distributes a phonorecord or a copy of a computer program (including
+        any tape, disk, or other medium embodying such program) in violation of paragraph
+        (1) is an infringer of copyright under section 501 of this title and is subject
+        to the remedies set forth in sections 502, 503, 504, and 505. Such violation
+        shall not be a criminal offense under section 506 or cause such person to
+        be subject to the criminal penalties set forth in section 2319 of title 18."},"url":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b/4@2013-07-18/","end_date":null,"children":[],"citations":[{"target_uri":"/us/usc/t17/s501","target_url":"https://authorityspoke.com/api/v1/us/usc/t17/s501@2013-07-18/","target_node":1252985,"reference_text":"section
+        501 of this title"},{"target_uri":"/us/usc/t18/s2319","target_url":"https://authorityspoke.com/api/v1/us/usc/t18/s2319@2013-07-18/","target_node":1151186,"reference_text":"section
+        2319 of title 18"}],"parent":"https://authorityspoke.com/api/v1/us/usc/t17/s109/b@2013-07-18/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1199'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 20 Sep 2021 22:09:06 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.26.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/coverage/us/usc/
+  response:
+    body:
+      string: '{"uri":"/us/usc","latest_heading":"United States Code (USC)","first_published":"1926-06-30","earliest_in_db":"2013-07-18","latest_in_db":"2021-06-17"}'
+    headers:
+      Allow:
+      - GET, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 20 Sep 2021 22:09:06 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

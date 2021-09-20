@@ -236,18 +236,14 @@ the download client to get the referenced :class:`~legislice.enactments.Enactmen
     >>> infringement_provision = client.read("/us/usc/t17/s109/b/4")
     >>> str(infringement_provision.text)
     'Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18.'
-
     >>> len(infringement_provision.cross_references())
     2
-
     >>> str(infringement_provision.cross_references()[0])
     'CrossReference(target_uri="/us/usc/t17/s501", reference_text="section 501 of this title")'
-
     >>> reference_to_title_18 = infringement_provision.cross_references()[1]
     >>> referenced_enactment = client.read(reference_to_title_18)
     >>> referenced_enactment.text[:239]
     'Any person who violates section 506(a) (relating to criminal offenses) of title 17 shall be punished as provided in subsections (b), (c), and (d) and such penalties shall be in addition to any other provisions of title 17 or any other law.'
-
 
 An important caveat for this feature is that the return value of the
 :meth:`~legislice.enactments.Enactment.cross_references` method will only be populated with internal links
@@ -296,6 +292,8 @@ subsections nested inside the cited provision. We can use the download
     >>> citing_enactment = client.read(inbound_refs[0])
     >>> citing_enactment.node
     '/us/usc/t17/s109/b/4'
+    >>> citing_enactment.text
+    'Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18.'
 
 This Enactment happens not to have any child nodes nested within it, so
 its full text is the same as what we saw when we looked at the
