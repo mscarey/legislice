@@ -10,16 +10,13 @@ As explained in the :ref:`downloading` guide,
 begin by creating a :class:`~legislice.download.Client` to download
 and create :class:`~legislice.enactments.Enactment` objects.
 
-.. code:: ipython3
-
-    import os
-    from dotenv import load_dotenv
-    from legislice.download import Client
-
-    load_dotenv()
-
-    TOKEN = os.getenv("LEGISLICE_API_TOKEN")
-    client = Client(api_token=TOKEN)
+    >>> import os
+    >>> from dotenv import load_dotenv
+    >>> from legislice.download import Client
+    >>> load_dotenv()
+    True
+    >>> TOKEN = os.getenv("LEGISLICE_API_TOKEN")
+    >>> client = Client(api_token=TOKEN)
 
 .. _features-of-an-enactment:
 
@@ -37,7 +34,7 @@ We can also view its ``level``, which is “constitution”, as opposed to
 “statute” or “regulation”.
 
     >>> fourteenth_amendment.level
-    'constitution'
+    <CodeLevel.CONSTITUTION: 1>
 
 And we can find out the ``node``, or place in the document tree, for
 the Fourteenth Amendment itself as well at its subsections.
@@ -64,12 +61,12 @@ We can also isolate some parts of the ``node`` path, such as the
 Selecting text
 -----------------
 
-When we use the :meth:`~legislice.enactments.Enactment.selected_text` method,
+When we use the :meth:`~legislice.enactments.Enactment.text` method,
 we get all the enacted text
 in the `Fourteenth Amendment <https://authorityspoke.com/legislice/us/const/amendment/XIV>`__,
 including all its subsections.
 
-    >>> fourteenth_amendment.selected_text()
+    >>> fourteenth_amendment.text
     'All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside. No State shall make or enforce any law which shall abridge the privileges or immunities of citizens of the United States; nor shall any State deprive any person of life, liberty, or property, without due process of law; nor deny to any person within its jurisdiction the equal protection of the laws. Representatives shall be apportioned among the several States according to their respective numbers, counting the whole number of persons in each State, excluding Indians not taxed. But when the right to vote at any election for the choice of electors for President and Vice President of the United States, Representatives in Congress, the Executive and Judicial officers of a State, or the members of the Legislature thereof, is denied to any of the male inhabitants of such State, being twenty-one years of age, and citizens of the United States, or in any way abridged, except for participation in rebellion, or other crime, the basis of representation therein shall be reduced in the proportion which the number of such male citizens shall bear to the whole number of male citizens twenty-one years of age in such State. No person shall be a Senator or Representative in Congress, or elector of President and Vice President, or hold any office, civil or military, under the United States, or under any State, who, having previously taken an oath, as a member of Congress, or as an officer of the United States, or as a member of any State legislature, or as an executive or judicial officer of any State, to support the Constitution of the United States, shall have engaged in insurrection or rebellion against the same, or given aid or comfort to the enemies thereof. But Congress may by a vote of two-thirds of each House, remove such disability. The validity of the public debt of the United States, authorized by law, including debts incurred for payment of pensions and bounties for services in suppressing insurrection or rebellion, shall not be questioned. But neither the United States nor any State shall assume or pay any debt or obligation incurred in aid of insurrection or rebellion against the United States, or any claim for the loss or emancipation of any slave; but all such debts, obligations and claims shall be held illegal and void. The Congress shall have power to enforce, by appropriate legislation, the provisions of this article.'
 
 However, we might want an :class:`~legislice.enactments.Enactment` object that only represents a
@@ -80,18 +77,20 @@ strings that exactly match the text we want to select. Because we're selecting o
 the text, the output of the :meth:`~legislice.enactments.BaseEnactment.selected_text` method
 will be different.
 
-    >>> fourteenth_amendment.select(["No State shall", "deprive any person of", "liberty", "without due process of law"])
-    >>> fourteenth_amendment.selected_text()
+    >>> passages = fourteenth_amendment.select(["No State shall", "deprive any person of", "liberty", "without due process of law"])
+    >>> passages.selected_text()
     '…No State shall…deprive any person of…liberty…without due process of law…'
 
-
-Every time we use the :meth:`~legislice.enactments.Enactment.select` method, it clears any existing text
-selection from the Enactment. But if we want to select additional text
+The :meth:`~legislice.enactments.Enactment.select` method returns a new
+:class:`~legislice.enactments.EnactmentPassage` object, which holds
+both the :class:`~legislice.enactments.Enactment` and a
+:class:`~anchorpoint.textselectors.TextPositionSet` indicating which text is
+selected. But if we want to select additional text
 without clearing the existing selection, we can
-use :meth:`~legislice.enactments.Enactment.select_more`.
-It’s okay if the selection we pass in
-to :meth:`~legislice.enactments.Enactment.select_more` overlaps with
-text we've already selected.
+use the EnactmentPassage's :meth:`~legislice.enactments.EnactmentPassage.select_more`
+method. It’s okay if the selection we pass in
+to :meth:`~legislice.enactments.EnactmentPassage.select_more` overlaps
+with text we've already selected.
 
     >>> fourteenth_amendment.select_more("life, liberty, or property,")
     >>> fourteenth_amendment.selected_text()
@@ -106,8 +105,8 @@ being selected is the second instance of the phrase “twenty-one years of
 age” in the Fourteenth Amendment.
 
     >>> from legislice import TextQuoteSelector
-    >>> fourteenth_amendment.select(TextQuoteSelector(prefix="male citizens ", exact="twenty-one years of age"))
-    >>> fourteenth_amendment.selected_text()
+    >>> age_passage = fourteenth_amendment.select(TextQuoteSelector(prefix="male citizens ", exact="twenty-one years of age"))
+    >>> age_passage.selected_text()
     '…twenty-one years of age…'
 
 We can also access the start and endpoints of the quoted passages, but
@@ -171,8 +170,8 @@ Next, we’ll change the selected text of the
 original :class:`~legislice.enactments.Enactment` to
 include all the text that was selected before, plus more.
 
-    >>> fourteenth_amendment.select(TextPositionSelector(1921, 2135))
-    >>> fourteenth_amendment.selected_text()
+    >>> debt_passage = fourteenth_amendment.select(TextPositionSelector(1921, 2135))
+    >>> debt_passage.selected_text()
     '…The validity of the public debt of the United States, authorized by law, including debts incurred for payment of pensions and bounties for services in suppressing insurrection or rebellion, shall not be questioned.…'
 
 Now we can compare the text selections in these two Enactments. The
@@ -209,7 +208,7 @@ how we can check that the Fifth Amendment doesn’t have identical text
 to the first section of the Fourteenth Amendment.
 
     >>> fifth_amendment = client.read(query="/us/const/amendment/V")
-    >>> fifth_amendment.selected_text()
+    >>> fifth_amendment.text
     'No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any Criminal Case to be a witness against himself; nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation.'
 
     >>> fourteenth_amendment_section_1 = client.read(query="/us/const/amendment/XIV/1")
@@ -223,9 +222,9 @@ provisions, then we can use the :meth:`~legislice.enactments.Enactment.means`
 method to verify that both text selections are identical.
 
     >>> phrase = "life, liberty, or property, without due process of law"
-    >>> fourteenth_amendment_section_1.select(phrase)
-    >>> fifth_amendment.select(phrase)
-    >>> fourteenth_amendment_section_1.means(fifth_amendment)
+    >>> due_process_14 = fourteenth_amendment_section_1.select(phrase)
+    >>> due_process_5 = fifth_amendment.select(phrase)
+    >>> due_process_14.means(due_process_5)
     True
 
 There are many situations in real legal analysis where it’s helpful to
@@ -263,16 +262,16 @@ text from subsection ``a`` and subsection ``b`` in the correct order.
 
     >>> s103 = client.read(query="/us/usc/t17/s103", date="2020-01-01")
     >>> selections = ["The copyright in such work is independent of", "any copyright protection in the preexisting material."]
-    >>> s103.select(selections)
-    >>> s103.selected_text()
+    >>> s103_passage = s103.select(selections)
+    >>> s103_passage.selected_text()
     '…The copyright in such work is independent of…any copyright protection in the preexisting material.'
 
     >>> s103a = client.read(query="/us/usc/t17/s103/a", date="2020-01-01")
-    >>> s103a.selected_text()
+    >>> s103a.text
     'The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully.'
 
-    >>> combined_enactment = s103 + s103a
-    >>> combined_enactment.selected_text()
+    >>> combined_passage = s103_passage + s103a
+    >>> combined_passage.selected_text()
     'The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully.…The copyright in such work is independent of…any copyright protection in the preexisting material.'
 
 .. _enactment-groups:
@@ -298,15 +297,14 @@ combined into one. Thus the resulting EnactmentGroup will contain three
 Enactments instead of four.
 
     >>> from legislice import EnactmentGroup
-    >>> establishment_clause = client.read(query="/us/const/amendment/I")
-    >>> establishment_clause.select("Congress shall make no law respecting an establishment of religion")
-    >>> speech_clause = client.read(query="/us/const/amendment/I")
-    >>> speech_clause.select(["Congress shall make no law", "abridging the freedom of speech"])
-    >>> arms_clause = client.read(query="/us/const/amendment/II")
-    >>> arms_clause.select("the right of the people to keep and bear arms, shall not be infringed.")
-    >>> third_amendment = client.read(query="/us/const/amendment/III")
+    >>> first = client.read(query="/us/const/amendment/I")
+    >>> establishment_clause=first.select("Congress shall make no law respecting an establishment of religion")
+    >>> speech_clause = first.select(["Congress shall make no law", "abridging the freedom of speech"])
+    >>> second = client.read(query="/us/const/amendment/II")
+    >>> arms_clause = second.select("the right of the people to keep and bear arms, shall not be infringed.")
+    >>> third = client.read(query="/us/const/amendment/III")
     >>> left = EnactmentGroup([establishment_clause, arms_clause])
-    >>> right = EnactmentGroup([third_amendment, speech_clause])
+    >>> right = EnactmentGroup([third, speech_clause])
     >>> combined = left + right
     >>> print(combined)
     the group of Enactments:
@@ -330,13 +328,11 @@ to JSON.
 As explained in the section above, this JSON represents a selection of three
 nonconsecutive passages from the most recent version of
 `section 103 of Title 17 of the United States Code <https://authorityspoke.com/legislice/us/usc/t17/s103@2020-11-17/>`__.
-The schema's :meth:`~marshmallow.Schema.dumps` method returns a JSON string,
-while the :meth:`~marshmallow.Schema.dump` method returns a
+The schema's :meth:`~legislice.enactments.Enactment.json` method returns a JSON string,
+while the :meth:`~legislice.enactments.Enactment.dict` method returns a
 Python dictionary.
 
-    >>> from legislice.schemas import EnactmentSchema
-    >>> schema = EnactmentSchema()
-    >>> schema.dumps(combined_enactment)
+    >>> combined_enactment.json()
     '{"node": "/us/usc/t17/s103", "heading": "Subject matter of copyright: Compilations and derivative works", "text_version": null, "start_date": "2013-07-18", "end_date": null, "selection": [], "anchors": [], "children": [{"node": "/us/usc/t17/s103/a", "heading": "", "text_version": {"content": "The subject matter of copyright as specified by section 102 includes compilations and derivative works, but protection for a work employing preexisting material in which copyright subsists does not extend to any part of the work in which such material has been used unlawfully."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 0, "end": 277}], "anchors": [], "children": []}, {"node": "/us/usc/t17/s103/b", "heading": "", "text_version": {"content": "The copyright in a compilation or derivative work extends only to the material contributed by the author of such work, as distinguished from the preexisting material employed in the work, and does not imply any exclusive right in the preexisting material. The copyright in such work is independent of, and does not affect or enlarge the scope, duration, ownership, or subsistence of, any copyright protection in the preexisting material."}, "start_date": "2013-07-18", "end_date": null, "selection": [{"start": 256, "end": 300}, {"start": 384, "end": 437}], "anchors": [], "children": []}]}'
 
 Formatting Citations (Experimental)
@@ -358,7 +354,7 @@ case.
     >>> str(citation)
     '15 U.S. Code § 9021 (2020)'
     >>> cares_act_benefits.csl_json()
-    '{"container-title": "U.S. Code", "jurisdiction": "us", "volume": "15", "event-date": {"date-parts": [["2020", 4, 10]]}, "type": "legislation", "section": "sec. 9021"}'
+    '{"jurisdiction": "us", "code_level_name": "CodeLevel.STATUTE", "volume": "15", "section": "sec. 9021", "type": "legislation", "container-title": "U.S. Code", "event-date": {"date-parts": [["2020", 4, 10]]}}'
 
 This CSL-JSON format currently only identifies the cited
 provision down to the section level. Calling

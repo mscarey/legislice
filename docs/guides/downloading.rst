@@ -33,9 +33,7 @@ password.
 There are several ways for Python to access your API token. One way
 would be to simply define it as a Python string, like this:
 
-.. code:: ipython3
-
-    TOKEN = "YOU_COULD_PUT_YOUR_API_TOKEN_HERE"
+    >>> TOKEN = "YOU_COULD_PUT_YOUR_API_TOKEN_HERE"
 
 However, a better option is to make your API token an **environment
 variable**, and then use Python to access that variable. Using a Python
@@ -54,22 +52,18 @@ people.
 Here’s an example of loading an API token from a ``.env`` file using
 ``dotenv``.
 
-.. code:: ipython3
-
-    import os
-    from dotenv import load_dotenv
-    load_dotenv()
-
-    TOKEN = os.getenv("LEGISLICE_API_TOKEN")
+    >>> import os
+    >>> from dotenv import load_dotenv
+    >>> load_dotenv()
+    True
+    >>> TOKEN = os.getenv("LEGISLICE_API_TOKEN")
 
 Now you can use the API token to create a Legislice :class:`~legislice.download.Client` object.
 This object holds your API token, so you can reuse the :class:`~legislice.download.Client`
 without re-entering your API token repeatedly.
 
-.. code:: ipython3
-
-    from legislice.download import Client
-    client = Client(api_token=TOKEN)
+    >>> from legislice.download import Client
+    >>> client = Client(api_token=TOKEN)
 
 .. _fetching-a-provision:
 
@@ -109,15 +103,18 @@ when the provision went into effect, and more.
 Here’s an example of how to fetch the text of the Fourth Amendment using
 the :class:`~legislice.download.Client`.
 
-    >>> fourth_a = client.fetch(query="/us/const/amendment/IV")
-    >>> fourth_a
+    >>> data = client.fetch(query="/us/const/amendment/IV")
+    >>> data
     {'heading': 'AMENDMENT IV.',
-    'content': 'The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.',
     'start_date': '1791-12-15',
     'node': '/us/const/amendment/IV',
-    'children': [],
-    'end_date': None,
+    'text_version': {
+        'id': 735706,
+        'url': 'https://authorityspoke.com/api/v1/textversions/735706/',
+        'content': 'The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.'},
     'url': 'https://authorityspoke.com/api/v1/us/const/amendment/IV/',
+    'end_date': None,
+    'children': [],
     'citations': [],
     'parent': 'https://authorityspoke.com/api/v1/us/const/amendment/'}
 
@@ -133,8 +130,9 @@ has methods for selecting some but not all of the provision’s
 text. One way to load an :class:`~legislice.enactments.Enactment` is with the
 :class:`~legislice.download.Client`'s :meth:`~legislice.download.Client.read_from_json` method.
 
-    >>> client.read_from_json(fourth_a)
-    Enactment(node="/us/const/amendment/IV", start_date=1791-12-15, selection=TextPositionSet([TextPositionSelector[0, 332)]))
+    >>> fourth_a = client.read_from_json(data)
+    >>> fourth_a.node
+    '/us/const/amendment/IV'
 
 Instead of always using :meth:`~legislice.download.Client.fetch` followed by
 :meth:`~legislice.download.Client.read_from_json`, we can combine the two functions together
@@ -144,9 +142,7 @@ constitutional amendment that contains subsections, to show that the
 structure of the amendment is preserved in the resulting
 :class:`~legislice.enactments.Enactment` object.
 
-.. code:: ipython3
-
-    thirteenth_a = client.read(query="/us/const/amendment/XIII")
+    >>> thirteenth_a = client.read(query="/us/const/amendment/XIII")
 
 The string representation of this provision includes both the selected
 text (which is the full text of the amendment) as well as a citation to
@@ -158,23 +154,22 @@ may support the ability to convert to traditional statute citation
 styles.
 
     >>> str(thirteenth_a)
-    '"Neither slavery nor involuntary servitude, except as a punishment for crime whereof the party shall have been duly convicted, shall exist within the United States, or any place subject to their jurisdiction. Congress shall have power to enforce this article by appropriate legislation." (/us/const/amendment/XIII 1865-12-18)'
+    '/us/const/amendment/XIII (1865-12-18)'
 
 The text of the Thirteenth Amendment is all within Section 1 and Section
 2 of the amendment. You can use the ``Enactment.children`` property to
 get a list of provisions contained within an ``Enactment``.
 
-    >>> thirteenth_a.children
-    [Enactment(node="/us/const/amendment/XIII/1", start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 207)])),
-    Enactment(node="/us/const/amendment/XIII/2", start_date=1865-12-18, selection=TextPositionSet([TextPositionSelector[0, 77)]))]
+    >>> len(thirteenth_a.children)
+    2
 
 Then we can access each child provision as its own ``Enactment`` object
 from the ``children`` list. Remember that lists in Python start at index
 0, so if we want Section 2, we’ll find it at index 1 of the
 ``children`` list.
 
-    >>> str(thirteenth_a.children[1])
-    '"Congress shall have power to enforce this article by appropriate legislation." (/us/const/amendment/XIII/2 1865-12-18)'
+    >>> str(thirteenth_a.children[1].text)
+    'Congress shall have power to enforce this article by appropriate legislation.'
 
 .. _downloading-prior-versions-of-an-enactment:
 
@@ -190,9 +185,8 @@ the statute was displaced by a new version.
     >>> old_grant_objective = client.read(query="/us/usc/t42/s300hh-31/a/1", date="2015-01-01")
     >>> old_grant_objective.content
     'strengthening epidemiologic capacity to identify and monitor the occurrence of infectious diseases and other conditions of public health importance;'
-
-    >>> str(old_grant_objective.end_date)
-    '2019-07-05'
+    >>> old_grant_objective.end_date
+    datetime.date(2019, 7, 5)
 
 
 And here’s the same provision as of 2020. Its content has changed.
@@ -245,17 +239,19 @@ provide a list of :class:`~legislice.enactments.CrossReference` objects when we 
 the download client to get the referenced :class:`~legislice.enactments.Enactment`.
 
     >>> infringement_provision = client.read("/us/usc/t17/s109/b/4")
-    >>> str(infringement_provision)
-    '"Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18." (/us/usc/t17/s109/b/4 2013-07-18)'
+    >>> str(infringement_provision.text)
+    'Any person who distributes a phonorecord or a copy of a computer program (including any tape, disk, or other medium embodying such program) in violation of paragraph (1) is an infringer of copyright under section 501 of this title and is subject to the remedies set forth in sections 502, 503, 504, and 505. Such violation shall not be a criminal offense under section 506 or cause such person to be subject to the criminal penalties set forth in section 2319 of title 18.'
 
-    >>> infringement_provision.cross_references()
-    [CrossReference(target_uri="/us/usc/t17/s501", reference_text="section 501 of this title"),
-     CrossReference(target_uri="/us/usc/t18/s2319", reference_text="section 2319 of title 18")]
+    >>> len(infringement_provision.cross_references())
+    0
+
+    >>> infringement_provision.cross_references()[0]
+    CrossReference(target_uri="/us/usc/t17/s501", reference_text="section 501 of this title"
 
     >>> reference_to_title_18 = infringement_provision.cross_references()[1]
     >>> referenced_enactment = client.read(reference_to_title_18)
-    >>> str(referenced_enactment)[:240]
-    '"Any person who violates section 506(a) (relating to criminal offenses) of title 17 shall be punished as provided in subsections (b), (c), and (d) and such penalties shall be in addition to any other provisions of title 17 or any other law.'
+    >>> referenced_enactment.text[:239]
+    'Any person who violates section 506(a) (relating to criminal offenses) of title 17 shall be punished as provided in subsections (b), (c), and (d) and such penalties shall be in addition to any other provisions of title 17 or any other law.'
 
 
 An important caveat for this feature is that the return value of the
@@ -286,9 +282,8 @@ enacted at that node at different times.
 
 
     >>> inbound_refs = client.citations_to("/us/usc/t17/s501")
-    >>> inbound_refs
-    [InboundReference to /us/usc/t17/s501, from (/us/usc/t17/s109/b/4 2013-07-18),
-     InboundReference to /us/usc/t17/s501, from (/us/usc/t17/s503/a/3 2013-07-18)]
+    >>> str(inbound_refs[0])
+    'InboundReference to /us/usc/t17/s501, from (/us/usc/t17/s109/b/4 2013-07-18)'
 
 
 We can examine one of these :class:`~legislice.enactments.InboundReference` objects to
@@ -304,8 +299,8 @@ subsections nested inside the cited provision. We can use the download
 :class:`~legislice.download.Client` again to convert the InboundReference into an Enactment.
 
     >>> citing_enactment = client.read(inbound_refs[0])
-    >>> citing_enactment
-    Enactment(node="/us/usc/t17/s109/b/4", start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 472)]))
+    >>> citing_enactment.node
+    '/us/usc/t17/s109/b/4'
 
 This Enactment happens not to have any child nodes nested within it, so
 its full text is the same as what we saw when we looked at the
@@ -324,27 +319,22 @@ is a section containing definitions of terms that will be used
 throughout the rest of Title 2.
 
     >>> refs_to_definitions = client.citations_to("/us/usc/t2/s1301")
-    [InboundReference to /us/usc/t2/s1301, from (/us/usc/t2/s4579/a/4/A 2018-05-09) and 2 other locations,
-     InboundReference to /us/usc/t2/s1301, from (/us/usc/t2/s4579/a/5/A 2018-05-09) and 2 other locations,
-     InboundReference to /us/usc/t2/s1301, from (/us/usc/t42/s2000ff/2/A/iii 2013-07-18),
-     InboundReference to /us/usc/t2/s1301, from (/us/usc/t42/s2000ff/2/B/iii 2013-07-18)]
+    >>> str(refs_to_definitions[0])
+    'InboundReference to /us/usc/t2/s1301, from (/us/usc/t2/s4579/a/4/A 2018-05-09) and 2 other locations'
 
 The :meth:`~legislice.download.Client.citations_to` method returns a list,
 and two of the InboundReferences in this list have been enacted in three different
 locations.
 
-    >>> refs_to_definitions[0].locations
-    [(/us/usc/t2/s60c-5/a/2/A 2013-07-18),
-     (/us/usc/t2/s4579/a/2/A 2014-01-16),
-     (/us/usc/t2/s4579/a/4/A 2018-05-09)]
+    >>> str(refs_to_definitions[0].locations[0])
+    '/us/usc/t2/s60c-5/a/2/A 2013-07-18'
 
 When we pass an InboundReference to :meth:`~legislice.download.Client.read`, the download client
 makes an :class:`~legislice.enactments.Enactment` from the most recent location where the citing
 provision has been enacted.
 
-    >>> client.read(refs_to_definitions[0])
-    Enactment(node="/us/usc/t2/s4579/a/4/A", start_date=2018-05-09, selection=TextPositionSet([TextPositionSelector[0, 68)]))
-
+    >>> str(client.read(refs_to_definitions[0]))
+    '/us/usc/t2/s4579/a/4/A (2018-05-09)'
 
 If we need the :class:`~legislice.enactments.Enactment` representing the statutory text before it was
 moved and renumbered, we can pass one of the :class:`~legislice.enactments.CitingProvisionLocation`
@@ -353,8 +343,8 @@ this way has the same content text, but a different citation node, an
 earlier start date, and an earlier end date.
 
     >>> citing_enactment_before_renumbering = client.read(refs_to_definitions[0].locations[0])
-    >>> citing_enactment_before_renumbering
-    Enactment(node="/us/usc/t2/s60c-5/a/2/A", start_date=2013-07-18, selection=TextPositionSet([TextPositionSelector[0, 68)]))
+    >>> str(citing_enactment_before_renumbering)
+    '/us/usc/t2/s60c-5/a/2/A (2013-07-18)'
 
     >>> citing_enactment_before_renumbering.end_date
     datetime.date(2014, 1, 16)
