@@ -83,7 +83,8 @@ Law Revision Counsel for publishing the United States Code. Similar to a
 URL path in a web address, the ``path`` format is a series of labels
 connected with forward slashes. The first part identifies the
 jurisdiction, the second part (if any) identifies the legislative code
-within that jurisdiction, and so on.
+within that jurisdiction, the third part identifies the next-level division
+of the code such as a numbered title, and so on.
 
 If we don’t know the right citation for the provision we want, we can
 sign in to an AuthoritySpoke account and

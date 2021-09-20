@@ -74,7 +74,7 @@ part of the Fourteenth Amendment that’s relevant to a particular case.
 We can use the :meth:`~legislice.enactments.Enactment.select` method to limit the text of the provision
 that’s considered “selected”. One way to do this is with a series of
 strings that exactly match the text we want to select. Because we're selecting only some of
-the text, the output of the :meth:`~legislice.enactments.BaseEnactment.selected_text` method
+the text, the output of the :meth:`~legislice.enactments.EnactmentPassage.selected_text` method
 will be different.
 
     >>> passages = fourteenth_amendment.select(["No State shall", "deprive any person of", "liberty", "without due process of law"])
@@ -124,7 +124,7 @@ select it, instead of specifying the exact text.
 Comparing selected text
 --------------------------
 
-We can use the :method:`~legislice.enactments.EnactmentPassage.child_passages`
+We can use the method :meth:`~legislice.enactments.EnactmentPassage.child_passages`
 to get a new :class:`~legislice.enactments.EnactmentPassage` with only the subsection
 of the Fourteenth Amendment that interests us. The text selector will still remain in
 place, so we can still get the same selected text.
@@ -327,6 +327,6 @@ case.
 
 This CSL-JSON format currently only identifies the cited
 provision down to the section level. Calling
-the :meth:`~legislice.enactments.BaseEnactment.as_citation` method
+the :meth:`~legislice.enactments.Enactment.as_citation` method
 on a subsection or deeper nested provision will produce
 the same citation data as its parent section.
