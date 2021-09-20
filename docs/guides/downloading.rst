@@ -227,7 +227,7 @@ Downloading Enactments from cross-references
 
 If an :class:`~legislice.enactments.Enactment` loaded from the API references other provisions, it may
 provide a list of :class:`~legislice.enactments.CrossReference` objects when we call its
-:meth:`~legislice.enactments.BaseEnactment.cross_references` method. You can pass one of these
+:meth:`~legislice.enactments.Enactment.cross_references` method. You can pass one of these
 :class:`~legislice.enactments.CrossReference` objects to the
 :meth:`~legislice.download.Client.fetch` or
 :meth:`~legislice.download.Client.read` method of
@@ -250,7 +250,7 @@ the download client to get the referenced :class:`~legislice.enactments.Enactmen
 
 
 An important caveat for this feature is that the return value of the
-:meth:`~legislice.enactments.BaseEnactment.cross_references` method will only be populated with internal links
+:meth:`~legislice.enactments.Enactment.cross_references` method will only be populated with internal links
 that have been marked up in the United States Legislative Markup XML
 published by the legislature. Unfortunately, some parts of the United
 States Code don’t include any link markup when making references to
