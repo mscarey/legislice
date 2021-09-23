@@ -630,6 +630,7 @@ class EnactmentPassage(BaseModel):
             tree_length += child.span_length
         return result
 
+    @property
     def start_date(self):
         current = self.enactment.start_date
         ranges = self.enactment.rangedict()
@@ -639,6 +640,7 @@ class EnactmentPassage(BaseModel):
                     current = memo.start_date
         return current
 
+    @property
     def end_date(self):
         current = self.enactment.end_date
         ranges = self.enactment.rangedict()
@@ -663,7 +665,7 @@ class EnactmentPassage(BaseModel):
 
     def __str__(self):
         text_sequence = self.text_sequence()
-        return f'"{text_sequence}" ({self.enactment.node} {self.start_date()})'
+        return f'"{text_sequence}" ({self.enactment.node} {self.start_date})'
 
     def select_all(self) -> None:
         """Select all text of Enactment."""

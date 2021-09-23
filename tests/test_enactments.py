@@ -131,7 +131,7 @@ class TestEnactmentDetails:
         )
         new = enactment.select(selection)
         assert new.level == CodeLevel.CONSTITUTION
-        assert new.start_date() == date(1791, 12, 15)
+        assert new.start_date == date(1791, 12, 15)
         assert "secure in their persons…" in str(new)
         assert enactment.node in str(new)
         assert "1791-12-15" in str(new)
@@ -1023,8 +1023,8 @@ class TestAddEnactments:
     def test_passage_start_date_is_latest_amendment(self, section_8, test_client):
         new_version = test_client.read_from_json(section_8)
         new_passage = new_version.select("remove the beard with electrolysis")
-        assert new_passage.start_date() == date(2013, 7, 18)
-        assert new_passage.end_date() is None
+        assert new_passage.start_date == date(2013, 7, 18)
+        assert new_passage.end_date is None
 
     def test_repealed_passage_end_date_is_earliest_found(
         self, old_section_8, test_client
@@ -1037,8 +1037,8 @@ class TestAddEnactments:
         # adding an earlier end date
         old_passage.enactment.children[1].children[2].end_date = date(2001, 1, 1)
         old_passage.select_more("within 14 days of such notice")
-        assert old_passage.start_date() == date(1935, 4, 1)
-        assert old_passage.end_date() == date(2001, 1, 1)
+        assert old_passage.start_date == date(1935, 4, 1)
+        assert old_passage.end_date == date(2001, 1, 1)
 
     def test_unable_to_add_subsection_with_new_text(
         self, old_section_8, section_8, test_client

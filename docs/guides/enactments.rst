@@ -219,17 +219,19 @@ if :meth:`~legislice.enactments.Enactment.implies` would return
 
 .. _combining-enactments:
 
-Combining Enactments
------------------------
+Combining Enactment Passages
+----------------------------
 
-When we have two Enactments and either they are at the same node or one
-is a descendant of the other, we can combine them into a new Enactment
+When we have two :class:`~legislice.enactments.EnactmentPassage`\s and 
+either they are at the same node or one
+is a descendant of the other, we can combine them into a 
+new :class:`~legislice.enactments.EnactmentPassage`\s
 using the addition sign. Here’s an example from a copyright statute in
 the United States Code. The example shows that we can load section
 ``/us/usc/t17/s103``, select some text from subsection ``b`` of that
 provision, and then add it to a separate Enactment representing the
 entirety of subsection ``/us/usc/t17/s103/a``. Legislice combines the
-text from subsection ``a`` and subsection ``b`` in the correct order.
+selected text from subsection ``a`` and subsection ``b`` in the correct order.
 
     >>> s103 = client.read(query="/us/usc/t17/s103", date="2020-01-01")
     >>> selections = ["The copyright in such work is independent of", "any copyright protection in the preexisting material."]
@@ -247,8 +249,8 @@ text from subsection ``a`` and subsection ``b`` in the correct order.
 
 .. _enactment-groups:
 
-EnactmentGroups
----------------
+Enactment Groups
+----------------
 
 When we want to work with groups of Enactments that may or may not be
 nested inside one another, we can put them together in
