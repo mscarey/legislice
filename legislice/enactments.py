@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections import deque
 from copy import deepcopy
 
 from datetime import date
@@ -12,11 +11,11 @@ from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
 from anchorpoint.textselectors import TextPositionSetFactory
 from anchorpoint.textsequences import TextSequence
-from anchorpoint.utils.ranges import Range, RangeDict
 
 from legislice.citations import Citation, identify_code, CodeLevel
 
 from pydantic import BaseModel, validator, root_validator
+from ranges import Range, RangeDict
 
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]

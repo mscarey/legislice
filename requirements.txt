@@ -1,5 +1,6 @@
 apispec[validation]
-git+git://github.com/mscarey/anchorpoint.git@06850bf2220a91b504e79b1e57f08d2a6d96923e#egg=anchorpoint
+git+git://github.com/mscarey/anchorpoint.git@c33cfa2f4ffd680ef45a7f77194e4b5882eabe9a#egg=anchorpoint
 python-dotenv
+python-ranges~=0.2.1
 requests
 roman
