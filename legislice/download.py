@@ -17,6 +17,8 @@ from legislice.enactments import (
 
 def enactment_needs_api_update(data: RawEnactment) -> bool:
     """Determine if JSON representation of Enactment needs to be supplemented from API."""
+    if not isinstance(data, dict):
+        return False
     if not data.get("node"):
         raise ValueError(
             '"data" must contain a "node" field '

@@ -377,3 +377,6 @@ class TestInboundCitations:
         }
         with pytest.raises(ValueError):
             _ = enactment_needs_api_update(barbers_without_node)
+
+    def test_enactment_needs_api_update_with_str(self):
+        assert enactment_needs_api_update("/us/usc") is False
