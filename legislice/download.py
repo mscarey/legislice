@@ -1,7 +1,7 @@
 """Download Enactments from API, with client."""
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, TypedDict, Union
 
 import requests
 
@@ -13,7 +13,27 @@ from legislice.enactments import (
     FetchedCitationDict,
     InboundReference,
     RawEnactment,
+    RawEnactmentPassage,
 )
+
+
+class PublicationCoverage(TypedDict):
+    """Available dates for a publication covered in an API's database."""
+
+    uri: str
+    latest_heading: str
+    first_published: datetime.date
+    earliest_in_db: datetime.date
+    latest_in_db: datetime.date
+
+
+CONST_COVERAGE: PublicationCoverage = {
+    "first_published": datetime.date(1788, 6, 21),
+    "earliest_in_db": datetime.date(1788, 6, 21),
+    "latest_in_db": datetime.date(2021, 1, 1),
+    "uri": "/us/const",
+    "latest_heading": "United States Constitution",
+}
 
 
 def enactment_needs_api_update(data: RawEnactment) -> bool:
@@ -71,11 +91,8 @@ class Client:
         if api_token and api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token or ""
-        self.coverage: Dict[str, Dict[str, Union[datetime.date, str]]] = {
-            "/us/const": {
-                "first_published": datetime.date(1788, 6, 21),
-                "earliest_in_db": datetime.date(1788, 6, 21),
-            }
+        self.coverage: Dict[str, PublicationCoverage] = {
+            "/us/const": CONST_COVERAGE,
         }
         self.update_coverage_from_api = update_coverage_from_api
 
@@ -145,7 +162,7 @@ class Client:
 
         return self._fetch_from_url(url=target).json()
 
-    def fetch_db_coverage(self, code_uri: str) -> Dict[str, Union[str, datetime.date]]:
+    def fetch_db_coverage(self, code_uri: str) -> PublicationCoverage:
         """Document date range of provisions of a code of laws available in API database."""
         target = self.api_root + "/coverage" + code_uri
         coverage = self._fetch_from_url(url=target).json()
@@ -288,7 +305,7 @@ class Client:
             data["first_published"] = self.coverage[code_uri]["first_published"]
         return data
 
-    def read_passage_from_json(self, data: RawEnactment) -> EnactmentPassage:
+    def read_passage_from_json(self, data: RawEnactmentPassage) -> EnactmentPassage:
         r"""
         Create a new :class:`EnactmentPassage` object using imported JSON data.
 
@@ -348,8 +365,8 @@ class Client:
         return {**data, **data_from_api}
 
     def update_entries_in_enactment_index(
-        self, enactment_index: Mapping[str, RawEnactment]
-    ) -> Mapping[str, RawEnactment]:
+        self, enactment_index: Mapping[str, RawEnactmentPassage]
+    ) -> Mapping[str, RawEnactmentPassage]:
         """Fill in missing fields in every entry in an :class:`~legislice.name_index.EnactmentIndex`."""
         for key, value in enactment_index.items():
             if enactment_needs_api_update(value["enactment"]):

@@ -5,7 +5,8 @@ from __future__ import annotations
 from copy import deepcopy
 
 from datetime import date
-from typing import Any, Dict, Sequence, List, Optional, Tuple, TypedDict, Union
+import datetime
+from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, TypedDict, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -17,8 +18,21 @@ from legislice.citations import Citation, identify_code, CodeLevel
 from pydantic import BaseModel, validator, root_validator
 from ranges import Range, RangeDict
 
-RawSelector = Union[str, Dict[str, str]]
-RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
+
+class RawPositionSelector(TypedDict):
+    start: int
+    end: int
+
+
+class RawQuoteSelector(TypedDict):
+    prefix: str
+    exact: str
+    suffix: str
+
+
+class RawSelectorSet(TypedDict):
+    positions: Optional[List[RawPositionSelector]]
+    quotes: Optional[List[RawQuoteSelector]]
 
 
 class CrossReferenceDict(TypedDict):
@@ -26,6 +40,24 @@ class CrossReferenceDict(TypedDict):
     target_url: str
     reference_text: str
     target_node: Optional[int]
+
+
+class RawEnactment(TypedDict):
+    heading: str
+    start_date: str
+    node: str
+    url: str
+    end_date: Optional[str]
+    content: str
+    children: List[Any]  # cyclic definition not allowed for mypy
+    citations: List[CrossReferenceDict]
+    earliest_in_db: Optional[datetime.date]
+    first_published: Optional[datetime.date]
+
+
+class RawEnactmentPassage(TypedDict):
+    enactment: RawEnactment
+    selection: RawSelectorSet
 
 
 class CitingProvisionLocationDict(TypedDict):
@@ -39,6 +71,7 @@ class FetchedCitationDict(TypedDict):
     locations: List[CitingProvisionLocationDict]
     citations: List[CrossReferenceDict]
     url: str
+    target_uri: Optional[str]
 
 
 class InboundReferenceDict(TypedDict):
