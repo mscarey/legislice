@@ -33,7 +33,7 @@ KNOWN_CODES: Dict[str, Dict[str, Tuple[str, CodeLevel]]] = {
 }
 
 
-def identify_code(jurisdiction: str, code: str) -> Tuple[str, str]:
+def identify_code(jurisdiction: str, code: str) -> Tuple[str, CodeLevel]:
     """Find code name and type based on USLM citation parts."""
     try:
         sovereign = KNOWN_CODES[jurisdiction]

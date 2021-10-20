@@ -10,6 +10,7 @@ from legislice.enactments import (
     CrossReference,
     CitingProvisionLocation,
     EnactmentPassage,
+    FetchedCitationDict,
     InboundReference,
     RawEnactment,
 )
@@ -232,7 +233,7 @@ class Client:
 
     def fetch_citations_to(
         self, target: Union[str, Enactment, CrossReference]
-    ) -> List[Dict]:
+    ) -> List[FetchedCitationDict]:
         """
         Query API for citations to a given target node, withoout loading them as InboundCitations.
 

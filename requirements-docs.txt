@@ -1,3 +1,8 @@
+anchorpoint~=0.7.0
+python-dotenv
+python-ranges~=0.2.1
+requests
+roman
 sphinx>=2.4.4
 sphinx-autodoc-typehints
 sphinx-rtd-theme

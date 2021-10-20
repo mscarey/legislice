@@ -5,7 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 from datetime import date
-from typing import Any, Dict, Sequence, List, Optional, Tuple, Union
+from typing import Any, Dict, Sequence, List, Optional, Tuple, TypedDict, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -19,6 +19,35 @@ from ranges import Range, RangeDict
 
 RawSelector = Union[str, Dict[str, str]]
 RawEnactment = Dict[str, Union[Any, str, List[RawSelector]]]
+
+
+class CrossReferenceDict(TypedDict):
+    target_uri: str
+    target_url: str
+    reference_text: str
+    target_node: Optional[int]
+
+
+class CitingProvisionLocationDict(TypedDict):
+    heading: str
+    start_date: str
+    node: str
+
+
+class FetchedCitationDict(TypedDict):
+    content: str
+    locations: List[CitingProvisionLocationDict]
+    citations: List[CrossReferenceDict]
+    url: str
+
+
+class InboundReferenceDict(TypedDict):
+    content: str
+    locations: List[CitingProvisionLocationDict]
+    citations: List[CrossReferenceDict]
+    url: str
+    target_uri: str
+    reference_text: Optional[str]
 
 
 class CrossReference(BaseModel):
@@ -95,8 +124,8 @@ class InboundReference(BaseModel):
 
     @root_validator(pre=True)
     def search_citations_for_reference_text(
-        cls, values: Dict[str, Union[Dict[str, str], str]]
-    ) -> Dict:
+        cls, values: InboundReferenceDict
+    ) -> InboundReferenceDict:
         """Get reference_text field from nested "citations" model."""
         if not values.get("reference_text"):
             reference_text = ""
@@ -261,7 +290,7 @@ class Enactment(BaseModel):
         return self.sovereign == "us"
 
     @property
-    def level(self) -> str:
+    def level(self) -> CodeLevel:
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
         code_name, code_level_name = identify_code(self.sovereign, self.code)
         return code_level_name
@@ -610,7 +639,7 @@ class EnactmentPassage(BaseModel):
         return self.enactment.is_federal
 
     @property
-    def level(self) -> str:
+    def level(self) -> CodeLevel:
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
         return self.enactment.level
 
@@ -833,10 +862,9 @@ class EnactmentPassage(BaseModel):
             Whether the list of phrases should include `None` to indicate a block of
             unselected text
         """
-        selected = self.selection.as_text_sequence(
+        return self.selection.as_text_sequence(
             text=self.enactment.text, include_nones=include_nones
         )
-        return selected
 
     def select_more(
         self,
@@ -913,19 +941,19 @@ def consolidate_enactments(
     :returns:
         a list of :class:`Enactment`\s without overlapping text
     """
-    consolidated: List[Enactment] = []
-    enactments = [
+    consolidated: List[EnactmentPassage] = []
+    passages: List[EnactmentPassage] = [
         item.select_all() if isinstance(item, Enactment) else item
         for item in enactments
     ]
-    while enactments:
+    while passages:
         match_made = False
-        left = enactments.pop()
-        for right in enactments:
+        left = passages.pop()
+        for right in passages:
             try:
                 combined = left + right
-                enactments.remove(right)
-                enactments.append(combined)
+                passages.remove(right)
+                passages.append(combined)
                 match_made = True
                 break
             except (ValueError, TypeError, TextSelectionError):
