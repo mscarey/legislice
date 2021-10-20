@@ -1,7 +1,7 @@
 """Download Enactments from API, with client."""
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TypedDict, Union
+from typing import Dict, List, Mapping, Optional, TypedDict, Union
 
 import requests
 
@@ -361,7 +361,9 @@ class Client:
         Useful when the dict has missing data because it was created by a user.
         """
 
-        data_from_api = self.fetch(query=data["node"], date=data.get("start_date"))
+        data_from_api = self.fetch(
+            query=data["node"], date=data.get("start_date") or ""
+        )
         return {**data, **data_from_api}
 
     def update_entries_in_enactment_index(

@@ -1,6 +1,6 @@
 import pytest
 
-from legislice import Citation, Enactment
+from legislice import Citation
 
 
 class TestMakeCitation:

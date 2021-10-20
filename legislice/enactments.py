@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from datetime import date
 import datetime
-from typing import Any, Dict, Sequence, List, Optional, Tuple, Type, TypedDict, Union
+from typing import Any, Sequence, List, Optional, Tuple, TypedDict, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -21,7 +21,7 @@ from ranges import Range, RangeDict
 
 class RawPositionSelector(TypedDict):
     start: int
-    end: int
+    end: Optional[int]
 
 
 class RawQuoteSelector(TypedDict):
@@ -44,7 +44,7 @@ class CrossReferenceDict(TypedDict):
 
 class RawEnactment(TypedDict):
     heading: str
-    start_date: str
+    start_date: Optional[str]
     node: str
     url: str
     end_date: Optional[str]

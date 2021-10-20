@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import textwrap
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import List, Sequence, Union
 
 from legislice.enactments import Enactment, EnactmentPassage, consolidate_enactments
 from pydantic import BaseModel, validator
