@@ -37,6 +37,7 @@ class EnactmentGroup(BaseModel):
             List[Union[Enactment, EnactmentPassage]],
         ],
     ) -> List[EnactmentPassage]:
+        """Consolidate overlapping EnactmentPassages into fewer objects."""
         if isinstance(obj, EnactmentGroup):
             return obj.passages
         if not isinstance(obj, List):
@@ -46,6 +47,8 @@ class EnactmentGroup(BaseModel):
 
     @validator("passages")
     def sort_passages(cls, obj: List[EnactmentPassage]) -> List[EnactmentPassage]:
+        """Sort federal to state, constitutional to statute to regulation, and then alphabetically."""
+
         return sort_passages(obj)
 
     def _at_index(self, key: int) -> EnactmentPassage:

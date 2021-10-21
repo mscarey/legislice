@@ -10,6 +10,8 @@ from pydantic import BaseModel, Field
 
 
 class CodeLevel(IntEnum):
+    """Identifier for the type of legislative code."""
+
     CONSTITUTION = 1
     STATUTE = 2
     REGULATION = 3
@@ -66,6 +68,7 @@ class Citation(BaseModel):
 
     @root_validator(pre=True)
     def validate_code(cls, obj):
+        """Standardize the code name for the styled citation."""
         if obj.get("code"):
             obj["code"], obj["code_level_name"] = identify_code(
                 jurisdiction=obj["jurisdiction"], code=obj["code"]
@@ -74,12 +77,14 @@ class Citation(BaseModel):
 
     @validator("volume")
     def validate_volume(cls, value):
+        """Make sure the "title" identifier for the styled citation doesn't start with "t"."""
         if value:
             value = value.lstrip("t")
         return value
 
     @validator("section")
     def validate_section(cls, value):
+        """Make sure the "section" part of the styled citation starts with the right abbreviation."""
         if value and not value.startswith("sec. "):
             value = "sec. " + value.lstrip("s")
         return value

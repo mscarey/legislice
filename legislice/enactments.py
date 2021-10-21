@@ -115,6 +115,8 @@ class TextVersion(BaseModel):
 
     @validator("content")
     def content_exists(cls, content: str) -> str:
+        """Check that the text content is a non-empty string."""
+
         if not content:
             raise ValueError(
                 "TextVersion should not be created with an empty string for content."
@@ -123,7 +125,6 @@ class TextVersion(BaseModel):
 
 
 class EnactmentMemo(BaseModel):
-
     """
     Info about an Enactment, to be linked to its text position in a parent Enactment.
 
@@ -427,9 +428,7 @@ class Enactment(BaseModel):
         start: int = 0,
         end: Optional[int] = None,
     ) -> TextPositionSet:
-        """
-        Make a TextPositionSet for specified text in this Enactment.
-        """
+        """Make a TextPositionSet for specified text in this Enactment."""
         if selection is False or selection is None:
             return TextPositionSet()
         elif not isinstance(selection, TextPositionSet):
@@ -629,6 +628,7 @@ class EnactmentPassage(BaseModel):
 
     @property
     def start_date(self):
+        """Get the latest start date of any provision version included in the passage."""
         current = self.enactment.start_date
         ranges = self.enactment.rangedict()
         for span, memo in ranges.items():
@@ -639,6 +639,7 @@ class EnactmentPassage(BaseModel):
 
     @property
     def end_date(self):
+        """Get the earliest end date of any provision version included in the passage."""
         current = self.enactment.end_date
         ranges = self.enactment.rangedict()
         for span, memo in ranges.items():
