@@ -8,4 +8,4 @@ from legislice.citations import Citation
 from legislice.download import Client
 from legislice.groups import EnactmentGroup
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"

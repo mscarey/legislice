@@ -1,5 +1,11 @@
 Changelog
 =========
+0.7.0 (2021-10-21)
+------------------
+- replace Marshmallow schemas with Pydantic models
+- add `types` module for type annotations of TypedDict API responses
+- add MANIFEST.in (to include readme.md on Python Package Index)
+
 0.6.0 (2021-09-20)
 ------------------
 - add EnactmentPassage class
@@ -7,7 +13,6 @@ Changelog
 - Enactment.limit_selection.start must be an int
 - no separate LinkedEnactment class for Enactments with URL links as children
 - remove BaseEnactment parent class
-- replace Marshmallow schemas with Pydantic models
 
 0.5.2 (2021-05-20)
 ------------------
