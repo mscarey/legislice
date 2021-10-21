@@ -5,8 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 from datetime import date
-import datetime
-from typing import Any, Sequence, List, Optional, Tuple, TypedDict, Union
+from typing import Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -14,73 +13,10 @@ from anchorpoint.textselectors import TextPositionSetFactory
 from anchorpoint.textsequences import TextSequence
 
 from legislice.citations import Citation, identify_code, CodeLevel
+from legislice.types import InboundReferenceDict
 
 from pydantic import BaseModel, validator, root_validator
 from ranges import Range, RangeDict
-
-
-class RawPositionSelector(TypedDict):
-    start: int
-    end: Optional[int]
-
-
-class RawQuoteSelector(TypedDict):
-    prefix: str
-    exact: str
-    suffix: str
-
-
-class RawSelectorSet(TypedDict):
-    positions: Optional[List[RawPositionSelector]]
-    quotes: Optional[List[RawQuoteSelector]]
-
-
-class CrossReferenceDict(TypedDict):
-    target_uri: str
-    target_url: str
-    reference_text: str
-    target_node: Optional[int]
-
-
-class RawEnactment(TypedDict):
-    heading: str
-    start_date: Optional[str]
-    node: str
-    url: str
-    end_date: Optional[str]
-    content: str
-    children: List[Any]  # cyclic definition not allowed for mypy
-    citations: List[CrossReferenceDict]
-    earliest_in_db: Optional[datetime.date]
-    first_published: Optional[datetime.date]
-
-
-class RawEnactmentPassage(TypedDict):
-    enactment: RawEnactment
-    selection: RawSelectorSet
-
-
-class CitingProvisionLocationDict(TypedDict):
-    heading: str
-    start_date: str
-    node: str
-
-
-class FetchedCitationDict(TypedDict):
-    content: str
-    locations: List[CitingProvisionLocationDict]
-    citations: List[CrossReferenceDict]
-    url: str
-    target_uri: Optional[str]
-
-
-class InboundReferenceDict(TypedDict):
-    content: str
-    locations: List[CitingProvisionLocationDict]
-    citations: List[CrossReferenceDict]
-    url: str
-    target_uri: str
-    reference_text: Optional[str]
 
 
 class CrossReference(BaseModel):

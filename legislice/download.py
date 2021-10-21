@@ -10,11 +10,11 @@ from legislice.enactments import (
     CrossReference,
     CitingProvisionLocation,
     EnactmentPassage,
-    FetchedCitationDict,
     InboundReference,
-    RawEnactment,
-    RawEnactmentPassage,
 )
+
+from legislice.types import FetchedCitationDict
+from legislice.types import RawEnactment, RawEnactmentPassage
 
 
 class PublicationCoverage(TypedDict):

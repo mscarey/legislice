@@ -44,6 +44,7 @@ API Documentation
     api_docs/enactments
     api_docs/citations
     api_docs/groups
+    api_docs/types
 
 Indices and tables
 -------------------
