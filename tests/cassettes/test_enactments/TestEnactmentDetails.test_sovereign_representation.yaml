@@ -1,0 +1,46 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/
+  response:
+    body:
+      string: '{"heading":"United States Legislation","start_date":"1776-07-04","node":"/us","text_version":null,"url":"https://authorityspoke.com/api/v1/us/","end_date":null,"children":["https://authorityspoke.com/api/v1/us/const/","https://authorityspoke.com/api/v1/us/usc/"],"citations":[],"parent":null}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '292'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 06 Nov 2023 04:58:37 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

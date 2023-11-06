@@ -1,6 +1,6 @@
-anchorpoint~=0.7.0
+git+https://github.com/mscarey/anchorpoint.git@v0.8.1#egg=anchorpoint
 python-dotenv
-python-ranges~=0.2.1
+python-ranges>=1.2.2
 requests
 roman
 sphinx>=2.4.4
