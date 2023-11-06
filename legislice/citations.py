@@ -3,10 +3,10 @@
 from datetime import date
 from enum import IntEnum
 import json
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Literal, Optional, Tuple, Union
 
 from pydantic.class_validators import validator, root_validator
-from pydantic import BaseModel, Field
+from pydantic import field_validator, model_validator, BaseModel
 
 
 class CodeLevel(IntEnum):
@@ -64,9 +64,10 @@ class Citation(BaseModel):
     volume: Optional[str] = None
     section: Optional[str] = None
     revision_date: Optional[date] = None
-    type: str = Field("legislation", const=True)
+    type: Literal["legislation"]
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def validate_code(cls, obj):
         """Standardize the code name for the styled citation."""
         if obj.get("code"):
@@ -75,14 +76,16 @@ class Citation(BaseModel):
             )
         return obj
 
-    @validator("volume")
+    @field_validator("volume")
+    @classmethod
     def validate_volume(cls, value):
         """Make sure the "title" identifier for the styled citation doesn't start with "t"."""
         if value:
             value = value.lstrip("t")
         return value
 
-    @validator("section")
+    @field_validator("section")
+    @classmethod
     def validate_section(cls, value):
         """Make sure the "section" part of the styled citation starts with the right abbreviation."""
         if value and not value.startswith("sec. "):
