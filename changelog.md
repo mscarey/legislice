@@ -1,5 +1,10 @@
 Changelog
 =========
+0.7.1 (2023-12-02)
+------------------
+- support Pydantic 2
+- replace pytest-vcr with pytest-recording
+
 0.7.0 (2021-10-21)
 ------------------
 - replace Marshmallow schemas with Pydantic models
