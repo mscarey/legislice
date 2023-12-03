@@ -54,7 +54,7 @@ class TestSerializeCitation:
         """
         section = test_client.read("/us/usc/t17/s103/b")
         cite = section.as_citation()
-        serialized = cite.dict()
+        serialized = cite.model_dump()
         assert str(cite).startswith("17 U.S. Code § 103")
         assert serialized.get("event-date") is None
         assert serialized.get("revision_date") is None

@@ -3,7 +3,7 @@
 from datetime import date
 from enum import IntEnum
 import json
-from typing import Dict, List, Literal, Optional, Tuple, Union
+from typing import ClassVar, Dict, List, Literal, Optional, Tuple, Union
 
 from pydantic.class_validators import validator, root_validator
 from pydantic import field_validator, model_validator, BaseModel
@@ -60,11 +60,11 @@ class Citation(BaseModel):
 
     jurisdiction: str
     code: str
-    code_level_name: Optional[str] = None
+    code_level_name: CodeLevel
     volume: Optional[str] = None
     section: Optional[str] = None
     revision_date: Optional[date] = None
-    type: Literal["legislation"]
+    type: ClassVar[Literal["legislation"]] = "legislation"
 
     @model_validator(mode="before")
     @classmethod
@@ -113,8 +113,9 @@ class Citation(BaseModel):
 
     def csl_dict(self) -> Dict[str, Union[str, int, List[List[Union[str, int]]]]]:
         """Return citation as a Citation Style Language object."""
-        result = self.dict()
+        result = self.model_dump()
         result["container-title"] = result.pop("code", None)
+        result["type"] = self.type
         event_date = result.pop("revision_date", None)
         if event_date:
             result["event-date"] = self.csl_date_format(event_date)
