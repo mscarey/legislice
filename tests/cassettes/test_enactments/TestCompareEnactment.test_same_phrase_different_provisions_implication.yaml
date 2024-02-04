@@ -1,0 +1,110 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/V/
+  response:
+    body:
+      string: '{"heading":"AMENDMENT V.","start_date":"1791-12-15","node":"/us/const/amendment/V","text_version":{"id":735707,"url":"https://authorityspoke.com/api/v1/textversions/735707/","content":"No
+        person shall be held to answer for a capital, or otherwise infamous crime,
+        unless on a presentment or indictment of a Grand Jury, except in cases arising
+        in the land or naval forces, or in the Militia, when in actual service in
+        time of War or public danger; nor shall any person be subject for the same
+        offence to be twice put in jeopardy of life or limb; nor shall be compelled
+        in any Criminal Case to be a witness against himself; nor be deprived of life,
+        liberty, or property, without due process of law; nor shall private property
+        be taken for public use, without just compensation."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/V/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '951'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 06 Nov 2023 04:58:41 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/
+  response:
+    body:
+      string: '{"heading":"Citizenship: security and equal protection of citizens.","start_date":"1868-07-28","node":"/us/const/amendment/XIV/1","text_version":{"id":735717,"url":"https://authorityspoke.com/api/v1/textversions/735717/","content":"All
+        persons born or naturalized in the United States, and subject to the jurisdiction
+        thereof, are citizens of the United States and of the State wherein they reside.
+        No State shall make or enforce any law which shall abridge the privileges
+        or immunities of citizens of the United States; nor shall any State deprive
+        any person of life, liberty, or property, without due process of law; nor
+        deny to any person within its jurisdiction the equal protection of the laws."},"url":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/1/","end_date":null,"children":[],"citations":[],"parent":"https://authorityspoke.com/api/v1/us/const/amendment/XIV/"}'
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '884'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 06 Nov 2023 04:58:42 GMT
+      Nel:
+      - '{"report_to":"heroku-nel","max_age":3600,"success_fraction":0.005,"failure_fraction":0.05,"response_headers":["Via"]}'
+      Referrer-Policy:
+      - same-origin
+      Report-To:
+      - '{"group":"heroku-nel","max_age":3600,"endpoints":[{"url":"https://nel.heroku.com/reports?ts=1699246722&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&s=zO5G%2FYVjAdkoVG85bXjJ5VBg7pqMSQQzMXbBPyNeAC4%3D"}]}'
+      Reporting-Endpoints:
+      - heroku-nel=https://nel.heroku.com/reports?ts=1699246722&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&s=zO5G%2FYVjAdkoVG85bXjJ5VBg7pqMSQQzMXbBPyNeAC4%3D
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

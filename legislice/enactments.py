@@ -15,7 +15,7 @@ from anchorpoint.textsequences import TextSequence
 from legislice.citations import Citation, identify_code, CodeLevel
 from legislice.types import InboundReferenceDict
 
-from pydantic import BaseModel, validator, root_validator
+from pydantic import field_validator, model_validator, BaseModel
 from ranges import Range, RangeDict
 
 
@@ -91,7 +91,8 @@ class InboundReference(BaseModel):
         """Get most recent location where the citing text has been enacted."""
         return max(self.locations)
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def search_citations_for_reference_text(
         cls, values: InboundReferenceDict
     ) -> InboundReferenceDict:
@@ -113,7 +114,8 @@ class TextVersion(BaseModel):
     url: Optional[str] = None
     id: Optional[int] = None
 
-    @validator("content")
+    @field_validator("content")
+    @classmethod
     def content_exists(cls, content: str) -> str:
         """Check that the text content is a non-empty string."""
 
@@ -199,7 +201,8 @@ class Enactment(BaseModel):
     name: str = ""
     children: Union[List[Enactment], List[str]] = []
 
-    @validator("text_version", pre=True)
+    @field_validator("text_version", mode="before")
+    @classmethod
     def make_text_version_from_str(
         cls, value: Optional[Union[TextVersion, str]]
     ) -> Optional[TextVersion]:
@@ -560,7 +563,7 @@ class Enactment(BaseModel):
         return self.implies(other)
 
 
-Enactment.update_forward_refs()
+Enactment.model_rebuild()
 
 
 class EnactmentPassage(BaseModel):

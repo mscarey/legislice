@@ -5,6 +5,8 @@ from typing import Dict, List, Mapping, Optional, TypedDict, Union
 
 import requests
 
+from anchorpoint import TextPositionSelector
+
 from legislice.enactments import (
     Enactment,
     CrossReference,
@@ -313,8 +315,6 @@ class Client:
         """
 
         data["enactment"] = self.update_data_from_api_if_needed(data=data["enactment"])
-        if not data.get("selection"):
-            data["selection"] = {"positions": [{"start": 0, "end": None}]}
 
         return EnactmentPassage(**data)
 

@@ -6,7 +6,7 @@ import textwrap
 from typing import List, Sequence, Union
 
 from legislice.enactments import Enactment, EnactmentPassage, consolidate_enactments
-from pydantic import BaseModel, validator
+from pydantic import field_validator, BaseModel
 
 
 def sort_passages(passages: List[EnactmentPassage]) -> List[EnactmentPassage]:
@@ -27,7 +27,8 @@ class EnactmentGroup(BaseModel):
 
     passages: List[EnactmentPassage] = []
 
-    @validator("passages", pre=True)
+    @field_validator("passages", mode="before")
+    @classmethod
     def consolidate_passages(
         cls,
         obj: Union[
@@ -45,7 +46,8 @@ class EnactmentGroup(BaseModel):
         consolidated: List[EnactmentPassage] = consolidate_enactments(obj)
         return consolidated
 
-    @validator("passages")
+    @field_validator("passages")
+    @classmethod
     def sort_passages(cls, obj: List[EnactmentPassage]) -> List[EnactmentPassage]:
         """Sort federal to state, constitutional to statute to regulation, and then alphabetically."""
 

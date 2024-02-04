@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://authorityspoke.com/api/v1/test/acts/47/6C@2020-01-01/
+  response:
+    body:
+      string: "{\"heading\":\"Issuance of beardcoin\",\"start_date\":\"1935-04-01\",\"node\":\"/test/acts/47/6C\",\"text_version\":{\"id\":1142672,\"url\":\"https://authorityspoke.com/api/v1/textversions/1142672/\",\"content\":\"Where
+        an exemption is granted under section 6, the Department of Beards shall issue
+        to the person so exempted a token, hereinafter referred to as a beardcoin,
+        that shall for all purposes be regarded as substantive proof of such exemption.\"},\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C@2020-01-01/\",\"end_date\":null,\"children\":[{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1\",\"text_version\":{\"id\":1142698,\"url\":\"https://authorityspoke.com/api/v1/textversions/1142698/\",\"content\":\"The
+        beardcoin shall be a cryptocurrency token using a blockchain approved by the
+        Department of Beards.\"},\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C/1@2020-01-01/\",\"end_date\":null,\"children\":[],\"citations\":[]},{\"heading\":\"\",\"start_date\":\"2013-07-18\",\"node\":\"/test/acts/47/6C/1-con\",\"text_version\":{\"id\":1142699,\"url\":\"https://authorityspoke.com/api/v1/textversions/1142699/\",\"content\":\"The
+        beardcoin's blockchain shall be in substantially the following form: WHEREAS
+        this beardcoin is approved by the Department of Beards under section 6, it
+        is secured by the following blockchain: \u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1.\"},\"url\":\"https://authorityspoke.com/api/v1/test/acts/47/6C/1-con@2020-01-01/\",\"end_date\":null,\"children\":[],\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"https://authorityspoke.com/api/v1/test/acts/47/6@2020-01-01/\",\"target_node\":1386965,\"reference_text\":\"section
+        6\"}]}],\"citations\":[{\"target_uri\":\"/test/acts/47/6\",\"target_url\":\"https://authorityspoke.com/api/v1/test/acts/47/6@2020-01-01/\",\"target_node\":1386965,\"reference_text\":\"section
+        6\"}],\"parent\":\"https://authorityspoke.com/api/v1/test/acts/47@2020-01-01/\"}"
+    headers:
+      Allow:
+      - GET, POST, PUT, PATCH, HEAD, OPTIONS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1857'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 06 Nov 2023 04:58:33 GMT
+      Nel:
+      - '{"report_to":"heroku-nel","max_age":3600,"success_fraction":0.005,"failure_fraction":0.05,"response_headers":["Via"]}'
+      Referrer-Policy:
+      - same-origin
+      Report-To:
+      - '{"group":"heroku-nel","max_age":3600,"endpoints":[{"url":"https://nel.heroku.com/reports?ts=1699246713&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&s=bSFagyszEwruTjdpL44GL6F3nkATV7XeNOlVO3jGxl4%3D"}]}'
+      Reporting-Endpoints:
+      - heroku-nel=https://nel.heroku.com/reports?ts=1699246713&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&s=bSFagyszEwruTjdpL44GL6F3nkATV7XeNOlVO3jGxl4%3D
+      Server:
+      - gunicorn
+      Vary:
+      - Accept, Cookie
+      Via:
+      - 1.1 vegur
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1
