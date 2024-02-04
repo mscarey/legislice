@@ -7,7 +7,7 @@ ipykernel
 mypy
 pydocstyle
 pylint
-pytest-cov>=4.1.0
+pytest-recording
 pytest-profiling
 pytest-vcr
 pytest>=5.3.2
