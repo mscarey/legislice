@@ -1,5 +1,10 @@
 Changelog
 =========
+0.8.0 (2024-05-18)
+------------------
+- change CI flag name to record-mode
+- limit supported python versions to 3.11 and 3.12
+
 0.7.1 (2023-12-02)
 ------------------
 - support Pydantic 2
