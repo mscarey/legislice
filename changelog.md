@@ -1,5 +1,11 @@
 Changelog
 =========
+
+0.8.1 (2025-01-25)
+------------------
+- add py.typed
+- bump anchorpoint==0.8.2
+
 0.8.0 (2024-05-18)
 ------------------
 - change CI flag name to record-mode
