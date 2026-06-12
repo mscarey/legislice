@@ -1,6 +1,21 @@
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+[project]
+name = "legislice"
+version = "0.8.1"
+description = "Tool for tagging, comparing, and combining legislative text"
+readme = "readme.md"
+requires-python = ">=3.14"
+dependencies = [
+    "anchorpoint==0.8.2",
+    "python-dotenv>=1.2.2",
+    "requests>=2.34.2",
+    "roman>=5.2",
 ]
-build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+    "pytest>=9.0.3",
+    "setuptools>=82.0.1",
+    "pytest-recording>=0.13.4",
+    "sphinx>=9.1.0",
+]
