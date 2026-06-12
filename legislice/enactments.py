@@ -332,14 +332,13 @@ class Enactment(BaseModel):
 
     def convert_selection_to_set(
         self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
+        selection: bool
+        | str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector]
+        | None,
     ) -> TextPositionSet:
         """Create a TextPositionSet from a different selection method."""
         if selection is True:
@@ -414,7 +413,7 @@ class Enactment(BaseModel):
         """Return a TextPositionSet of all text in this Enactment."""
         if self.text:
             return TextPositionSet(
-                positions=TextPositionSelector(start=0, end=len(self.text))
+                positions=[TextPositionSelector(start=0, end=len(self.text))]
             )
         return TextPositionSet()
 
@@ -452,7 +451,7 @@ class Enactment(BaseModel):
         if not self.content:
             return TextPositionSet()
         return TextPositionSet(
-            positions=TextPositionSelector(start=0, end=len(self.content))
+            positions=[TextPositionSelector(start=0, end=len(self.content))]
         )
 
     def _rangedict(
@@ -571,7 +570,7 @@ class EnactmentPassage(BaseModel):
 
     enactment: Enactment
     selection: TextPositionSet = TextPositionSet(
-        positions=TextPositionSelector(start=0, end=None)
+        positions=[TextPositionSelector(start=0, end=None)]
     )
 
     @property
@@ -735,12 +734,20 @@ class EnactmentPassage(BaseModel):
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
 
-    def __add__(self, other: Union[Enactment, EnactmentPassage]) -> EnactmentPassage:
-
+    def __add__(
+        self,
+        other: Enactment
+        | EnactmentPassage
+        | str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector],
+    ) -> EnactmentPassage:
         if isinstance(other, Enactment):
             other = other.select_all()
 
-        if not isinstance(other, self.__class__):
+        elif not isinstance(other, EnactmentPassage):
             copy_of_self = deepcopy(self)
             copy_of_self.select_more(other)
             return copy_of_self
@@ -902,7 +909,7 @@ class AnchoredEnactmentPassage(BaseModel):
 
 
 def consolidate_enactments(
-    enactments: Sequence[Union[Enactment, EnactmentPassage]]
+    enactments: Sequence[Union[Enactment, EnactmentPassage]],
 ) -> List[EnactmentPassage]:
     r"""
     Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.
