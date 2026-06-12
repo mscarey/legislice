@@ -22,6 +22,21 @@ def sort_passages(passages: List[EnactmentPassage]) -> List[EnactmentPassage]:
     return passages
 
 
+def consolidate_passages(
+    obj: EnactmentGroup
+    | Enactment
+    | EnactmentPassage
+    | Sequence[Enactment | EnactmentPassage],
+) -> list[EnactmentPassage]:
+    """Consolidate overlapping EnactmentPassages into fewer objects."""
+    if isinstance(obj, EnactmentGroup):
+        return obj.passages
+    if isinstance(obj, (Enactment, EnactmentPassage)):
+        obj = [obj]
+    consolidated: List[EnactmentPassage] = consolidate_enactments(list(obj))
+    return consolidated
+
+
 class EnactmentGroup(BaseModel):
     """Group of Enactments with comparison methods."""
 
@@ -37,14 +52,9 @@ class EnactmentGroup(BaseModel):
             EnactmentPassage,
             Sequence[Union[Enactment, EnactmentPassage]],
         ],
-    ) -> List[EnactmentPassage]:
+    ) -> list[EnactmentPassage]:
         """Consolidate overlapping EnactmentPassages into fewer objects."""
-        if isinstance(obj, EnactmentGroup):
-            return obj.passages
-        if isinstance(obj, (Enactment, EnactmentPassage)):
-            obj = [obj]
-        consolidated: List[EnactmentPassage] = consolidate_enactments(list(obj))
-        return consolidated
+        return consolidate_passages(obj)
 
     @field_validator("passages")
     @classmethod
@@ -87,12 +97,19 @@ class EnactmentGroup(BaseModel):
         return self.__class__(passages=combined)
 
     def __add__(
-        self, other: Union[EnactmentGroup, Sequence[Enactment], Enactment]
+        self,
+        other: Union[
+            EnactmentGroup,
+            Sequence[Enactment | EnactmentPassage],
+            Enactment,
+            EnactmentPassage,
+        ],
     ) -> EnactmentGroup:
         """Combine two EnactmentGroups, consolidating any duplicate Enactments."""
         if isinstance(other, self.__class__):
             return self._add_group(other)
-        to_add = self.__class__(passages=other)
+        passages = consolidate_passages(other)
+        to_add = self.__class__(passages=passages)
         return self._add_group(to_add)
 
     def __ge__(self, other: Union[Enactment, EnactmentPassage, EnactmentGroup]) -> bool:
