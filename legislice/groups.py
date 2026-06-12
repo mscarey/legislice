@@ -35,15 +35,15 @@ class EnactmentGroup(BaseModel):
             EnactmentGroup,
             Enactment,
             EnactmentPassage,
-            List[Union[Enactment, EnactmentPassage]],
+            Sequence[Union[Enactment, EnactmentPassage]],
         ],
     ) -> List[EnactmentPassage]:
         """Consolidate overlapping EnactmentPassages into fewer objects."""
         if isinstance(obj, EnactmentGroup):
             return obj.passages
-        if not isinstance(obj, List):
+        if isinstance(obj, (Enactment, EnactmentPassage)):
             obj = [obj]
-        consolidated: List[EnactmentPassage] = consolidate_enactments(obj)
+        consolidated: List[EnactmentPassage] = consolidate_enactments(list(obj))
         return consolidated
 
     @field_validator("passages")
