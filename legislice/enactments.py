@@ -208,7 +208,7 @@ class Enactment(BaseModel):
     ] = []
     citations: List[CrossReference] = []
     name: str = ""
-    children: List[Enactment] = []
+    children: List[Enactment] | List[str] = []
 
     @field_validator("text_version", mode="before")
     @classmethod
