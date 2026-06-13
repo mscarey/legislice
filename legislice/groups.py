@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import textwrap
-from typing import List, Sequence, Union
+from typing import Annotated, List, Sequence, Union
 
 from legislice.enactments import Enactment, EnactmentPassage, consolidate_enactments
-from pydantic import field_validator, BaseModel
+from pydantic import BaseModel, BeforeValidator, AfterValidator
 
 
 def sort_passages(passages: List[EnactmentPassage]) -> List[EnactmentPassage]:
@@ -40,28 +40,11 @@ def consolidate_passages(
 class EnactmentGroup(BaseModel):
     """Group of Enactments with comparison methods."""
 
-    passages: List[EnactmentPassage] = []
-
-    @field_validator("passages", mode="before")
-    @classmethod
-    def consolidate_passages(
-        cls,
-        obj: Union[
-            EnactmentGroup,
-            Enactment,
-            EnactmentPassage,
-            Sequence[Union[Enactment, EnactmentPassage]],
-        ],
-    ) -> list[EnactmentPassage]:
-        """Consolidate overlapping EnactmentPassages into fewer objects."""
-        return consolidate_passages(obj)
-
-    @field_validator("passages")
-    @classmethod
-    def sort_passages(cls, obj: List[EnactmentPassage]) -> List[EnactmentPassage]:
-        """Sort federal to state, constitutional to statute to regulation, and then alphabetically."""
-
-        return sort_passages(obj)
+    passages: Annotated[
+        List[EnactmentPassage],
+        AfterValidator(sort_passages),
+        BeforeValidator(consolidate_passages),
+    ] = []
 
     def _at_index(self, key: int) -> EnactmentPassage:
         return self.passages[key]

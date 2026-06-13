@@ -1,7 +1,7 @@
 """TypedDict data structures used for communicating between an API and Legislice."""
 
 from datetime import date
-from typing import Any, List, Optional, TypedDict
+from typing import List, Optional, TypedDict
 
 
 class RawPositionSelector(TypedDict):
