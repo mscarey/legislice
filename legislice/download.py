@@ -5,7 +5,6 @@ from typing import Dict, List, Mapping, Optional, TypedDict, Union
 
 import requests
 
-from anchorpoint import TextPositionSelector
 
 from legislice.enactments import (
     Enactment,

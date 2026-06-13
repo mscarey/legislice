@@ -304,6 +304,7 @@ class Enactment(BaseModel):
         return Citation(
             jurisdiction=self.jurisdiction,
             code=self.code,
+            code_level_name=level,
             volume=self.title,
             section=self.section,
             revision_date=revision_date,
@@ -335,14 +336,12 @@ class Enactment(BaseModel):
         selection: bool
         | str
         | TextPositionSelector
-        | TextPositionSet
         | TextQuoteSelector
         | Sequence[TextQuoteSelector]
         | None,
     ) -> TextPositionSet:
         """Create a TextPositionSet from a different selection method."""
-        if selection is True:
-            return self.make_selection_of_all_text()
+
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
 

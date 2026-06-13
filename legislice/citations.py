@@ -5,7 +5,6 @@ from enum import IntEnum
 import json
 from typing import ClassVar, Dict, List, Literal, Optional, Tuple, Union
 
-from pydantic.class_validators import validator, root_validator
 from pydantic import field_validator, model_validator, BaseModel
 
 
