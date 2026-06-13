@@ -292,7 +292,7 @@ class Enactment(BaseModel):
         If not, then the `start_date` merely reflects the earliest date that versions
         of the :class:`Enactment`\'s code exist in the database.
         """
-        if self.earliest_in_db:
+        if self.start_date and self.earliest_in_db:
             if self.earliest_in_db < self.start_date:
                 return True
             elif self.first_published and self.earliest_in_db <= self.first_published:
