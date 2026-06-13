@@ -80,6 +80,7 @@ class InboundReference(BaseModel):
     reference_text: str
     target_uri: str
     locations: List[CitingProvisionLocation]
+    url: str | None = None
 
     def __str__(self):
         result = f"InboundReference to {self.target_uri}, from {self.latest_location()}"
