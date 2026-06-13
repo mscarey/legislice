@@ -317,18 +317,16 @@ class Client:
 
         return EnactmentPassage(**data)
 
-    def read_from_json(
-        self, data: RawEnactment, use_text_expansion: bool = True
-    ) -> Enactment:
+    def read_from_json(self, data: RawEnactment) -> Enactment:
         r"""
         Create a new :class:`Enactment` object using imported JSON data.
 
         If fields are missing from the JSON, they will be fetched using the API key.
         """
 
-        data = self.update_data_from_api_if_needed(data=data)
+        data: RawEnactment = self.update_data_from_api_if_needed(data=data)
 
-        return Enactment(**data)
+        return Enactment(**data)  # ty: ignore[unknown-argument]
 
     def read(
         self,
@@ -351,7 +349,7 @@ class Client:
             you will be given the version that became effective later.
         """
         raw_enactment = self.fetch(query=query, date=date)
-        return self.read_from_json(raw_enactment, use_text_expansion=False)
+        return self.read_from_json(raw_enactment)
 
     def update_enactment_from_api(self, data: RawEnactment) -> RawEnactment:
         """

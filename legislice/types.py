@@ -48,7 +48,7 @@ class RawEnactment(TypedDict):
     url: str
     end_date: Optional[str]
     content: str
-    children: List[Any]  # cyclic definition not allowed for mypy
+    children: List["RawEnactment"]
     citations: List[CrossReferenceDict]
     earliest_in_db: Optional[date]
     first_published: Optional[date]

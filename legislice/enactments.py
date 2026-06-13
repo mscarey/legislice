@@ -5,7 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 from datetime import date
-from typing import Sequence, List, Optional, Tuple, Union
+from typing import Annotated, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -15,7 +15,7 @@ from anchorpoint.textsequences import TextSequence
 from legislice.citations import Citation, identify_code, CodeLevel
 from legislice.types import InboundReferenceDict
 
-from pydantic import field_validator, model_validator, BaseModel
+from pydantic import BeforeValidator, field_validator, model_validator, BaseModel
 from ranges import Range, RangeDict
 
 
@@ -134,9 +134,16 @@ class EnactmentMemo(BaseModel):
     """
 
     node: str
-    start_date: date
+    start_date: date | None
     content: str
     end_date: Optional[date] = None
+
+
+def string_to_date(value: Optional[Union[date, str]]) -> Optional[date]:
+    """Allow first_published to be populated from a string."""
+    if isinstance(value, str):
+        return date.fromisoformat(value)
+    return value
 
 
 class Enactment(BaseModel):
@@ -155,7 +162,8 @@ class Enactment(BaseModel):
         full text content at this node, even if not all of it is cited
 
     :param start_date:
-        date when the text was enacted at the cited location
+        date when the text was enacted at the cited location. Likely
+        not the same as the operative dates of any rules established by the enactment.
 
     :param known_revision_date:
         whether the "start_date" field is known to be a date
@@ -188,18 +196,18 @@ class Enactment(BaseModel):
     """
 
     node: str
-    start_date: date
+    start_date: Annotated[date | None, BeforeValidator(string_to_date)]
     heading: str = ""
     text_version: Optional[TextVersion] = None
-    end_date: Optional[date] = None
-    first_published: Optional[date] = None
-    earliest_in_db: Optional[date] = None
+    end_date: Annotated[date | None, BeforeValidator(string_to_date)] = None
+    first_published: Annotated[date | None, BeforeValidator(string_to_date)] = None
+    earliest_in_db: Annotated[date | None, BeforeValidator(string_to_date)] = None
     anchors: Union[
         TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
     ] = []
     citations: List[CrossReference] = []
     name: str = ""
-    children: Union[List[Enactment], List[str]] = []
+    children: List[Enactment] = []
 
     @field_validator("text_version", mode="before")
     @classmethod
