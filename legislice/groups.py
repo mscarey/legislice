@@ -108,6 +108,14 @@ class EnactmentGroup(
     def sequence(self) -> Tuple[EnactmentGroupItem, ...]:
         return tuple(self.root)
 
+    def append(self, item: Enactment | EnactmentGroupItem) -> None:
+        """Append an Enactment or EnactmentPassage to the group."""
+        if not isinstance(item, (Enactment, EnactmentPassage)):
+            raise TypeError(
+                f"Cannot append object of type {type(item)} to {self.__class__.__name__}"
+            )
+        self.passages = list(self.root) + [item]
+
     @sequence.setter
     def sequence(self, value: Sequence[EnactmentGroupItem]) -> None:
         self.root = tuple(value)

@@ -42,6 +42,55 @@ class TestEnactmentGroups:
             EnactmentGroup(passages=[cite])
 
 
+class TestAppend:
+    def test_append_enactment_passage(self, copyright_clause, copyright_statute):
+        group = EnactmentGroup(passages=[copyright_clause])
+        group.append(copyright_statute)
+        assert len(group) == 2
+
+    def test_append_enactment(self, copyright_clause, copyright_statute):
+        """Appending a bare Enactment should be converted via .passage."""
+        group = EnactmentGroup(passages=[copyright_clause])
+        enactment = Enactment(
+            node="/us/usc/t17/s102/b",
+            heading="",
+            start_date=date(2013, 7, 18),
+            text_version="In no case does copyright protection extend to any idea.",
+        )
+        group.append(enactment)
+        assert len(group) == 2
+
+    def test_append_wrong_type_raises(self, copyright_clause):
+        group = EnactmentGroup(passages=[copyright_clause])
+        with pytest.raises(TypeError):
+            group.append("not an enactment")
+
+    def test_append_consolidates_overlapping(self, copyright_clause):
+        passage = copyright_clause.select(None)
+        securing_for_authors = passage + (
+            "To promote the Progress of Science and "
+            "useful Arts, by securing for limited Times to Authors"
+        )
+        and_inventors = passage + "and Inventors"
+        group = EnactmentGroup(passages=[securing_for_authors])
+        group.append(and_inventors)
+        assert len(group) == 1
+        assert "Authors" in group[0].selected_text()
+        assert "Inventors" in group[0].selected_text()
+
+    def test_append_sorts_passages(self, copyright_clause, copyright_statute):
+        """State/lower-level enactments should be sorted to the end after append."""
+        regulation = Enactment(
+            node="/us/cfr/t37/s202.1",
+            heading="",
+            start_date=date(1992, 2, 21),
+            text_version="The following are examples of works not subject to copyright",
+        )
+        group = EnactmentGroup(passages=[copyright_clause, copyright_statute])
+        group.append(regulation)
+        assert group[-1].node == "/us/cfr/t37/s202.1"
+
+
 class TestImplies:
     def test_no_implication_of_group(self, copyright_clause, copyright_statute):
         extra = deepcopy(copyright_clause)
