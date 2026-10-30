@@ -1,7 +1,9 @@
-"""TypedDict data structures used for communicating between an API and Legislice."""
+"""Data structures used for communicating between an API and Legislice."""
 
 from datetime import date
 from typing import TypedDict
+
+from pydantic import BaseModel
 
 
 class RawPositionSelector(TypedDict):
@@ -104,7 +106,7 @@ class InboundReferenceDict(TypedDict):
     reference_text: str | None
 
 
-class PublicationCoverage(TypedDict):
+class PublicationCoverage(BaseModel):
     """Available dates for a publication covered in an API's database."""
 
     uri: str

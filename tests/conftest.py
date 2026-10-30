@@ -5,7 +5,7 @@ import pytest
 from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
 
-from legislice.download import Client
+from legislice.download import Client, PublicationCoverage
 
 load_dotenv()
 
@@ -24,20 +24,20 @@ def vcr_config():
 @pytest.fixture(scope="class")
 def test_client() -> Client:
     client = Client(api_token=TOKEN)
-    client.coverage["/us/usc"] = {
-        "uri": "/us/usc",
-        "latest_heading": "United States Code (USC)",
-        "first_published": datetime.date(1926, 6, 30),
-        "earliest_in_db": datetime.date(2013, 7, 18),
-        "latest_in_db": datetime.date(2020, 8, 8),
-    }
-    client.coverage["/test/acts"] = {
-        "uri": "/test/acts",
-        "latest_heading": "Test Acts",
-        "first_published": datetime.date(1935, 4, 1),
-        "earliest_in_db": datetime.date(1935, 4, 1),
-        "latest_in_db": datetime.date(2013, 7, 18),
-    }
+    client.coverage["/us/usc"] = PublicationCoverage(
+        uri="/us/usc",
+        latest_heading="United States Code (USC)",
+        first_published=datetime.date(1926, 6, 30),
+        earliest_in_db=datetime.date(2013, 7, 18),
+        latest_in_db=datetime.date(2020, 8, 8),
+    )
+    client.coverage["/test/acts"] = PublicationCoverage(
+        uri="/test/acts",
+        latest_heading="Test Acts",
+        first_published=datetime.date(1935, 4, 1),
+        earliest_in_db=datetime.date(1935, 4, 1),
+        latest_in_db=datetime.date(2013, 7, 18),
+    )
     return client
 
 

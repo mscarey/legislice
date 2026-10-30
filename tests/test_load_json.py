@@ -4,7 +4,7 @@ from typing import ClassVar
 import pytest
 from anchorpoint import TextQuoteSelector
 
-from legislice.download import Client
+from legislice.download import Client, PublicationCoverage
 
 
 class TestUpdateEnactments:
@@ -96,10 +96,13 @@ class TestUpdateEnactments:
 
 class TestLoadAndSelect:
     client = Client()
-    client.coverage["/us/usc"] = {
-        "earliest_in_db": date(1750, 1, 1),
-        "first_published": date(1750, 1, 1),
-    }
+    client.coverage["/us/usc"] = PublicationCoverage(
+        uri="/us/usc",
+        latest_heading="United States Code",
+        earliest_in_db=date(1750, 1, 1),
+        first_published=date(1750, 1, 1),
+        latest_in_db=date(1750, 1, 1),
+    )
     response: ClassVar[dict] = {
         "heading": "",
         "start_date": "2013-07-18",

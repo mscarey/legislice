@@ -2,7 +2,6 @@
 
 import datetime
 from collections.abc import Mapping
-from typing import TypedDict
 
 import requests
 
@@ -13,26 +12,20 @@ from legislice.enactments import (
     EnactmentPassage,
     InboundReference,
 )
-from legislice.types import FetchedCitationDict, RawEnactment, RawEnactmentPassage
+from legislice.types import (
+    FetchedCitationDict,
+    PublicationCoverage,
+    RawEnactment,
+    RawEnactmentPassage,
+)
 
-
-class PublicationCoverage(TypedDict):
-    """Available dates for a publication covered in an API's database."""
-
-    uri: str
-    latest_heading: str
-    first_published: datetime.date
-    earliest_in_db: datetime.date
-    latest_in_db: datetime.date
-
-
-CONST_COVERAGE: PublicationCoverage = {
-    "first_published": datetime.date(1788, 6, 21),
-    "earliest_in_db": datetime.date(1788, 6, 21),
-    "latest_in_db": datetime.date(2021, 1, 1),
-    "uri": "/us/const",
-    "latest_heading": "United States Constitution",
-}
+CONST_COVERAGE = PublicationCoverage(
+    first_published=datetime.date(1788, 6, 21),
+    earliest_in_db=datetime.date(1788, 6, 21),
+    latest_in_db=datetime.date(2021, 1, 1),
+    uri="/us/const",
+    latest_heading="United States Constitution",
+)
 
 
 def enactment_needs_api_update(data: RawEnactment) -> bool:
@@ -159,10 +152,7 @@ class Client:
         """Document date range of provisions of a code of laws available in API database."""
         target = self.api_root + "/coverage" + code_uri
         coverage = self._fetch_from_url(url=target).json()
-        for k, v in coverage.items():
-            if k not in ("uri", "latest_heading"):
-                coverage[k] = datetime.date.fromisoformat(v)
-        return coverage
+        return PublicationCoverage.model_validate(coverage)
 
     def fetch_inbound_reference(self, query: InboundReference) -> RawEnactment:
         """
@@ -290,8 +280,8 @@ class Client:
         # update client's data about the database's coverage
         code_uri = self.get_db_coverage(data["node"])
         if self.coverage.get(code_uri):
-            data["earliest_in_db"] = self.coverage[code_uri]["earliest_in_db"]
-            data["first_published"] = self.coverage[code_uri]["first_published"]
+            data["earliest_in_db"] = self.coverage[code_uri].earliest_in_db
+            data["first_published"] = self.coverage[code_uri].first_published
         return data
 
     def read_passage_from_json(self, data: RawEnactmentPassage) -> EnactmentPassage:
