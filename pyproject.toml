@@ -12,7 +12,7 @@ classifiers = [
     "Programming Language :: Python :: 3.15",
     "Operating System :: OS Independent",
 ]
-readme = "README.rst"
+readme = "readme.md"
 requires-python = ">=3.13"
 dependencies = [
     "anchorpoint==0.9.0",
@@ -39,3 +39,9 @@ docs = [
 
 [tool.ruff.lint]
 ignore = ["B015", "PLR0124"]
+
+[project.urls]
+Homepage = "https://github.com/mscarey/legislice"
+Documentation = "https://legislice.readthedocs.io/en/latest/"
+Changelog = "https://github.com/mscarey/legislice/blob/master/changelog.md"
+Issues = "https://github.com/mscarey/legislice/issues"

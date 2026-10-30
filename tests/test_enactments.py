@@ -30,7 +30,7 @@ class TestMakeEnactment:
             node="/test/acts/47/1",
             start_date=date(1935, 4, 1),
             heading="Short title",
-            content=(
+            text_version=(
                 "This Act may be cited as the Australian Beard Tax"
                 " (Promotion of Enlightenment Values) Act 1934."
             ),
@@ -56,7 +56,10 @@ class TestMakeEnactment:
             start_date=date(1935, 4, 1),
         )
 
-        assert section.children[0].content.startswith("The beardcoin shall")
+        assert isinstance(section.children[0], Enactment)
+        assert section.children[0].text_version and section.children[
+            0
+        ].text_version.content.startswith("The beardcoin shall")
 
     def test_create_TextPositionSet_on_init(self, section_11_subdivided):
         len_s11 = len(section_11_subdivided["text_version"]["content"])

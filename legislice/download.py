@@ -259,7 +259,7 @@ class Client:
             a list of InboundReferences to the cited node
         """
         target_uri = self.uri_from_query(target)
-        json_citations = self.fetch_citations_to(target_uri)
+        json_citations: list[FetchedCitationDict] = self.fetch_citations_to(target_uri)
         for entry in json_citations:
             entry["target_uri"] = target_uri
         return [InboundReference(**data) for data in json_citations]
