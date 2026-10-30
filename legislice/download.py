@@ -12,7 +12,7 @@ from legislice.enactments import (
     EnactmentPassage,
     InboundReference,
 )
-from legislice.types import (
+from legislice.models import (
     FetchedCitationDict,
     PublicationCoverage,
     RawEnactment,

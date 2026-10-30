@@ -18,7 +18,7 @@ from pydantic import BaseModel, BeforeValidator, field_validator, model_validato
 from ranges import Range, RangeDict
 
 from legislice.citations import Citation, CodeLevel, identify_code
-from legislice.types import InboundReferenceDict
+from legislice.models import InboundReferenceDict
 
 
 class CrossReference(BaseModel):
