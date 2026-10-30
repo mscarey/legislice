@@ -205,5 +205,5 @@ class EnactmentGroup[EnactmentGroupItem: EnactmentPassage](
     ) -> bool:
         """Determine whether self includes all the text of another Enactment or EnactmentGroup."""
         if isinstance(other, (Enactment, EnactmentPassage)):
-            return self._implies_enactment(other)
+            return self._implies_enactment(cast(Enactment | EnactmentGroupItem, other))
         return self._implies(other)
