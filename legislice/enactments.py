@@ -644,8 +644,12 @@ class EnactmentPassage(BaseModel):
         current = self.enactment.start_date
         ranges = self.enactment.rangedict()
         for span, memo in ranges.items():
-            if self.selection.rangeset() & span[0]:
-                current = max(current, memo.start_date)
+            if self.selection.rangeset() & span[0] and memo.start_date is not None:
+                current = (
+                    memo.start_date
+                    if current is None
+                    else max(current, memo.start_date)
+                )
         return current
 
     @property
