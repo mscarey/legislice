@@ -326,7 +326,7 @@ class Client:
 
         data: RawEnactment = self.update_data_from_api_if_needed(data=data)
 
-        return Enactment(**data)  # ty: ignore[unknown-argument]
+        return Enactment(**data)
 
     def read(
         self,

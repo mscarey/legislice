@@ -15,7 +15,6 @@ class TestEnactmentGroups:
         assert isinstance(EnactmentGroup(passages=group), EnactmentGroup)
 
     def test_consolidate_adjacent_passages(self, copyright_clause, copyright_statute):
-
         passage = copyright_clause.select(None)
         securing_for_authors = passage + (
             "To promote the Progress of Science and "

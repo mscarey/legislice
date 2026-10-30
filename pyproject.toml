@@ -5,7 +5,7 @@ description = "Tool for tagging, comparing, and combining legislative text"
 readme = "readme.md"
 requires-python = ">=3.14"
 dependencies = [
-    "anchorpoint==0.8.2",
+    "anchorpoint==0.9.0",
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
     "roman>=5.2",
