@@ -567,9 +567,9 @@ class TestCompareEnactment:
         """
         enactment = test_client.read(query="/test/acts/47/1", date="1999-01-01")
         passage = enactment.select_all()
-        assert passage == passage  # noqa: PLR0124
-        assert not passage > passage  # noqa: PLR0124
-        assert passage >= passage  # noqa: PLR0124
+        assert passage == passage
+        assert not passage > passage
+        assert passage >= passage
 
     @pytest.mark.vcr
     def test_not_gt_if_equal_with_selection(self, test_client):
@@ -612,7 +612,7 @@ class TestCompareEnactment:
         subdivided = Enactment(**section_11_subdivided)
         divided_passage = subdivided.select_all()
         with pytest.raises(TypeError):
-            passage >= divided_passage.text_sequence()
+            passage >= divided_passage.text_sequence()  # ty: ignore[unsupported-operator]
 
     @pytest.mark.vcr
     def test_more_provisions_implies_fewer(self, test_client, section_8):

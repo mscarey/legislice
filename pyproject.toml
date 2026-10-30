@@ -36,3 +36,6 @@ docs = [
     "sphinx>=9.1.0",
     "sphinx-rtd-theme>=3.1.0",
 ]
+
+[tool.ruff.lint]
+ignore = ["B015", "PLR0124"]

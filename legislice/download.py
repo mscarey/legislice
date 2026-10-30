@@ -56,15 +56,12 @@ class LegislicePathError(Exception):
     """Error for API query with invalid path."""
 
 
-
 class LegisliceDateError(Exception):
     """Error for API query with invalid date."""
 
 
-
 class LegisliceTokenError(Exception):
     """Error for failure to authenticate with API token."""
-
 
 
 def normalize_path(path: str) -> str:
@@ -202,9 +199,7 @@ class Client:
                 self.coverage[code_uri] = self.fetch_db_coverage(code_uri)
         return code_uri
 
-    def url_from_enactment_path(
-        self, path: str, date: datetime.date | str = ""
-    ) -> str:
+    def url_from_enactment_path(self, path: str, date: datetime.date | str = "") -> str:
         """Generate URL for API call for specified USLM path and date."""
         query_with_root = self.api_root + normalize_path(path)
 
@@ -216,9 +211,7 @@ class Client:
             query_with_root += "/"
         return query_with_root
 
-    def fetch_uri(
-        self, query: str, date: datetime.date | str = ""
-    ) -> RawEnactment:
+    def fetch_uri(self, query: str, date: datetime.date | str = "") -> RawEnactment:
         """
         Fetch data about legislation at specified path and date from Client's assigned API root.
 
