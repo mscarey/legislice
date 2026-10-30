@@ -262,7 +262,7 @@ class Client:
         json_citations: list[FetchedCitationDict] = self.fetch_citations_to(target_uri)
         for entry in json_citations:
             entry["target_uri"] = target_uri
-        return [InboundReference(**data) for data in json_citations]
+        return [InboundReference.from_fetched_citation(data) for data in json_citations]
 
     def update_data_from_api_if_needed(self, data: RawEnactment) -> RawEnactment:
         """

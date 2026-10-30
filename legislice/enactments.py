@@ -352,6 +352,11 @@ class Enactment(BaseModel):
     ) -> TextPositionSet:
         """Create a TextPositionSet from a different selection method."""
 
+        if selection is None:
+            return TextPositionSet()
+        if isinstance(selection, str):
+            return TextPositionSetFactory(self.text).from_selection([selection])
+
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
 
