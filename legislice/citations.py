@@ -1,11 +1,11 @@
 """Citations to codified citations."""
 
+import json
 from datetime import date
 from enum import IntEnum
-import json
-from typing import ClassVar, Dict, List, Literal, Optional, Tuple, Union
+from typing import ClassVar, Literal
 
-from pydantic import field_validator, model_validator, BaseModel
+from pydantic import BaseModel, field_validator, model_validator
 
 
 class CodeLevel(IntEnum):
@@ -18,7 +18,7 @@ class CodeLevel(IntEnum):
 
 
 # Path parts known to indicate the level of law they refer to.
-KNOWN_CODES: Dict[str, Dict[str, Tuple[str, CodeLevel]]] = {
+KNOWN_CODES: dict[str, dict[str, tuple[str, CodeLevel]]] = {
     "test": {"acts": ("Test Acts", CodeLevel.STATUTE)},
     "us": {
         "const": ("U.S. Const.", CodeLevel.CONSTITUTION),
@@ -34,7 +34,7 @@ KNOWN_CODES: Dict[str, Dict[str, Tuple[str, CodeLevel]]] = {
 }
 
 
-def identify_code(jurisdiction: str, code: str) -> Tuple[str, CodeLevel]:
+def identify_code(jurisdiction: str, code: str) -> tuple[str, CodeLevel]:
     """Find code name and type based on USLM citation parts."""
     try:
         sovereign = KNOWN_CODES[jurisdiction]
@@ -60,9 +60,9 @@ class Citation(BaseModel):
     jurisdiction: str
     code: str
     code_level_name: CodeLevel
-    volume: Optional[str] = None
-    section: Optional[str] = None
-    revision_date: Optional[date] = None
+    volume: str | None = None
+    section: str | None = None
+    revision_date: date | None = None
     type: ClassVar[Literal["legislation"]] = "legislation"
 
     @model_validator(mode="before")
@@ -92,7 +92,7 @@ class Citation(BaseModel):
         return value
 
     @staticmethod
-    def csl_date_format(revision_date: date) -> Dict[str, List[List[Union[str, int]]]]:
+    def csl_date_format(revision_date: date) -> dict[str, list[list[str | int]]]:
         """Convert event date to Citation Style Language format."""
         return {
             "date-parts": [
@@ -110,7 +110,7 @@ class Citation(BaseModel):
             name += f" ({self.revision_date.year})"
         return name.replace("sec.", "§")
 
-    def csl_dict(self) -> Dict[str, Union[str, int, List[List[Union[str, int]]]]]:
+    def csl_dict(self) -> dict[str, str | int | list[list[str | int]]]:
         """Return citation as a Citation Style Language object."""
         result = self.model_dump()
         result["container-title"] = result.pop("code", None)

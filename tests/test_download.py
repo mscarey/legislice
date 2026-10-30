@@ -1,20 +1,22 @@
 import datetime
-from legislice import download
-from legislice.enactments import CitingProvisionLocation, CrossReference
 import os
 
+import pytest
 from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
-import pytest
 
+from legislice import download
 from legislice.download import (
     Client,
     LegislicePathError,
     LegisliceTokenError,
     enactment_needs_api_update,
 )
-from legislice.enactments import InboundReference
-
+from legislice.enactments import (
+    CitingProvisionLocation,
+    CrossReference,
+    InboundReference,
+)
 
 load_dotenv()
 

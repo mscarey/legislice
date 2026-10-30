@@ -1,11 +1,11 @@
-from datetime import date
 import os
+from datetime import date
 
-from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.textselectors import TextPositionSet, TextSelectionError, Range
+import pytest
+from anchorpoint import TextPositionSelector, TextQuoteSelector
+from anchorpoint.textselectors import Range, TextPositionSet, TextSelectionError
 from dotenv import load_dotenv
 from pydantic import ValidationError
-import pytest
 
 from legislice.citations import CodeLevel
 from legislice.download import Client
@@ -567,9 +567,9 @@ class TestCompareEnactment:
         """
         enactment = test_client.read(query="/test/acts/47/1", date="1999-01-01")
         passage = enactment.select_all()
-        assert passage == passage
-        assert not passage > passage
-        assert passage >= passage
+        assert passage == passage  # noqa: PLR0124
+        assert not passage > passage  # noqa: PLR0124
+        assert passage >= passage  # noqa: PLR0124
 
     @pytest.mark.vcr
     def test_not_gt_if_equal_with_selection(self, test_client):

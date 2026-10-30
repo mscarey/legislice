@@ -2,21 +2,23 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from copy import deepcopy
-
 from datetime import date
-from typing import Annotated, Sequence, List, Optional, Tuple, Union
+from typing import Annotated
 
-from anchorpoint import TextQuoteSelector, TextPositionSelector
-from anchorpoint.textselectors import TextPositionSet, TextSelectionError
-from anchorpoint.textselectors import TextPositionSetFactory
+from anchorpoint import TextPositionSelector, TextQuoteSelector
+from anchorpoint.textselectors import (
+    TextPositionSet,
+    TextPositionSetFactory,
+    TextSelectionError,
+)
 from anchorpoint.textsequences import TextSequence
-
-from legislice.citations import Citation, identify_code, CodeLevel
-from legislice.types import InboundReferenceDict
-
-from pydantic import BeforeValidator, field_validator, model_validator, BaseModel
+from pydantic import BaseModel, BeforeValidator, field_validator, model_validator
 from ranges import Range, RangeDict
+
+from legislice.citations import Citation, CodeLevel, identify_code
+from legislice.types import InboundReferenceDict
 
 
 class CrossReference(BaseModel):
@@ -40,7 +42,7 @@ class CrossReference(BaseModel):
     target_uri: str
     target_url: str
     reference_text: str
-    target_node: Optional[int] = None
+    target_node: int | None = None
 
     def __str__(self):
         return f'CrossReference(target_uri="{self.target_uri}", reference_text="{self.reference_text}")'
@@ -79,7 +81,7 @@ class InboundReference(BaseModel):
     content: str
     reference_text: str
     target_uri: str
-    locations: List[CitingProvisionLocation]
+    locations: list[CitingProvisionLocation]
     url: str | None = None
 
     def __str__(self):
@@ -112,8 +114,8 @@ class TextVersion(BaseModel):
     """Version of legislative text, enacted at one or more times and locations."""
 
     content: str
-    url: Optional[str] = None
-    id: Optional[int] = None
+    url: str | None = None
+    id: int | None = None
 
     @field_validator("content")
     @classmethod
@@ -137,10 +139,10 @@ class EnactmentMemo(BaseModel):
     node: str
     start_date: date | None
     content: str
-    end_date: Optional[date] = None
+    end_date: date | None = None
 
 
-def string_to_date(value: Optional[Union[date, str]]) -> Optional[date]:
+def string_to_date(value: date | str | None) -> date | None:
     """Allow first_published to be populated from a string."""
     if isinstance(value, str):
         return date.fromisoformat(value)
@@ -199,22 +201,20 @@ class Enactment(BaseModel):
     node: str
     start_date: Annotated[date | None, BeforeValidator(string_to_date)]
     heading: str = ""
-    text_version: Optional[TextVersion] = None
+    text_version: TextVersion | None = None
     end_date: Annotated[date | None, BeforeValidator(string_to_date)] = None
     first_published: Annotated[date | None, BeforeValidator(string_to_date)] = None
     earliest_in_db: Annotated[date | None, BeforeValidator(string_to_date)] = None
-    anchors: Union[
-        TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
-    ] = []
-    citations: List[CrossReference] = []
+    anchors: TextPositionSet | list[TextPositionSelector | TextQuoteSelector] = []
+    citations: list[CrossReference] = []
     name: str = ""
-    children: List[Enactment] | List[str] = []
+    children: list[Enactment] | list[str] = []
 
     @field_validator("text_version", mode="before")
     @classmethod
     def make_text_version_from_str(
-        cls, value: Optional[Union[TextVersion, str]]
-    ) -> Optional[TextVersion]:
+        cls, value: TextVersion | str | None
+    ) -> TextVersion | None:
         """Allow content to be used to populate text_version."""
         if isinstance(value, str):
             if value:
@@ -234,7 +234,7 @@ class Enactment(BaseModel):
         """Get nested children attribute."""
         return [child for child in self.children if isinstance(child, Enactment)]
 
-    def get_identifier_part(self, index: int) -> Optional[str]:
+    def get_identifier_part(self, index: int) -> str | None:
         """Get a part of the split node identifier, by number."""
         identifier_parts = self.node.split("/")
         if len(identifier_parts) < (index + 1):
@@ -293,9 +293,7 @@ class Enactment(BaseModel):
         of the :class:`Enactment`\'s code exist in the database.
         """
         if self.start_date and self.earliest_in_db:
-            if self.earliest_in_db < self.start_date:
-                return True
-            elif self.first_published and self.earliest_in_db <= self.first_published:
+            if self.earliest_in_db < self.start_date or self.first_published and self.earliest_in_db <= self.first_published:
                 return True
         return False
 
@@ -319,7 +317,7 @@ class Enactment(BaseModel):
             revision_date=revision_date,
         )
 
-    def cross_references(self) -> List[CrossReference]:
+    def cross_references(self) -> list[CrossReference]:
         """Return all cross-references from this node and subnodes."""
         result = self.citations[:]
         for child in self.nested_children:
@@ -328,13 +326,7 @@ class Enactment(BaseModel):
 
     def get_string(
         self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
+        selection: bool | str | TextPositionSelector | TextQuoteSelector | Sequence[TextQuoteSelector],
     ) -> str:
         """Use text selector to get corresponding string from Enactment."""
         position_set = self.convert_selection_to_set(selection)
@@ -365,7 +357,7 @@ class Enactment(BaseModel):
         self,
         selection: TextPositionSet,
         start: int = 0,
-        end: Optional[int] = None,
+        end: int | None = None,
     ) -> TextPositionSet:
         """Limit selection to the range defined by start and end points."""
 
@@ -385,7 +377,7 @@ class Enactment(BaseModel):
         selection = self.tree_selection()
         return selection.as_text_sequence(text=self.text, include_nones=include_nones)
 
-    def means(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+    def means(self, other: Enactment | EnactmentPassage) -> bool:
         """Determine if self and other have identical text."""
         if not isinstance(other, (EnactmentPassage, Enactment)):
             raise TypeError(
@@ -397,16 +389,9 @@ class Enactment(BaseModel):
 
     def select(
         self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ] = True,
+        selection: bool | str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector] = True,
         start: int = 0,
-        end: Optional[int] = None,
+        end: int | None = None,
     ) -> EnactmentPassage:
         """Select text from Enactment."""
         selection_set = self.make_selection(selection=selection, start=start, end=end)
@@ -427,16 +412,9 @@ class Enactment(BaseModel):
 
     def make_selection(
         self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ] = True,
+        selection: bool | str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector] = True,
         start: int = 0,
-        end: Optional[int] = None,
+        end: int | None = None,
     ) -> TextPositionSet:
         """Make a TextPositionSet for specified text in this Enactment."""
         if selection is False or selection is None:
@@ -464,7 +442,7 @@ class Enactment(BaseModel):
 
     def _rangedict(
         self, range_dict: RangeDict, tree_length: int
-    ) -> Tuple[RangeDict, int]:
+    ) -> tuple[RangeDict, int]:
         if self.content:
             span = Range(start=tree_length, end=tree_length + len(self.content))
             range_dict[span] = EnactmentMemo(
@@ -498,7 +476,7 @@ class Enactment(BaseModel):
 
     def _tree_selection(
         self, selector_set: TextPositionSet, tree_length: int
-    ) -> Tuple[TextPositionSet, int]:
+    ) -> tuple[TextPositionSet, int]:
         selectors_at_node = self.make_selection_of_this_node()
         selectors_at_node_with_offset = selectors_at_node + tree_length
         new_tree_length = tree_length + self.padded_length
@@ -544,7 +522,7 @@ class Enactment(BaseModel):
         joined = " ".join(text_parts)
         return joined.strip()
 
-    def implies(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+    def implies(self, other: Enactment | EnactmentPassage) -> bool:
         """Test whether ``self`` has all the text passages of ``other``."""
         if not isinstance(other, (Enactment, EnactmentPassage)):
             raise TypeError(
@@ -554,7 +532,7 @@ class Enactment(BaseModel):
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
 
-    def __ge__(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+    def __ge__(self, other: Enactment | EnactmentPassage) -> bool:
         """
         Test whether ``self`` implies ``other``.
 
@@ -622,9 +600,9 @@ class EnactmentPassage(BaseModel):
         return self.enactment.level
 
     @property
-    def child_passages(self) -> List[EnactmentPassage]:
+    def child_passages(self) -> list[EnactmentPassage]:
         """Return a list of EnactmentPassages for this Enactment's children."""
-        result: List[EnactmentPassage] = []
+        result: list[EnactmentPassage] = []
         tree_length = self.enactment.padded_length
         for child in self.enactment.nested_children:
             selection = self.selection & TextPositionSelector(
@@ -643,8 +621,7 @@ class EnactmentPassage(BaseModel):
         ranges = self.enactment.rangedict()
         for span, memo in ranges.items():
             if self.selection.rangeset() & span[0]:
-                if memo.start_date > current:
-                    current = memo.start_date
+                current = max(current, memo.start_date)
         return current
 
     @property
@@ -654,9 +631,7 @@ class EnactmentPassage(BaseModel):
         ranges = self.enactment.rangedict()
         for span, memo in ranges.items():
             if self.selection.rangeset() & span[0]:
-                if not current:
-                    current = memo.end_date
-                elif memo.end_date and memo.end_date < current:
+                if not current or memo.end_date and memo.end_date < current:
                     current = memo.end_date
         return current
 
@@ -665,7 +640,7 @@ class EnactmentPassage(BaseModel):
         """Get the node that this Enactment is from."""
         return self.enactment.node
 
-    def as_quotes(self) -> List[TextQuoteSelector]:
+    def as_quotes(self) -> list[TextQuoteSelector]:
         """Return quote selectors for the selected text."""
         return [
             phrase.as_quote(self.enactment.text) for phrase in self.selection.positions
@@ -681,12 +656,11 @@ class EnactmentPassage(BaseModel):
         self.selection = TextPositionSet(
             positions=[TextPositionSelector(start=0, end=len(text))]
         )
-        return None
 
     def limit_selection(
         self,
         start: int = 0,
-        end: Optional[int] = None,
+        end: int | None = None,
     ) -> None:
         """Limit selection to the range defined by start and end points."""
 
@@ -695,7 +669,6 @@ class EnactmentPassage(BaseModel):
         )
         new_selection = self.selection & limit_selector
         self.selection = new_selection
-        return None
 
     def select_more_text_at_current_node(
         self, added_selection: TextPositionSet
@@ -703,11 +676,10 @@ class EnactmentPassage(BaseModel):
         """Select more text at this Enactment's node, not in child nodes."""
         new_selection = self.enactment.limit_selection_to_current_node(added_selection)
         self.selection = self.selection + new_selection
-        return None
 
     def _update_text_at_included_node(
         self, other: EnactmentPassage
-    ) -> Tuple[bool, bool]:
+    ) -> tuple[bool, bool]:
         """Recursively search child nodes for one that can be updated by `other`."""
         if self.node == other.node:
             found_node = True
@@ -732,7 +704,7 @@ class EnactmentPassage(BaseModel):
         copy_of_self._update_text_at_included_node(other)
         return copy_of_self
 
-    def implies(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+    def implies(self, other: Enactment | EnactmentPassage) -> bool:
         """Test whether ``self`` has all the text passages of ``other``."""
         if not isinstance(other, (Enactment, EnactmentPassage)):
             raise TypeError(
@@ -770,7 +742,7 @@ class EnactmentPassage(BaseModel):
             "when neither is a descendant of the other."
         )
 
-    def __ge__(self, other: Union[Enactment, EnactmentPassage]) -> bool:
+    def __ge__(self, other: Enactment | EnactmentPassage) -> bool:
         """
         Test whether ``self`` implies ``other``.
 
@@ -787,23 +759,15 @@ class EnactmentPassage(BaseModel):
 
     def select(
         self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ] = True,
+        selection: bool | str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector] = True,
         start: int = 0,
-        end: Optional[int] = None,
+        end: int | None = None,
     ) -> None:
         """Select text from Enactment."""
         selection_set = self.enactment.make_selection(
             selection=selection, start=start, end=end
         )
         self.selection = selection_set
-        return None
 
     def clear_selection(self) -> None:
         """Deselect any Enactment text, including in child nodes."""
@@ -856,13 +820,7 @@ class EnactmentPassage(BaseModel):
 
     def select_more(
         self,
-        selection: Union[
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
+        selection: str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector],
     ) -> None:
         """Select text, in addition to any previous selection."""
         if not isinstance(selection, TextPositionSet):
@@ -878,7 +836,6 @@ class EnactmentPassage(BaseModel):
         """Select more text within this Enactment's tree_selection, including child nodes."""
         new_selection = self.selection + added_selection
         self.selection = new_selection
-        return None
 
     def means(self, other: EnactmentPassage) -> bool:
         r"""
@@ -917,8 +874,8 @@ class AnchoredEnactmentPassage(BaseModel):
 
 
 def consolidate_enactments(
-    enactments: Sequence[Union[Enactment, EnactmentPassage]],
-) -> List[EnactmentPassage]:
+    enactments: Sequence[Enactment | EnactmentPassage],
+) -> list[EnactmentPassage]:
     r"""
     Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.
 
@@ -929,8 +886,8 @@ def consolidate_enactments(
     :returns:
         a list of :class:`Enactment`\s without overlapping text
     """
-    consolidated: List[EnactmentPassage] = []
-    passages: List[EnactmentPassage] = [
+    consolidated: list[EnactmentPassage] = []
+    passages: list[EnactmentPassage] = [
         item.select_all() if isinstance(item, Enactment) else item
         for item in enactments
     ]

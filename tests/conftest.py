@@ -1,10 +1,9 @@
 import datetime
 import os
-from typing import Dict
 
+import pytest
 from anchorpoint import TextQuoteSelector
 from dotenv import load_dotenv
-import pytest
 
 from legislice.download import Client
 
@@ -26,12 +25,14 @@ def vcr_config():
 def test_client() -> Client:
     client = Client(api_token=TOKEN)
     client.coverage["/us/usc"] = {
+        "uri": "/us/usc",
         "latest_heading": "United States Code (USC)",
         "first_published": datetime.date(1926, 6, 30),
         "earliest_in_db": datetime.date(2013, 7, 18),
         "latest_in_db": datetime.date(2020, 8, 8),
     }
     client.coverage["/test/acts"] = {
+        "uri": "/test/acts",
         "latest_heading": "Test Acts",
         "first_published": datetime.date(1935, 4, 1),
         "earliest_in_db": datetime.date(1935, 4, 1),
@@ -460,7 +461,7 @@ def section_11_subdivided():
 
 
 @pytest.fixture(scope="module")
-def make_selector() -> Dict[str, TextQuoteSelector]:
+def make_selector() -> dict[str, TextQuoteSelector]:
     return {
         "bad_selector": TextQuoteSelector(exact="text that doesn't exist in the code"),
         "preexisting material": TextQuoteSelector(

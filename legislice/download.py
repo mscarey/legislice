@@ -1,21 +1,19 @@
 """Download Enactments from API, with client."""
 
 import datetime
-from typing import Dict, List, Mapping, Optional, TypedDict, Union
+from collections.abc import Mapping
+from typing import TypedDict
 
 import requests
 
-
 from legislice.enactments import (
-    Enactment,
-    CrossReference,
     CitingProvisionLocation,
+    CrossReference,
+    Enactment,
     EnactmentPassage,
     InboundReference,
 )
-
-from legislice.types import FetchedCitationDict
-from legislice.types import RawEnactment, RawEnactmentPassage
+from legislice.types import FetchedCitationDict, RawEnactment, RawEnactmentPassage
 
 
 class PublicationCoverage(TypedDict):
@@ -57,19 +55,16 @@ def enactment_needs_api_update(data: RawEnactment) -> bool:
 class LegislicePathError(Exception):
     """Error for API query with invalid path."""
 
-    pass
 
 
 class LegisliceDateError(Exception):
     """Error for API query with invalid date."""
 
-    pass
 
 
 class LegisliceTokenError(Exception):
     """Error for failure to authenticate with API token."""
 
-    pass
 
 
 def normalize_path(path: str) -> str:
@@ -82,8 +77,8 @@ class Client:
 
     def __init__(
         self,
-        api_token: Optional[str] = "",
-        api_root: Optional[str] = "https://authorityspoke.com/api/v1",
+        api_token: str | None = "",
+        api_root: str | None = "https://authorityspoke.com/api/v1",
         update_coverage_from_api: bool = True,
     ):
         """Create download client with an API token and an API address."""
@@ -92,15 +87,15 @@ class Client:
         if api_token and api_token.startswith("Token "):
             api_token = api_token.split("Token ")[1]
         self.api_token = api_token or ""
-        self.coverage: Dict[str, PublicationCoverage] = {
+        self.coverage: dict[str, PublicationCoverage] = {
             "/us/const": CONST_COVERAGE,
         }
         self.update_coverage_from_api = update_coverage_from_api
 
     def fetch(
         self,
-        query: Union[str, CitingProvisionLocation, CrossReference, InboundReference],
-        date: Union[datetime.date, str] = "",
+        query: str | CitingProvisionLocation | CrossReference | InboundReference,
+        date: datetime.date | str = "",
     ) -> RawEnactment:
         """
         Download legislative provision from string identifier or cross-reference.
@@ -134,7 +129,7 @@ class Client:
         return self.fetch_uri(query=query.node, date=query.start_date)
 
     def fetch_cross_reference(
-        self, query: CrossReference, date: Union[datetime.date, str] = ""
+        self, query: CrossReference, date: datetime.date | str = ""
     ) -> RawEnactment:
         """
         Download legislative provision from cross-reference.
@@ -208,7 +203,7 @@ class Client:
         return code_uri
 
     def url_from_enactment_path(
-        self, path: str, date: Union[datetime.date, str] = ""
+        self, path: str, date: datetime.date | str = ""
     ) -> str:
         """Generate URL for API call for specified USLM path and date."""
         query_with_root = self.api_root + normalize_path(path)
@@ -222,7 +217,7 @@ class Client:
         return query_with_root
 
     def fetch_uri(
-        self, query: str, date: Union[datetime.date, str] = ""
+        self, query: str, date: datetime.date | str = ""
     ) -> RawEnactment:
         """
         Fetch data about legislation at specified path and date from Client's assigned API root.
@@ -241,7 +236,7 @@ class Client:
         response = self._fetch_from_url(url=url)
         return response.json()
 
-    def uri_from_query(self, target: Union[str, Enactment, CrossReference]) -> str:
+    def uri_from_query(self, target: str | Enactment | CrossReference) -> str:
         """Get a URI for the target object."""
         if isinstance(target, Enactment):
             return target.node
@@ -250,8 +245,8 @@ class Client:
         return target
 
     def fetch_citations_to(
-        self, target: Union[str, Enactment, CrossReference]
-    ) -> List[FetchedCitationDict]:
+        self, target: str | Enactment | CrossReference
+    ) -> list[FetchedCitationDict]:
         """
         Query API for citations to a given target node, withoout loading them as InboundCitations.
 
@@ -268,8 +263,8 @@ class Client:
         return api_response.json()["results"]
 
     def citations_to(
-        self, target: Union[str, Enactment, CrossReference]
-    ) -> List[InboundReference]:
+        self, target: str | Enactment | CrossReference
+    ) -> list[InboundReference]:
         r"""
         Load an InboundReference object for each provision citing the target USLM provision URI.
 
@@ -330,8 +325,8 @@ class Client:
 
     def read(
         self,
-        query: Union[str, CrossReference],
-        date: Union[datetime.date, str] = "",
+        query: str | CrossReference,
+        date: datetime.date | str = "",
     ) -> Enactment:
         """
         Fetch data from Client's assigned API root and builds Enactment or LinkedEnactment.

@@ -1,8 +1,8 @@
 from copy import deepcopy
 from datetime import date
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from legislice.enactments import Enactment
 from legislice.groups import EnactmentGroup

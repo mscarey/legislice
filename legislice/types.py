@@ -1,14 +1,14 @@
 """TypedDict data structures used for communicating between an API and Legislice."""
 
 from datetime import date
-from typing import List, Optional, TypedDict
+from typing import TypedDict
 
 
 class RawPositionSelector(TypedDict):
     """Data for a TextPositionSelector."""
 
     start: int
-    end: Optional[int]
+    end: int | None
 
 
 class RawQuoteSelector(TypedDict):
@@ -26,8 +26,8 @@ class RawSelectorSet(TypedDict):
     Used in Legislice to specify the cited part of an Enactment.
     """
 
-    positions: Optional[List[RawPositionSelector]]
-    quotes: Optional[List[RawQuoteSelector]]
+    positions: list[RawPositionSelector] | None
+    quotes: list[RawQuoteSelector] | None
 
 
 class CrossReferenceDict(TypedDict):
@@ -36,22 +36,22 @@ class CrossReferenceDict(TypedDict):
     target_uri: str
     target_url: str
     reference_text: str
-    target_node: Optional[int]
+    target_node: int | None
 
 
 class RawEnactment(TypedDict):
     """Data for creating an Enactment."""
 
     heading: str
-    start_date: Optional[str]
+    start_date: str | None
     node: str
     url: str
-    end_date: Optional[str]
+    end_date: str | None
     content: str
-    children: List["RawEnactment"]
-    citations: List[CrossReferenceDict]
-    earliest_in_db: Optional[date]
-    first_published: Optional[date]
+    children: list["RawEnactment"]
+    citations: list[CrossReferenceDict]
+    earliest_in_db: date | None
+    first_published: date | None
 
 
 class RawEnactmentPassage(TypedDict):
@@ -82,10 +82,10 @@ class FetchedCitationDict(TypedDict):
     """
 
     content: str
-    locations: List[CitingProvisionLocationDict]
-    citations: List[CrossReferenceDict]
+    locations: list[CitingProvisionLocationDict]
+    citations: list[CrossReferenceDict]
     url: str
-    target_uri: Optional[str]
+    target_uri: str | None
 
 
 class InboundReferenceDict(TypedDict):
@@ -97,11 +97,11 @@ class InboundReferenceDict(TypedDict):
     """
 
     content: str
-    locations: List[CitingProvisionLocationDict]
-    citations: List[CrossReferenceDict]
+    locations: list[CitingProvisionLocationDict]
+    citations: list[CrossReferenceDict]
     url: str
     target_uri: str
-    reference_text: Optional[str]
+    reference_text: str | None
 
 
 class PublicationCoverage(TypedDict):

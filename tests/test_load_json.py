@@ -1,7 +1,9 @@
 from datetime import date
+from typing import ClassVar
 
-from anchorpoint import TextQuoteSelector
 import pytest
+from anchorpoint import TextQuoteSelector
+
 from legislice.download import Client
 
 
@@ -98,7 +100,7 @@ class TestLoadAndSelect:
         "earliest_in_db": date(1750, 1, 1),
         "first_published": date(1750, 1, 1),
     }
-    response = {
+    response: ClassVar[dict] = {
         "heading": "",
         "start_date": "2013-07-18",
         "node": "/us/usc/t18/s1960/b/1",
