@@ -5,7 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 from datetime import date
-from typing import Sequence, List, Optional, Tuple, Union
+from typing import Annotated, Sequence, List, Optional, Tuple, Union
 
 from anchorpoint import TextQuoteSelector, TextPositionSelector
 from anchorpoint.textselectors import TextPositionSet, TextSelectionError
@@ -15,7 +15,7 @@ from anchorpoint.textsequences import TextSequence
 from legislice.citations import Citation, identify_code, CodeLevel
 from legislice.types import InboundReferenceDict
 
-from pydantic import field_validator, model_validator, BaseModel
+from pydantic import BeforeValidator, field_validator, model_validator, BaseModel
 from ranges import Range, RangeDict
 
 
@@ -80,6 +80,7 @@ class InboundReference(BaseModel):
     reference_text: str
     target_uri: str
     locations: List[CitingProvisionLocation]
+    url: str | None = None
 
     def __str__(self):
         result = f"InboundReference to {self.target_uri}, from {self.latest_location()}"
@@ -134,9 +135,16 @@ class EnactmentMemo(BaseModel):
     """
 
     node: str
-    start_date: date
+    start_date: date | None
     content: str
     end_date: Optional[date] = None
+
+
+def string_to_date(value: Optional[Union[date, str]]) -> Optional[date]:
+    """Allow first_published to be populated from a string."""
+    if isinstance(value, str):
+        return date.fromisoformat(value)
+    return value
 
 
 class Enactment(BaseModel):
@@ -155,7 +163,8 @@ class Enactment(BaseModel):
         full text content at this node, even if not all of it is cited
 
     :param start_date:
-        date when the text was enacted at the cited location
+        date when the text was enacted at the cited location. Likely
+        not the same as the operative dates of any rules established by the enactment.
 
     :param known_revision_date:
         whether the "start_date" field is known to be a date
@@ -188,18 +197,18 @@ class Enactment(BaseModel):
     """
 
     node: str
-    start_date: date
+    start_date: Annotated[date | None, BeforeValidator(string_to_date)]
     heading: str = ""
     text_version: Optional[TextVersion] = None
-    end_date: Optional[date] = None
-    first_published: Optional[date] = None
-    earliest_in_db: Optional[date] = None
+    end_date: Annotated[date | None, BeforeValidator(string_to_date)] = None
+    first_published: Annotated[date | None, BeforeValidator(string_to_date)] = None
+    earliest_in_db: Annotated[date | None, BeforeValidator(string_to_date)] = None
     anchors: Union[
         TextPositionSet, List[Union[TextPositionSelector, TextQuoteSelector]]
     ] = []
     citations: List[CrossReference] = []
     name: str = ""
-    children: Union[List[Enactment], List[str]] = []
+    children: List[Enactment] | List[str] = []
 
     @field_validator("text_version", mode="before")
     @classmethod
@@ -283,7 +292,7 @@ class Enactment(BaseModel):
         If not, then the `start_date` merely reflects the earliest date that versions
         of the :class:`Enactment`\'s code exist in the database.
         """
-        if self.earliest_in_db:
+        if self.start_date and self.earliest_in_db:
             if self.earliest_in_db < self.start_date:
                 return True
             elif self.first_published and self.earliest_in_db <= self.first_published:
@@ -304,6 +313,7 @@ class Enactment(BaseModel):
         return Citation(
             jurisdiction=self.jurisdiction,
             code=self.code,
+            code_level_name=level,
             volume=self.title,
             section=self.section,
             revision_date=revision_date,
@@ -332,18 +342,15 @@ class Enactment(BaseModel):
 
     def convert_selection_to_set(
         self,
-        selection: Union[
-            bool,
-            str,
-            TextPositionSelector,
-            TextPositionSet,
-            TextQuoteSelector,
-            Sequence[TextQuoteSelector],
-        ],
+        selection: bool
+        | str
+        | TextPositionSelector
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector]
+        | None,
     ) -> TextPositionSet:
         """Create a TextPositionSet from a different selection method."""
-        if selection is True:
-            return self.make_selection_of_all_text()
+
         factory = TextPositionSetFactory(self.text)
         return factory.from_selection(selection)
 
@@ -414,7 +421,7 @@ class Enactment(BaseModel):
         """Return a TextPositionSet of all text in this Enactment."""
         if self.text:
             return TextPositionSet(
-                positions=TextPositionSelector(start=0, end=len(self.text))
+                positions=[TextPositionSelector(start=0, end=len(self.text))]
             )
         return TextPositionSet()
 
@@ -452,7 +459,7 @@ class Enactment(BaseModel):
         if not self.content:
             return TextPositionSet()
         return TextPositionSet(
-            positions=TextPositionSelector(start=0, end=len(self.content))
+            positions=[TextPositionSelector(start=0, end=len(self.content))]
         )
 
     def _rangedict(
@@ -571,7 +578,7 @@ class EnactmentPassage(BaseModel):
 
     enactment: Enactment
     selection: TextPositionSet = TextPositionSet(
-        positions=TextPositionSelector(start=0, end=None)
+        positions=[TextPositionSelector(start=0, end=None)]
     )
 
     @property
@@ -735,12 +742,20 @@ class EnactmentPassage(BaseModel):
         other_selected_passages = other.text_sequence(include_nones=False)
         return self_selected_passages >= other_selected_passages
 
-    def __add__(self, other: Union[Enactment, EnactmentPassage]) -> EnactmentPassage:
-
+    def __add__(
+        self,
+        other: Enactment
+        | EnactmentPassage
+        | str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector],
+    ) -> EnactmentPassage:
         if isinstance(other, Enactment):
             other = other.select_all()
 
-        if not isinstance(other, self.__class__):
+        elif not isinstance(other, EnactmentPassage):
             copy_of_self = deepcopy(self)
             copy_of_self.select_more(other)
             return copy_of_self
@@ -902,7 +917,7 @@ class AnchoredEnactmentPassage(BaseModel):
 
 
 def consolidate_enactments(
-    enactments: Sequence[Union[Enactment, EnactmentPassage]]
+    enactments: Sequence[Union[Enactment, EnactmentPassage]],
 ) -> List[EnactmentPassage]:
     r"""
     Consolidate any overlapping :class:`Enactment`\s in a :class:`list`.

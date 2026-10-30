@@ -9,3 +9,12 @@ from legislice.download import Client
 from legislice.groups import EnactmentGroup
 
 __version__ = "0.8.1"
+__all__ = [
+    "Enactment",
+    "Citation",
+    "Client",
+    "EnactmentGroup",
+    "TextQuoteSelector",
+    "TextPositionSelector",
+    "TextPositionSet",
+]
