@@ -274,7 +274,7 @@ class Enactment(BaseModel):
     @property
     def level(self) -> CodeLevel:
         """Get level of code for this Enactment, e.g. "statute" or "regulation"."""
-        code_name, code_level_name = identify_code(self.sovereign, self.code)
+        _, code_level_name = identify_code(self.sovereign, self.code)
         return code_level_name
 
     @property
@@ -292,10 +292,15 @@ class Enactment(BaseModel):
         If not, then the `start_date` merely reflects the earliest date that versions
         of the :class:`Enactment`\'s code exist in the database.
         """
-        if self.start_date and self.earliest_in_db:
-            if self.earliest_in_db < self.start_date or self.first_published and self.earliest_in_db <= self.first_published:
-                return True
-        return False
+        return bool(
+            self.start_date
+            and self.earliest_in_db
+            and (
+                self.earliest_in_db < self.start_date
+                or self.first_published
+                and self.earliest_in_db <= self.first_published
+            )
+        )
 
     def __str__(self):
         return f"{self.node} ({self.start_date})"
@@ -326,7 +331,11 @@ class Enactment(BaseModel):
 
     def get_string(
         self,
-        selection: bool | str | TextPositionSelector | TextQuoteSelector | Sequence[TextQuoteSelector],
+        selection: bool
+        | str
+        | TextPositionSelector
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector],
     ) -> str:
         """Use text selector to get corresponding string from Enactment."""
         position_set = self.convert_selection_to_set(selection)
@@ -389,7 +398,12 @@ class Enactment(BaseModel):
 
     def select(
         self,
-        selection: bool | str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector] = True,
+        selection: bool
+        | str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector] = True,
         start: int = 0,
         end: int | None = None,
     ) -> EnactmentPassage:
@@ -412,7 +426,12 @@ class Enactment(BaseModel):
 
     def make_selection(
         self,
-        selection: bool | str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector] = True,
+        selection: bool
+        | str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector] = True,
         start: int = 0,
         end: int | None = None,
     ) -> TextPositionSet:
@@ -462,7 +481,7 @@ class Enactment(BaseModel):
 
     def rangedict(self) -> RangeDict:
         """Return a RangeDict matching text spans to Enactment attributes."""
-        new_range_dict, new_tree_length = self._rangedict(
+        new_range_dict, _new_tree_length = self._rangedict(
             range_dict=RangeDict(), tree_length=0
         )
         return new_range_dict
@@ -491,7 +510,7 @@ class Enactment(BaseModel):
 
     def tree_selection(self) -> TextPositionSet:
         """Return set of selectors for selected text in this provision and its children."""
-        new_selector_set, new_tree_length = self._tree_selection(
+        new_selector_set, _new_tree_length = self._tree_selection(
             selector_set=TextPositionSet(), tree_length=0
         )
         return new_selector_set
@@ -630,9 +649,10 @@ class EnactmentPassage(BaseModel):
         current = self.enactment.end_date
         ranges = self.enactment.rangedict()
         for span, memo in ranges.items():
-            if self.selection.rangeset() & span[0]:
-                if not current or memo.end_date and memo.end_date < current:
-                    current = memo.end_date
+            if self.selection.rangeset() & span[0] and (
+                not current or memo.end_date and memo.end_date < current
+            ):
+                current = memo.end_date
         return current
 
     @property
@@ -759,7 +779,12 @@ class EnactmentPassage(BaseModel):
 
     def select(
         self,
-        selection: bool | str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector] = True,
+        selection: bool
+        | str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector] = True,
         start: int = 0,
         end: int | None = None,
     ) -> None:
@@ -820,7 +845,11 @@ class EnactmentPassage(BaseModel):
 
     def select_more(
         self,
-        selection: str | TextPositionSelector | TextPositionSet | TextQuoteSelector | Sequence[TextQuoteSelector],
+        selection: str
+        | TextPositionSelector
+        | TextPositionSet
+        | TextQuoteSelector
+        | Sequence[TextQuoteSelector],
     ) -> None:
         """Select text, in addition to any previous selection."""
         if not isinstance(selection, TextPositionSet):

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import textwrap
 from collections.abc import Sequence
-from typing import Generic, TypeVar, cast
+from typing import TypeVar, cast
 
 from pydantic import RootModel, field_validator, model_validator
 
@@ -15,7 +15,9 @@ SortablePassage = TypeVar("SortablePassage", bound=EnactmentPassage)
 ConsolidatablePassage = TypeVar("ConsolidatablePassage", bound=EnactmentPassage)
 
 
-def sort_passages(passages: list[SortablePassage]) -> list[SortablePassage]:
+def sort_passages[SortablePassage: EnactmentPassage](
+    passages: list[SortablePassage],
+) -> list[SortablePassage]:
     """
     Sort EnactmentPassages in group, in place.
 
@@ -28,7 +30,7 @@ def sort_passages(passages: list[SortablePassage]) -> list[SortablePassage]:
     return passages
 
 
-def consolidate_passages(
+def consolidate_passages[ConsolidatablePassage: EnactmentPassage](
     obj: EnactmentGroup[ConsolidatablePassage]
     | Enactment
     | ConsolidatablePassage
@@ -46,9 +48,8 @@ def consolidate_passages(
     return consolidated
 
 
-class EnactmentGroup(
+class EnactmentGroup[EnactmentGroupItem: EnactmentPassage](
     RootModel[tuple[EnactmentGroupItem, ...]],
-    Generic[EnactmentGroupItem],
 ):
     """Group of Enactments with comparison methods."""
 
@@ -166,7 +167,10 @@ class EnactmentGroup(
 
     def __add__(
         self,
-        other: EnactmentGroup[EnactmentGroupItem] | Sequence[Enactment | EnactmentGroupItem] | Enactment | EnactmentGroupItem,
+        other: EnactmentGroup[EnactmentGroupItem]
+        | Sequence[Enactment | EnactmentGroupItem]
+        | Enactment
+        | EnactmentGroupItem,
     ) -> EnactmentGroup[EnactmentGroupItem]:
         """Combine two EnactmentGroups, consolidating any duplicate Enactments."""
         if isinstance(other, self.__class__):
