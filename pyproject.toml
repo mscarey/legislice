@@ -1,5 +1,6 @@
 [project]
 name = "legislice"
+version = "0.9.0"
 authors = [
     {name = "Matt Carey", email = "matt@authorityspoke.com"},
 ]

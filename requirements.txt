@@ -1,5 +1,0 @@
-anchorpoint==0.8.2
-python-dotenv
-python-ranges>=1.2.2
-requests
-roman
