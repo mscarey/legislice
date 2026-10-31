@@ -1,5 +1,16 @@
 Changelog
 =========
+0.9.0 (dev)
+------------------
+- add `EnactmentGroup.append` and make `EnactmentGroup` generic
+- extract `consolidate_passages` and allow it to accept sequences
+- allow `convert_selection_to_set` to accept `None`
+- preserve URLs on `InboundReference` and pass `code_level_name` through `Enactment.as_citation`
+- handle missing start dates when determining an enactment's known revision date
+- rename the `types` module to `models`
+- migrate dependency configuration to `pyproject.toml` and add a `uv` lockfile
+- update the `anchorpoint` dependency to 0.9.0
+
 
 0.8.1 (2025-01-25)
 ------------------
