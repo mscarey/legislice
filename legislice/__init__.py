@@ -11,7 +11,7 @@ from legislice.download import Client
 from legislice.enactments import Enactment
 from legislice.groups import EnactmentGroup
 
-__version__ = "0.8.1"
+__version__ = "0.9.0rc1"
 __all__ = [
     "Citation",
     "Client",
