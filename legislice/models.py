@@ -110,7 +110,7 @@ class PublicationCoverage(BaseModel):
     """Available dates for a publication covered in an API's database."""
 
     uri: str
-    latest_heading: str
+    latest_heading: str | None
     first_published: date
     earliest_in_db: date
     latest_in_db: date
