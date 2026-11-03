@@ -69,7 +69,7 @@ including all its subsections.
     >>> fourteenth_amendment.text
     'All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside. No State shall make or enforce any law which shall abridge the privileges or immunities of citizens of the United States; nor shall any State deprive any person of life, liberty, or property, without due process of law; nor deny to any person within its jurisdiction the equal protection of the laws. Representatives shall be apportioned among the several States according to their respective numbers, counting the whole number of persons in each State, excluding Indians not taxed. But when the right to vote at any election for the choice of electors for President and Vice President of the United States, Representatives in Congress, the Executive and Judicial officers of a State, or the members of the Legislature thereof, is denied to any of the male inhabitants of such State, being twenty-one years of age, and citizens of the United States, or in any way abridged, except for participation in rebellion, or other crime, the basis of representation therein shall be reduced in the proportion which the number of such male citizens shall bear to the whole number of male citizens twenty-one years of age in such State. No person shall be a Senator or Representative in Congress, or elector of President and Vice President, or hold any office, civil or military, under the United States, or under any State, who, having previously taken an oath, as a member of Congress, or as an officer of the United States, or as a member of any State legislature, or as an executive or judicial officer of any State, to support the Constitution of the United States, shall have engaged in insurrection or rebellion against the same, or given aid or comfort to the enemies thereof. But Congress may by a vote of two-thirds of each House, remove such disability. The validity of the public debt of the United States, authorized by law, including debts incurred for payment of pensions and bounties for services in suppressing insurrection or rebellion, shall not be questioned. But neither the United States nor any State shall assume or pay any debt or obligation incurred in aid of insurrection or rebellion against the United States, or any claim for the loss or emancipation of any slave; but all such debts, obligations and claims shall be held illegal and void. The Congress shall have power to enforce, by appropriate legislation, the provisions of this article.'
 
-However, we might want an :class:`~legislice.enactments.Enactment` object that only represents a
+However, we might want an :class:`~legislice.enactments.EnactmentPassage` object that only represents a
 part of the Fourteenth Amendment that’s relevant to a particular case.
 We can use the :meth:`~legislice.enactments.Enactment.select` method to limit the text of the provision
 that’s considered “selected”. One way to do this is with a series of
@@ -222,9 +222,9 @@ if :meth:`~legislice.enactments.Enactment.implies` would return
 Combining Enactment Passages
 ----------------------------
 
-When we have two :class:`~legislice.enactments.EnactmentPassage`\s and 
+When we have two :class:`~legislice.enactments.EnactmentPassage`\s and
 either they are at the same node or one
-is a descendant of the other, we can combine them into a 
+is a descendant of the other, we can combine them into a
 new :class:`~legislice.enactments.EnactmentPassage`\s
 using the addition sign. Here’s an example from a copyright statute in
 the United States Code. The example shows that we can load section
@@ -280,7 +280,7 @@ Enactments instead of four.
     >>> right = EnactmentGroup(passages=[third, speech_clause])
     >>> combined = left + right
     >>> print(combined)
-    the group of Enactments:
+    the group of Enactment Passages:
       "Congress shall make no law respecting an establishment of religion…abridging the freedom of speech…" (/us/const/amendment/I 1791-12-15)
       "…the right of the people to keep and bear arms, shall not be infringed." (/us/const/amendment/II 1791-12-15)
       "No soldier shall, in time of peace be quartered in any house, without the consent of the Owner, nor in time of war, but in a manner to be prescribed by law." (/us/const/amendment/III 1791-12-15)
