@@ -355,6 +355,8 @@ class Enactment(BaseModel):
         if selection is None:
             return TextPositionSet()
         if isinstance(selection, str):
+            if selection.count("|") == 2:
+                return TextPositionSetFactory(self.text).from_selection(selection)
             return TextPositionSetFactory(self.text).from_selection([selection])
 
         factory = TextPositionSetFactory(self.text)

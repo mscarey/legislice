@@ -1141,3 +1141,12 @@ class TestConsolidateEnactments:
 
         combined = consolidate_enactments([quote_5, quote_14])
         assert len(combined) == 2
+
+    def test_select_with_pipes(self, fifth_a):
+
+        due_process_5 = Enactment(**fifth_a)
+
+        passage = "life,|liberty, or property, without due process| of law"
+        quote_5 = due_process_5.select(passage)
+
+        assert quote_5.selected_text() == "…liberty, or property, without due process…"
