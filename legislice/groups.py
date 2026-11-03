@@ -153,7 +153,7 @@ class EnactmentGroup[EnactmentGroupItem: EnactmentPassage](
         return f"{self.__class__.__name__}({list(self.passages)!r})"
 
     def __str__(self):
-        result = "the group of Enactments:"
+        result = "the group of Enactment Passages:"
         indent = "  "
         for factor in self.passages:
             result += f"\n{textwrap.indent(str(factor), prefix=indent)}"
